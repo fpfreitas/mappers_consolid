@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Orcamento">
+  <resultMap id="OrcaJsonResult" type="Map">
+    <result property="json" column="row_to_json"/>
+  </resultMap>
+
+  <select id="selectOrcamento" resultMap="OrcaJsonResult">
+<![CDATA[
+
+SELECT ROW_TO_JSON(ROW), 
+       "cdEmp", 
+       "cdFilial", 
+       "cdOrc" 
+FROM   ( 
+                 SELECT    orc.cd_emp               AS "cdEmp", 
+						   orc.cd_filial            AS "cdFilial", 
+                           orc.cd_orc               AS "cdOrc", 
+                           orc.vd_troca_fidel       AS "vdTrocaFidel", 
+                           orc.cd_cli               AS "cdCli", 
+                           orc.cd_conv              AS "cdConv", 
+                           orc.qt_parc_conv         AS "qtParcConv", 
+                           orc.nr_ped_televd        AS "nrPedTelevd", 
+                           orc.tipo_prazo_pgto      AS "tipoPrazoPgto", 
+                           orc.nr_cartao_pbm        AS "nrCartaoPbm", 
+                           orc.cd_projeto_pbm       AS "cdProjetoPbm", 
+                           orc.tp_perc_rec_conv     AS "tpPercRecConv", 
+                           orc.perc_rec_conv        AS "percRecConv", 
+                           orc.dados_adicionais     AS "dadosAdicionais", 
+                           orc.nm_comprador         AS "nmComprador", 
+                           orc.qtd_dias_prorrog     AS "qtdDiasProrrog" , 
+                           orc.tipo_pbm             AS "tipoPbm", 
+                           orc.cd_cli_dep           AS "cdCliDep", 
+                           orc.vlr_prod             AS "vlrProd", 
+                           orc.tp_orc_entg          AS "tpOrcEntg", 
+                           2		                AS "stsOrc", 
+                           orc.nm_cli               AS "nmCli", 
+                           orc.nr_autr_pbm          AS "nrAutrPbm", 
+                           orc.cpf_cli_pbm          AS "cpfCliPbm", 
+                           orc.dt_emi               AS "dtEmi", 
+                           orc.hr_emi               AS "hrEmi", 
+                           orc.vlr_tot              AS "vlrTot", 
+						   orc.vlr_desc				AS "vlrDesc",
+						   orc.vlr_desc_geral		AS "vlrDescGeral",
+                           orc.nr_cartao_fidelidade AS "nrCartaoCli", 
+                           orc.fone_cli             AS "foneCli", 
+                           orc.tp_orc               AS "tpOrc", 
+                           orc.cd_frm_pgto          AS "cdFrmPgto", 
+                           orc.orig_orc             AS "origOrc", 
+                           orc.obs                  AS "obs", 
+                           CASE 
+                                     WHEN COALESCE(est_cancel.cd_mt_cancel_orc, 0) > 0 THEN TRUE
+                                     ELSE FALSE 
+                           END                                      AS "orcamentoCancel", 
+                           COALESCE(est_cancel.cd_mt_cancel_orc, 0) AS "cdMtCancelOrc", 
+                           est_cancel.desc_mt_cancel                AS "descMtCancel", 
+                           ( 
+                                  SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(ORCIT))) 
+                                  FROM   ( 
+                                                   SELECT    est_orc_cpl.cd_prod                 AS "cdProd",
+                                                             est_orc_cpl.cd_barra                AS "cdBarra",
+                                                             est_orc_cpl.qt                      AS "qt",
+                                                             est_orc_cpl.vlr_it                  AS "vlrIt",
+                                                             est_orc_cpl.vlr_tot_it              AS "vlrTotIt",
+                                                             est_orc_cpl.vlr_desc                AS "vlrDesc",
+                                                             est_orc_cpl.perc_desc               AS "percDesc",
+                                                             est_orc_cpl.cd_medico_rec           AS "cdMedicoRec",
+                                                             est_orc_cpl.cd_vend                 AS "cdVend",
+                                                             est_orc_cpl.cd_vend_lib             AS "cdVendLib",
+                                                             est_orc_cpl.pr_tab                  AS "prTab",
+                                                             est_orc_cpl.nr_autr_pbm_item        AS "nrAutrPbmItem",
+                                                             est_orc_cpl.cd_vend_verba           AS "cdVendVerba",
+                                                             est_orc_cpl.libera_vd_conv          AS "liberaVdConv" ,
+                                                             est_orc_cpl.cd_it                   AS "cdIt",
+                                                             est_orc_cpl.perc_desc_min           AS "percDescMin",
+                                                             est_orc_cpl.perc_desc_max           AS "percDescMax",
+                                                             est_orc_cpl.cd_tbl_desc             AS "cdTblDesc",
+                                                             est_orc_cpl.oferta                  AS "oferta",
+                                                             est_orc_cpl.perc_desc_cad           AS "percDescCad",
+                                                             est_orc_cpl.perc_desc_fix           AS "percDescFix",
+                                                             est_orc_cpl.vlr_desc_fix            AS "vlrDescFix",
+                                                             est_orc_cpl.tipo_desconto           AS "tipoDesconto",
+                                                             est_orc_cpl.vlr_economia            AS "vlrEconomia",
+                                                             est_orc_cpl.venda_dependente        AS "vendaDependente",
+                                                             est_orc_cpl.perc_desconto_pos_pbm   AS "percDescontoPosPbm",
+                                                             est_orc_cpl.nr_protocolo_manipulado AS "nrProtocoloManipulado",
+                                                             est_orc_cpl.tipo_desconto           AS "tpDesc",
+                                                             est_orc_cpl.qtde_ponto_fidel        AS "qtPontosFidel",
+                                                             est_orc_cpl.vlr_desc_verba          AS "vlrDescVerba",
+                                                             est_orc_cpl.perc_desc_verba         AS "percDescVerba",
+                                                             est_orc_cpl.cd_vend_verba           AS "cdVendVerba",
+                                                             est_orc_cpl.vlr_custo_semaforo      AS "vlrCustoSemaforo",
+                                                             est_orc_cpl.qt_est                  AS "qtEst",
+                                                             est_orc_cpl.cd_grp                  AS "cdGrupoComissao",
+                                                             (                             SELECT row_to_json(CONCORRENTE)
+                                                                   FROM   (  SELECT desconto_concorrente.cd_prod                AS "cdProd",
+                                                                                    desconto_concorrente.nr_orc                 AS "nrOrc",
+                                                                                    desconto_concorrente.cd_vend                AS "cdVend",
+                                                                                    desconto_concorrente.cd_concor              AS "cdConcorrente",
+                                                                                    desconto_concorrente.vlr_concor             AS "vlrConcorrente",
+                                                                                    desconto_concorrente.perc_desc              AS "percDesc",
+                                                                                    desconto_concorrente.cd_it                     AS "cdIt"
+                                                                                    from est_orc_cpl_concor desconto_concorrente
+                                                                                    WHERE     est_orc_cpl.cd_emp = desconto_concorrente.cd_emp::      NUMERIC
+                                                                                    AND       est_orc_cpl.cd_filial = desconto_concorrente.cd_filial::NUMERIC
+                                                                                    AND       est_orc_cpl.cd_orc = desconto_concorrente.nr_orc::      NUMERIC
+                                                                                    AND       est_orc_cpl.cd_it = desconto_concorrente.cd_it::        NUMERIC
+                                                                                    AND       est_orc_cpl.cd_prod = desconto_concorrente.cd_prod::    NUMERIC) CONCORRENTE ) AS "concorrente",
+                                                             ( 
+                                                                    SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(LOTE)))  
+                                                                    FROM   ( 
+                                                                                  SELECT lote.cd_lote   AS "cdLote",
+                                                                                         lote.qtde_lote AS "qtdeLote"
+                                                                                  FROM   est_orc_cpl_lote lote
+                                                                                  WHERE  est_orc_cpl.cd_emp = lote.cd_emp::      NUMERIC
+                                                                                  AND    est_orc_cpl.cd_filial = lote.cd_filial::NUMERIC
+                                                                                  AND    est_orc_cpl.cd_orc = lote.cd_orc::      NUMERIC
+                                                                                  AND    est_orc_cpl.cd_prod = lote.cd_prod::    NUMERIC
+                                                                                  AND    est_orc_cpl.cd_it = lote.cd_it::        NUMERIC ) LOTE ) AS "lote"
+                                                   FROM      est_orc_cpl 
+                                                   left join est_orc_cpl_concor desconto_concorrente
+                                                   ON        est_orc_cpl.cd_emp = desconto_concorrente.cd_emp::      NUMERIC
+                                                   AND       est_orc_cpl.cd_filial = desconto_concorrente.cd_filial::NUMERIC
+                                                   AND       est_orc_cpl.cd_orc = desconto_concorrente.nr_orc::      NUMERIC
+                                                   AND       est_orc_cpl.cd_it = desconto_concorrente.cd_it::        NUMERIC
+                                                   AND       est_orc_cpl.cd_prod = desconto_concorrente.cd_prod::    NUMERIC
+                                                   WHERE     est_orc_cpl.cd_emp = orc.cd_emp 
+                                                   AND       est_orc_cpl.cd_filial = orc.cd_filial
+                                                   AND       est_orc_cpl.cd_orc = orc.cd_orc ) ORCIT ) AS "itens",
+                           ( 
+                                  SELECT array_to_json(array_agg(row_to_json(ORCREC))) 
+                                  FROM   ( 
+                                                SELECT receita.cd_prod                   AS "cdProd",
+                                                       receita.cd_it                     AS "cdIt",
+                                                       receita.nm_comprador              AS "nmCompradorRec",
+                                                       receita.idade                     AS "idadeRec",
+                                                       receita.nm_paciente               AS "nmPacienteRec",
+                                                       receita.receita_tipo              AS "receitaTipoRec",
+                                                       coalesce(receita.cid, 0)          AS "cidRec",
+                                                       receita.uf                        AS "ufRec",
+                                                       receita.nr_doc_cli                AS "nrDocCliRec",
+                                                       receita.tipo_documento            AS "tipoDocumentoRec",
+                                                       coalesce(receita.cd_medico_rec,0) AS "cdMedicoRec",
+                                                       receita.qt_prod                   AS "qtProd",
+                                                       receita.dt_receita                AS "dtReceita",
+                                                       receita.tp_capt_receita           AS "tipoCaptacaoReceita"
+                                                FROM   est_orc_glb_medico receita 
+                                                WHERE  receita.cd_emp = orc.cd_emp 
+                                                AND    receita.cd_filial = orc.cd_filial 
+                                                AND    receita.nr_orc = orc.cd_orc ) ORCREC ) AS "receita"
+                 FROM      est_orc orc 
+                 left join est_orc_mt_cancel est_cancel 
+                 ON        est_cancel.cd_emp::   NUMERIC = orc.cd_emp::NUMERIC 
+                 AND       est_cancel.cd_filial::NUMERIC = orc.cd_filial::NUMERIC 
+                 AND       est_cancel.cd_orc::   NUMERIC = orc.cd_orc::NUMERIC 
+				 left join pdv_vd vd on
+				 vd.cd_emp          = orc.cd_emp
+				 and vd.cd_filial   = orc.cd_filial
+				 and vd.nr_orc      = orc.cd_orc
+                 WHERE     orc.flag_consolidado = 0
+				 AND hr_emi < (now() - interval '30 minutes') 
+				 AND VD.CD_EMP IS NULL ) ROW;
+
+]]>
+  </select>
+
+  <update id="consumeOrcamento" parameterType="Map">
+    update est_orc set flag_consolidado = 1 , sts_orc = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_ORC = #{cdOrc}
+  </update>
+  
+  <select id="selectOrcamentoCplFalta" resultMap="OrcaJsonResult">
+	<![CDATA[
+	SELECT row_to_json(row), "cdFalta" from (
+			select 
+				'estOrcFalta' as "tipoRegistro",
+				cd_falta as "cdFalta",
+				cd_prod as "cdProd",
+				cd_filial as "cdFilial",
+				qtde as "qtde",
+				dt_falta as "dtFalta",
+				cd_vend as "cdVend",
+				qtde_estoque as "qtdeEstoque",
+				COALESCE(tp_falta,0::NUMERIC) as "tpFalta",
+				COALESCE(nm_concorrente,' '::CHARACTER VARYING) as "nmConcorrente",
+				COALESCE(vlr_preco_concorrente::money::numeric::float8,0.0::money::numeric::float8) as "vlrPrecoConcorrente"
+			FROM est_orc_cpl_falta 
+			where flag_consolidado = 0 LIMIT 1
+	) ROW;
+		]]>
+  </select>
+  
+  <update id="consumeOrcamentoCplFalta" parameterType="Map">
+    update est_orc_cpl_falta set flag_consolidado = 1  where cd_falta = #{cdFalta}
+  </update>
+
+</mapper>

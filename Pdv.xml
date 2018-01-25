@@ -574,7 +574,7 @@ FROM   (
 															AND       IT.CD_VD = VD.CD_VD
 															AND 	  ( LENGTH(IT.NR_AUTORIZACAO_PBM) > 1 OR LENGTH(IT.NR_ORC_VD_LINK)> 1)) PBM ) AS "pbm" , 
                            ( 
-                                  SELECT ROW_TO_JSON(VALECP)
+                                  SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(VALECP)))
                                   FROM   ( 
                                                 SELECT 
                                                        VD.VLR_TICKETS                              AS "vlrTickets",

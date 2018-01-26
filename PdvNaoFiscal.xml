@@ -14,7 +14,8 @@
        "cdFilial", 
        "cdCtr" 
 FROM   ( 
-                 SELECT    cupom.cd_emp                                                      AS "cdEmp",
+                 SELECT    filial.cgc						             AS "cnpjFilial",
+			   cupom.cd_emp                                                      AS "cdEmp",
                            cupom.cd_filial                                                   AS "cdFilial",
                            cupom.cd_cx                                                       AS "cdCx",
                            cupom.dt_cupom                                                    AS "dtCupom",

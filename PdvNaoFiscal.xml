@@ -365,7 +365,7 @@ FROM   (
                                                                                AND       cupomtef.cd_recto_tef = pdvtef.cd_recto_tef
 																			   
                                                                                WHERE     (cupomtef.vl_cartao > 0::NUMERIC OR pdvtef.vl_cartao > 0::  NUMERIC)
-									       AND 	 pdvtef.cod_modalidade::text <> '9800'::text 
+																			   AND (pdvtef.cod_modalidade::text <> '9800'::text OR cupomtef.cod_modalidade::text <> '9800'::text)
                                                                                AND       cupom.cd_emp = cupomtef.cd_emp
                                                                                AND       cupom.cd_filial = cupomtef.cd_filial
                                                                                AND       cupom.cd_cx = cupomtef.cd_cx

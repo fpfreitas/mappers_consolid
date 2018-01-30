@@ -161,7 +161,7 @@ FROM   (
 				 and vd.cd_filial   = orc.cd_filial
 				 and vd.nr_orc      = orc.cd_orc
                  WHERE     orc.flag_consolidado = 0
-				 AND hr_emi < (now() - interval '30 minutes') 
+				 AND hr_emi < (now() - interval '2 hours') 
 				 AND VD.CD_EMP IS NULL ) ROW;
 
 ]]>

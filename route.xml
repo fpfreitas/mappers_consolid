@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+   <bean class="io.convergencia.camel.dbmapper.SpringContextUtil" />
+   <bean id="dataSourcePdv" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+      <property name="driverClassName" value="${ipdv.database.driver}" />
+      <property name="url" value="${ipdv.database.url}" />
+      <property name="username" value="${ipdv.database.user}" />
+      <property name="password" value="${ipdv.database.pass}" />
+   </bean>
+    <bean id="jms-ex"
+        class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL" value="tcp://mq.itecdomain.com.br:61616" />
+            </bean>
+        </property>
+    </bean>
+    
+    
+    <bean id="mapProcessor" class="io.convergencia.tentacle.engine.processors.MapProcessor">
+      <property name="extractPath" value="json"/>
+    </bean>    
+    
+    <bean id="pgObjectProcessor" class="io.convergencia.tentacle.engine.processors.PgObjectProcessor"/>
+    <bean id="gzipProcessor" class="io.convergencia.tentacle.engine.processors.GZIPDecompress"></bean>
+    <bean id="tentacleSyncProcessor" class="io.convergencia.tentacle.engine.processors.TentacleSyncProcessor"></bean>
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+
+        <dataFormats>
+          <json id="json" library="Jackson"/>
+          <jacksonxml id="xml"/>
+        </dataFormats>
+
+        <route>
+            <from uri="dbmapper:selectCupom?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvReprocessar" />
+            <to uri="log:com.mycompany.order?level=ERROR"/>
+            <process ref="mapProcessor"/>
+            <process ref="pgObjectProcessor"/>
+            <to uri="jms-ex://integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
+            <to uri="davyjones://output" />
+			<unmarshal ref="json" />
+			<to uri="dbmapper:consumePdv?dataSource=dataSourcePdv&amp;statementType=Update" />
+        </route>	
+		<route>
+            <from uri="dbmapper:selectCupomErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=5000&amp;consumer.onConsume=consumePdvErro" />
+            <to uri="log:com.mycompany.order?level=ERROR"/>
+            <process ref="mapProcessor"/>
+            <process ref="pgObjectProcessor"/>
+            <to uri="jms-ex://integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
+            <to uri="davyjones://output" />
+			<unmarshal ref="jack" />
+			<to uri="dbmapper:consumePdv?dataSource=dataSourcePdv&amp;statementType=Update" />
+        </route>
+		
+		
+		<route>
+            <from uri="dbmapper:selectCupomNaoFiscal?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvNaoFiscalReprocessar" />
+            <to uri="log:com.mycompany.order?level=ERROR"/>
+            <process ref="mapProcessor"/>
+            <process ref="pgObjectProcessor"/>
+            <to uri="jms-ex://integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
+            <to uri="davyjones://output" />
+			<unmarshal ref="jack" />
+			<to uri="dbmapper:consumePdvNaoFiscal?dataSource=dataSourcePdv&amp;statementType=Update" />
+        </route>	
+
+		<route>
+            <from uri="dbmapper:selectCupomNaoFiscalErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvNaoFiscalErro" />
+            <to uri="log:com.mycompany.order?level=ERROR"/>
+            <process ref="mapProcessor"/>
+            <process ref="pgObjectProcessor"/>
+            <to uri="jms-ex://integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
+            <to uri="davyjones://output" />
+			<unmarshal ref="jack" />
+			<to uri="dbmapper:consumePdvNaoFiscal?dataSource=dataSourcePdv&amp;statementType=Update" />
+        </route>	
+		
+		
+		
+	<!--	<route>
+            <from uri="dbmapper:selectOrcamento?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=500&amp;consumer.onConsume=consumeOrcamento" />
+            <to uri="log:com.mycompany.order?level=ERROR"/>
+            <process ref="mapProcessor"/>
+            <process ref="pgObjectProcessor"/>
+            <to uri="jms-ex://integra.consolid.pdv.orcamento.{{ipdv.queueName}}" />
+            <to uri="davyjones://output" />
+        </route> -->
+		<route>
+            <from uri="dbmapper:selectMapaResumo?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumeMapaResumo" />
+            <to uri="log:com.mycompany.order?level=ERROR"/>
+            <process ref="mapProcessor"/>
+            <process ref="pgObjectProcessor"/>
+            <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+            <to uri="davyjones://output" />
+        </route>
+		<route>
+            <from uri="dbmapper:selectConsoldVd?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumeConsoldVd" />
+            <to uri="log:com.mycompany.order?level=ERROR"/>
+            <process ref="mapProcessor"/>
+            <process ref="pgObjectProcessor"/>
+            <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+            <to uri="davyjones://output" />
+        </route>
+		<route>
+            <from uri="dbmapper:selectOrcamentoCplFalta?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumeOrcamentoCplFalta" />
+            <to uri="log:com.mycompany.order?level=ERROR"/>
+            <process ref="mapProcessor"/>
+            <process ref="pgObjectProcessor"/>
+            <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+            <to uri="davyjones://output" />
+        </route> 
+	
+        <route>
+         <from uri="jms-ex://sync.consolid.pdv.fiscal.{{ipdv.queueName}}"/>
+         <process ref="gzipProcessor"/>
+         <convertBodyTo type="java.lang.String"/>
+         <unmarshal ref="json"/>
+         <to uri="dbmapper:tentacle?dataSource=dataSourcePdv&amp;statementType=TentacleSync&amp;preValidadeSchema=false" />
+         <to uri="log:IPDV?level=INFO"/>
+         <choice>
+             <when>
+             	 <simple>${in.body.get('result')} == 'failure'</simple>
+                 <to uri="log:IPDV-failure?level=INFO"/>
+                 <to uri="jms-ex://sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/>
+             </when>
+        </choice>         
+       </route>
+
+    </camelContext>
+</beans>

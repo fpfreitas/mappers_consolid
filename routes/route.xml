@@ -38,49 +38,59 @@
         </dataFormats>
 
         <route>
-            <from uri="dbmapper:selectCupom?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvReprocessar" />
-            <to uri="log:com.mycompany.order?level=ERROR"/>
+            <from uri="dbmapper:selectCupom?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdv" />
+            <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
             <to uri="jms-ex://integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
-            <to uri="davyjones://output" />
-			<unmarshal ref="json" />
-			<to uri="dbmapper:consumePdv?dataSource=dataSourcePdv&amp;statementType=Update" />
-        </route>	
-		<route>
-            <from uri="dbmapper:selectCupomErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=5000&amp;consumer.onConsume=consumePdvErro" />
-            <to uri="log:com.mycompany.order?level=ERROR"/>
-            <process ref="mapProcessor"/>
-            <process ref="pgObjectProcessor"/>
-            <to uri="jms-ex://integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
-            <to uri="davyjones://output" />
-			<unmarshal ref="jack" />
-			<to uri="dbmapper:consumePdv?dataSource=dataSourcePdv&amp;statementType=Update" />
+			<onException>
+				<exception>java.lang.Exception</exception>
+				<process ref="rollback"/>
+				<unmarshal ref="json" />
+				<to uri="dbmapper:consumePdvReprocessar?dataSource=dataSourcePdv&amp;statementType=Update" />
+			</onException>            
         </route>
-		
+		<route>
+            <from uri="dbmapper:selectCupom?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvErro" />
+            <to uri="log:br.com.itec?level=INFO"/>
+            <process ref="mapProcessor"/>
+            <process ref="pgObjectProcessor"/>
+            <to uri="jms-ex://integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
+			<onException>
+				<exception>java.lang.Exception</exception>
+				<process ref="rollback"/>
+				<unmarshal ref="json" />
+				<to uri="dbmapper:consumePdvReprocessar?dataSource=dataSourcePdv&amp;statementType=Update" />
+			</onException>            
+        </route>
 		
 		<route>
             <from uri="dbmapper:selectCupomNaoFiscal?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvNaoFiscalReprocessar" />
-            <to uri="log:com.mycompany.order?level=ERROR"/>
+            <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="jms-ex://integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
-            <to uri="davyjones://output" />
-			<unmarshal ref="jack" />
-			<to uri="dbmapper:consumePdvNaoFiscal?dataSource=dataSourcePdv&amp;statementType=Update" />
-        </route>	
-
+            <to uri="jms-ex://integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
+			<onException>
+				<exception>java.lang.Exception</exception>
+				<process ref="rollback"/>
+				<unmarshal ref="json" />
+				<to uri="dbmapper:consumePdvNaoFiscal?dataSource=dataSourcePdv&amp;statementType=Update" />
+			</onException>            
+        </route>
+		
 		<route>
             <from uri="dbmapper:selectCupomNaoFiscalErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvNaoFiscalErro" />
-            <to uri="log:com.mycompany.order?level=ERROR"/>
+            <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="jms-ex://integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
-            <to uri="davyjones://output" />
-			<unmarshal ref="jack" />
-			<to uri="dbmapper:consumePdvNaoFiscal?dataSource=dataSourcePdv&amp;statementType=Update" />
-        </route>	
-		
+            <to uri="jms-ex://integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
+			<onException>
+				<exception>java.lang.Exception</exception>
+				<process ref="rollback"/>
+				<unmarshal ref="json" />
+				<to uri="dbmapper:consumePdvNaoFiscal?dataSource=dataSourcePdv&amp;statementType=Update" />
+			</onException>            
+        </route>
 		
 		
 	<!--	<route>
@@ -115,8 +125,8 @@
             <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
             <to uri="davyjones://output" />
         </route> 
-	
-        <route>
+		
+	    <route>
          <from uri="jms-ex://sync.consolid.pdv.fiscal.{{ipdv.queueName}}"/>
          <process ref="gzipProcessor"/>
          <convertBodyTo type="java.lang.String"/>
@@ -126,9 +136,19 @@
          <choice>
              <when>
              	 <simple>${in.body.get('result')} == 'failure'</simple>
+				 <marshal ref="json"/>
+				 <convertBodyTo type="java.lang.String"/>
+				 <process ref="mapPutProcessor"/>
                  <to uri="log:IPDV-failure?level=INFO"/>
-                 <to uri="jms-ex://sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/>
+				 <!--
+                 <to uri="jms-ex://sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/> -->
+				 <to uri="dbmapper:insertError?dataSource=sync&amp;statementType=Insert" />
              </when>
+             <when>
+             	 <simple>${in.body.get('result')} == 'sql' || ${in.body.get('result')} == 'failure_sql'</simple>
+             	 <marshal ref="json"/>
+             	 <to uri="jms-ex://sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/>
+             </when> 
         </choice>         
        </route>
 

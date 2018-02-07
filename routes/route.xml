@@ -103,14 +103,14 @@
         </route>
 		
 		
-	<!--	<route>
+		<route>
             <from uri="dbmapper:selectOrcamento?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=500&amp;consumer.onConsume=consumeOrcamento" />
             <to uri="log:com.mycompany.order?level=ERROR"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
             <to uri="jms-ex://integra.consolid.pdv.orcamento.{{ipdv.queueName}}" />
             <to uri="davyjones://output" />
-        </route> -->
+        </route> 
 		<route>
             <from uri="dbmapper:selectMapaResumo?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumeMapaResumo" />
             <to uri="log:com.mycompany.order?level=ERROR"/>

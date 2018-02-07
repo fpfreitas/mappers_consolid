@@ -44,11 +44,11 @@ FROM   (
                                      AND       VD.VLR_CONV = 0::NUMERIC THEN 0::NUMERIC 
                                      ELSE VD.VLR_CONV 
                            END                                                            AS "vlrConv",
+						   VD.CD_CONV													  AS "cdConv",
                            VD.QT_PARC_CONV                  							  AS "qtParcConv",
                            VD.VLR_DUP                                                     AS "vlrDup",
                            VD.VL_CHQS_A_VISTA                                             AS "valorChequeAVista",
-                           VD.VL_CHQS_A_PRZ                                               AS "valorChequeAPrazo",
-                           
+                           VD.VL_CHQS_A_PRZ                                               AS "valorChequeAPrazo",                           
                            VD.NR_CEL_RECARGA                                              AS "nrCelRecarga",
                            VD.VLR_RECARGA_CEL                                             AS "vlrRecargaCel",
                            VD.NM_OPER_CEL                                                 AS "nmOperCel",
@@ -660,11 +660,11 @@ FROM   (
                                      AND       VD.VLR_CONV = 0::NUMERIC THEN 0::NUMERIC 
                                      ELSE VD.VLR_CONV 
                            END                                                            AS "vlrConv",
+						   VD.CD_CONV													  AS "cdConv",
                            VD.QT_PARC_CONV                  							  AS "qtParcConv",
                            VD.VLR_DUP                                                     AS "vlrDup",
                            VD.VL_CHQS_A_VISTA                                             AS "valorChequeAVista",
-                           VD.VL_CHQS_A_PRZ                                               AS "valorChequeAPrazo",
-                           
+                           VD.VL_CHQS_A_PRZ                                               AS "valorChequeAPrazo",                           
                            VD.NR_CEL_RECARGA                                              AS "nrCelRecarga",
                            VD.VLR_RECARGA_CEL                                             AS "vlrRecargaCel",
                            VD.NM_OPER_CEL                                                 AS "nmOperCel",

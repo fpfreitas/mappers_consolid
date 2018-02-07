@@ -12,11 +12,17 @@
       <property name="username" value="${ipdv.database.user}" />
       <property name="password" value="${ipdv.database.pass}" />
    </bean>
+   <bean id="sync" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+      <property name="driverClassName" value="${ipdv.database.driver}" />
+      <property name="url" value="${sync.database.url}" />
+      <property name="username" value="${ipdv.database.user}" />
+      <property name="password" value="${ipdv.database.pass}" />
+   </bean>
     <bean id="jms-ex"
         class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="connectionFactory">
             <bean class="org.apache.activemq.ActiveMQConnectionFactory">
-                <property name="brokerURL" value="tcp://mq.itecdomain.com.br:61616" />
+                <property name="brokerURL" value="tcp://hub.convergencia.io:61616" />
             </bean>
         </property>
     </bean>
@@ -25,10 +31,14 @@
     <bean id="mapProcessor" class="io.convergencia.tentacle.engine.processors.MapProcessor">
       <property name="extractPath" value="json"/>
     </bean>    
+    <bean id="mapPutProcessor" class="io.convergencia.tentacle.engine.processors.MapPutProcessor">
+      <property name="key" value="json"/>
+    </bean>    
     
+	
     <bean id="pgObjectProcessor" class="io.convergencia.tentacle.engine.processors.PgObjectProcessor"/>
     <bean id="gzipProcessor" class="io.convergencia.tentacle.engine.processors.GZIPDecompress"></bean>
-    <bean id="tentacleSyncProcessor" class="io.convergencia.tentacle.engine.processors.TentacleSyncProcessor"></bean>
+    <bean id="rollback" class="io.convergencia.camel.dbmapper.DBMapperRollbackProcessor"></bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
 

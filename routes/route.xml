@@ -12,12 +12,14 @@
       <property name="username" value="${ipdv.database.user}" />
       <property name="password" value="${ipdv.database.pass}" />
    </bean>
+   <!--
    <bean id="sync" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
       <property name="driverClassName" value="${ipdv.database.driver}" />
       <property name="url" value="${sync.database.url}" />
       <property name="username" value="${ipdv.database.user}" />
       <property name="password" value="${ipdv.database.pass}" />
    </bean>
+   -->
     <bean id="jms-ex"
         class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="connectionFactory">
@@ -151,8 +153,8 @@
 				 <process ref="mapPutProcessor"/>
                  <to uri="log:IPDV-failure?level=INFO"/>
 				 <!--
-                 <to uri="jms-ex://sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/> -->
-				 <to uri="dbmapper:insertError?dataSource=sync&amp;statementType=Insert" />
+                 <to uri="jms-ex://sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/> 
+				 <to uri="dbmapper:insertError?dataSource=sync&amp;statementType=Insert" />-->
              </when>
              <when>
              	 <simple>${in.body.get('result')} == 'sql' || ${in.body.get('result')} == 'failure_sql'</simple>

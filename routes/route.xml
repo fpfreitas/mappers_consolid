@@ -81,7 +81,7 @@
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="jms-ex://integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
+            <to uri="jms-ex://integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -95,7 +95,7 @@
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="jms-ex://integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
+            <to uri="jms-ex://integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>

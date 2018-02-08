@@ -566,7 +566,7 @@ FROM   (
                                                        CASE 
                                                               WHEN IT.VLR_REEMBOL = 0::NUMERIC THEN 0::NUMERIC
                                                               ELSE IT.VLR_REEMBOL 
-                                                       END)		                          
+                                                       END)		    AS "vlrProdReembolso",                       
                                                        COALESCE(IT.VLR_CONV_PBM   , 0::NUMERIC)               AS "vlrProdConv"
 													   FROM      PDV_VD_IT IT 
 															WHERE     IT.CD_EMP = VD.CD_EMP 

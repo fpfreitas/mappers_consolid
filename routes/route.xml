@@ -107,35 +107,31 @@
 		
 		<route>
             <from uri="dbmapper:selectOrcamento?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=500&amp;consumer.onConsume=consumeOrcamento" />
-            <to uri="log:com.mycompany.order?level=ERROR"/>
+            <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
             <to uri="jms-ex://integra.consolid.pdv.orcamento.{{ipdv.queueName}}" />
-            <to uri="davyjones://output" />
         </route> 
 		<route>
             <from uri="dbmapper:selectMapaResumo?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumeMapaResumo" />
-            <to uri="log:com.mycompany.order?level=ERROR"/>
+            <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
             <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
-            <to uri="davyjones://output" />
         </route>
 		<route>
             <from uri="dbmapper:selectConsoldVd?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumeConsoldVd" />
-            <to uri="log:com.mycompany.order?level=ERROR"/>
+            <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
             <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
-            <to uri="davyjones://output" />
         </route>
 		<route>
             <from uri="dbmapper:selectOrcamentoCplFalta?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumeOrcamentoCplFalta" />
-            <to uri="log:com.mycompany.order?level=ERROR"/>
+            <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
             <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
-            <to uri="davyjones://output" />
         </route> 
 		
 	    <route>

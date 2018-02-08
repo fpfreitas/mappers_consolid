@@ -77,7 +77,7 @@
         </route>
 		
 		<route>
-            <from uri="dbmapper:selectCupomNaoFiscal?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvNaoFiscalReprocessar" />
+            <from uri="dbmapper:selectCupomNaoFiscal?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvNaoFiscal" />
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -86,12 +86,12 @@
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
 				<unmarshal ref="json" />
-				<to uri="dbmapper:consumePdvNaoFiscal?dataSource=dataSourcePdv&amp;statementType=Update" />
+				<to uri="dbmapper:consumePdvNaoFiscalReprocessar?dataSource=dataSourcePdv&amp;statementType=Update" />
 			</onException>            
         </route>
 		
 		<route>
-            <from uri="dbmapper:selectCupomNaoFiscalErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvNaoFiscalErro" />
+            <from uri="dbmapper:selectCupomNaoFiscalErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvNaoFiscal" />
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -100,7 +100,7 @@
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
 				<unmarshal ref="json" />
-				<to uri="dbmapper:consumePdvNaoFiscal?dataSource=dataSourcePdv&amp;statementType=Update" />
+				<to uri="dbmapper:consumePdvNaoFiscalErro?dataSource=dataSourcePdv&amp;statementType=Update" />
 			</onException>            
         </route>
 		

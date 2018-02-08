@@ -24,7 +24,7 @@
         class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="connectionFactory">
             <bean class="org.apache.activemq.ActiveMQConnectionFactory">
-                <property name="brokerURL" value="tcp://hub.convergencia.io:61616" />
+                <property name="brokerURL" value="tcp://mq.itecdomain.com.br:61616" />
             </bean>
         </property>
     </bean>

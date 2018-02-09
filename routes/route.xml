@@ -63,7 +63,7 @@
 			</onException>            
         </route>
 		<route>
-            <from uri="dbmapper:selectCupom?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvErro" />
+            <from uri="dbmapper:selectCupom?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdv" />
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -72,7 +72,7 @@
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
 				<unmarshal ref="json" />
-				<to uri="dbmapper:consumePdvReprocessar?dataSource=dataSourcePdv&amp;statementType=Update" />
+				<to uri="dbmapper:consumePdvErro?dataSource=dataSourcePdv&amp;statementType=Update" />
 			</onException>            
         </route>
 		

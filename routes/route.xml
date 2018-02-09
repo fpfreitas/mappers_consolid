@@ -63,7 +63,7 @@
 			</onException>            
         </route>
 		<route>
-            <from uri="dbmapper:selectCupom?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdv" />
+            <from uri="dbmapper:selectCupomErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdv" />
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>

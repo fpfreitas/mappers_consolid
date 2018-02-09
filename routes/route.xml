@@ -148,8 +148,8 @@
 				 <convertBodyTo type="java.lang.String"/>
 				 <process ref="mapPutProcessor"/>
                  <to uri="log:IPDV-failure?level=INFO"/>
-				 <!--
                  <to uri="jms-ex://sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/> 
+				 <!--
 				 <to uri="dbmapper:insertError?dataSource=sync&amp;statementType=Insert" />-->
              </when>
              <when>

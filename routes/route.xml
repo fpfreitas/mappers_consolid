@@ -145,9 +145,7 @@
              <when>
              	 <simple>${in.body.get('result')} == 'failure'</simple>
 				 <marshal ref="json"/>
-				 <convertBodyTo type="java.lang.String"/>
-				 <process ref="mapPutProcessor"/>
-                 <to uri="log:IPDV-failure?level=INFO"/>
+                 <to uri="log:IPDV-failure?level=ERROR"/>
                  <to uri="jms-ex://sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/> 
 				 <!--
 				 <to uri="dbmapper:insertError?dataSource=sync&amp;statementType=Insert" />-->

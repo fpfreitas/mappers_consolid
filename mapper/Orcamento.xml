@@ -92,7 +92,6 @@ FROM   (
                                                              est_orc_cpl.qtde_ponto_fidel        AS "qtPontosFidel",
                                                              est_orc_cpl.vlr_desc_verba          AS "vlrDescVerba",
                                                              est_orc_cpl.perc_desc_verba         AS "percDescVerba",
-                                                             est_orc_cpl.cd_vend_verba           AS "cdVendVerba",
                                                              est_orc_cpl.vlr_custo_semaforo      AS "vlrCustoSemaforo",
                                                              est_orc_cpl.qt_est                  AS "qtEst",
                                                              est_orc_cpl.cd_grp                  AS "cdGrupoComissao",

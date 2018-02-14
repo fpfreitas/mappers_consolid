@@ -62,6 +62,7 @@
 				<to uri="dbmapper:consumePdvReprocessar?dataSource=dataSourcePdv&amp;statementType=Update" />
 			</onException>            
         </route>
+		
 		<route>
             <from uri="dbmapper:selectCupomErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdv" />
             <to uri="log:br.com.itec?level=INFO"/>
@@ -103,8 +104,7 @@
 				<to uri="dbmapper:consumePdvNaoFiscalErro?dataSource=dataSourcePdv&amp;statementType=Update" />
 			</onException>            
         </route>
-		
-		
+				
 		<route>
             <from uri="dbmapper:selectOrcamento?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=500&amp;consumer.onConsume=consumeOrcamento" />
             <to uri="log:com.mycompany.order?level=INFO"/>
@@ -133,8 +133,6 @@
 			</onException>  
         </route> 
 		
-		
-		
 		<route>
             <from uri="dbmapper:selectMapaResumo?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumeMapaResumo" />
             <to uri="log:com.mycompany.order?level=INFO"/>
@@ -142,13 +140,36 @@
             <process ref="pgObjectProcessor"/>
             <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route>
+			
 		<route>
             <from uri="dbmapper:selectConsoldVd?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumeConsoldVd" />
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
             <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+			<onException>
+				<exception>java.lang.Exception</exception>
+				<process ref="rollback"/>
+				<unmarshal ref="json" />
+				<to uri="dbmapper:consumeConsoldVdReprocessar?dataSource=dataSourcePdv&amp;statementType=Update" />
+			</onException> 
         </route>
+		
+		<route>
+            <from uri="dbmapper:selectConsoldVdReprocessar?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumeConsoldVd" />
+            <to uri="log:com.mycompany.order?level=INFO"/>
+            <process ref="mapProcessor"/>
+            <process ref="pgObjectProcessor"/>
+            <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+			<onException>
+				<exception>java.lang.Exception</exception>
+				<process ref="rollback"/>
+				<unmarshal ref="json" />
+				<to uri="dbmapper:consumeConsoldVdErro?dataSource=dataSourcePdv&amp;statementType=Update" />
+			</onException> 
+        </route>
+		
+		
 		<route>
             <from uri="dbmapper:selectOrcamentoCplFalta?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumeOrcamentoCplFalta" />
             <to uri="log:com.mycompany.order?level=INFO"/>

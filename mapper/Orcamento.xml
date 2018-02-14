@@ -167,10 +167,7 @@ FROM   (
 ]]>
   </select>
   
-    <select id="selectOrcamentoReprocessar" resultMap="OrcaJsonResult">
-
-
-  
+  <select id="selectOrcamentoReprocessar" resultMap="OrcaJsonResult"> 
   <![CDATA[
 
 SELECT ROW_TO_JSON(ROW), 

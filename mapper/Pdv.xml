@@ -1312,9 +1312,36 @@ FROM   (
   ) ROW;
 	 ]]>
 	 </select>
+	 
+	 
+	 <select id="selectConsoldVdReprocessar" resultMap="CupomJsonResult">
+  <![CDATA[
+	SELECT row_to_json(row), "cdEmp" , "cdFilial", "cdCx", "dtMov" from (
+		select 'pdvConsoldVd' as "tipoRegistro",
+		  cd_emp as "cdEmp",
+		  cd_filial as "cdFilial",
+		  cd_cx as "cdCx",
+		  dt_mov as "dtMov",
+		  nr_cupom_ini as "nrCupomIni",
+		  nr_cupom_fim as "nrCupomFim",
+		  vlr_vd_liq as "vlrVdLiq",
+		  cd_usu as "cdUsu",
+		  dt_cad as "dtCad",
+		  vl_receb as "vlReceb",
+		  vl_serv as "vlServ"
+		from pdv_consld_vd where flag_consolidado = 2 and cd_usu > 1 order by dt_mov desc LIMIT 1 
+  ) ROW;
+	 ]]>
+	 </select>
 
   <update id="consumeConsoldVd" parameterType="Map">
     update pdv_consld_vd set flag_consolidado = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_MOV =  #{dtMov}
+  </update>
+  <update id="consumeConsoldVdReprocessar" parameterType="Map">
+    update pdv_consld_vd set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_MOV =  #{dtMov}
+  </update>
+  <update id="consumeConsoldVdErro" parameterType="Map">
+    update pdv_consld_vd set flag_consolidado = 3 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_MOV =  #{dtMov}
   </update>
 
 </mapper>

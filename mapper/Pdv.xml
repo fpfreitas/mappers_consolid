@@ -132,6 +132,7 @@ FROM   (
                                                              COALESCE(IT.PERC_DESC_MIN, 0:: NUMERIC)   AS "percDescMin",
                                                              COALESCE(IT.CD_TBL_DESC, 0::   NUMERIC)   AS "cdTblDesc",
                                                              COALESCE(IT.TP_NIVEL, 0::      NUMERIC)   AS "tpNivel",
+															 COALESCE(it.tp_tbl_desc::numeric, 0::numeric) AS "tpTblDesc",
                                                              ( SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(LOTE))) 
 																FROM   ( 
 																	SELECT  CD_LOTE AS "cdLote"
@@ -748,6 +749,7 @@ FROM   (
                                                              COALESCE(IT.PERC_DESC_MIN, 0:: NUMERIC)   AS "percDescMin",
                                                              COALESCE(IT.CD_TBL_DESC, 0::   NUMERIC)   AS "cdTblDesc",
                                                              COALESCE(IT.TP_NIVEL, 0::      NUMERIC)   AS "tpNivel",
+															 COALESCE(it.tp_tbl_desc::numeric, 0::numeric) AS "tpTblDesc",
                                                              ( SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(LOTE))) 
 																FROM   ( 
 																	SELECT  CD_LOTE AS "cdLote"

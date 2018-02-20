@@ -12,15 +12,8 @@
       <property name="username" value="${ipdv.database.user}" />
       <property name="password" value="${ipdv.database.pass}" />
    </bean>
-   <!--
-   <bean id="sync" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-      <property name="driverClassName" value="${ipdv.database.driver}" />
-      <property name="url" value="${sync.database.url}" />
-      <property name="username" value="${ipdv.database.user}" />
-      <property name="password" value="${ipdv.database.pass}" />
-   </bean>
-   -->
-    <bean id="jms-ex"
+
+   <bean id="jms-ex"
         class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="connectionFactory">
             <bean class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -54,7 +47,7 @@
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="jms-ex://integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
+            <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;queue=integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -68,7 +61,7 @@
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="jms-ex://integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
+            <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;queue=integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -82,7 +75,7 @@
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="jms-ex://integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
+            <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;queue=integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -96,7 +89,7 @@
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="jms-ex://integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
+            <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;queue=integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -110,7 +103,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -124,7 +117,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -138,7 +131,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route>
 			
 		<route>
@@ -146,7 +139,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -160,7 +153,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -175,9 +168,9 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="jms-ex://integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route> 
-		
+<!--		
 	    <route>
          <from uri="jms-ex://sync.consolid.pdv.fiscal.{{ipdv.queueName}}"/>
          <process ref="gzipProcessor"/>
@@ -191,8 +184,6 @@
 				 <marshal ref="json"/>
                  <to uri="log:IPDV-failure?level=ERROR"/>
                  <to uri="jms-ex://sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/> 
-				 <!--
-				 <to uri="dbmapper:insertError?dataSource=sync&amp;statementType=Insert" />-->
              </when>
              <when>
              	 <simple>${in.body.get('result')} == 'sql' || ${in.body.get('result')} == 'failure_sql'</simple>
@@ -201,6 +192,7 @@
              </when> 
         </choice>         
        </route>
+	   -->
 
     </camelContext>
 </beans>

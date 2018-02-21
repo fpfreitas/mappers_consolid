@@ -47,7 +47,7 @@
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=fiscal&amp;queue=integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
+            <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=fiscal-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -61,7 +61,7 @@
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=fiscal&amp;queue=integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
+            <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=fiscal-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -75,7 +75,7 @@
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=naoFiscal&amp;queue=integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
+            <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=naoFiscal-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -89,7 +89,7 @@
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-            <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=naoFiscal&amp;queue=integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
+            <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=naoFiscal-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -103,7 +103,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -117,7 +117,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -131,7 +131,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route>
 			
 		<route>
@@ -139,7 +139,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -153,7 +153,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<process ref="rollback"/>
@@ -168,11 +168,11 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
-			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route> 
-<!--		
+		
 	    <route>
-         <from uri="jms-ex://sync.consolid.pdv.fiscal.{{ipdv.queueName}}"/>
+         <from uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=sync.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;queue=sync.consolid.pdv.fiscal.{{ipdv.queueName}}"/>
          <process ref="gzipProcessor"/>
          <convertBodyTo type="java.lang.String"/>
          <unmarshal ref="json"/>
@@ -183,16 +183,16 @@
              	 <simple>${in.body.get('result')} == 'failure'</simple>
 				 <marshal ref="json"/>
                  <to uri="log:IPDV-failure?level=ERROR"/>
-                 <to uri="jms-ex://sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/> 
+                 <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;queue=sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/> 
              </when>
              <when>
              	 <simple>${in.body.get('result')} == 'sql' || ${in.body.get('result')} == 'failure_sql'</simple>
              	 <marshal ref="json"/>
-             	 <to uri="jms-ex://sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/>
+             	 <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;queue=sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/>
              </when> 
         </choice>         
        </route>
-	   -->
+	   
 
     </camelContext>
 </beans>

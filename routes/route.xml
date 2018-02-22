@@ -47,6 +47,7 @@
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
+			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
             <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=fiscal-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
@@ -61,6 +62,7 @@
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
+			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
             <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=fiscal-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
@@ -75,6 +77,7 @@
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
+			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
             <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=naoFiscal-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
@@ -89,6 +92,7 @@
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
+			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
             <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=naoFiscal-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
@@ -103,6 +107,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
+			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>

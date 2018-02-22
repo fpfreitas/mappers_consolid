@@ -122,6 +122,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
+			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
@@ -136,6 +137,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
+			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route>
 			
@@ -144,6 +146,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
+			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
@@ -158,6 +161,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
+			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
@@ -173,6 +177,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
+			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route> 
 		
@@ -183,6 +188,7 @@
          <unmarshal ref="json"/>
          <to uri="dbmapper:tentacle?dataSource=dataSourcePdv&amp;statementType=TentacleSync&amp;preValidadeSchema=false" />
          <to uri="log:IPDV?level=INFO"/>
+		 <setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
          <choice>
              <when>
              	 <simple>${in.body.get('result')} == 'failure'</simple>

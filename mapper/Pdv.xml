@@ -1351,12 +1351,14 @@ FROM   (
   <![CDATA[
 	SELECT row_to_json(row) from (
 		select 'pdvVdConciliacao' as "tipoRegistro",
-		  cd_emp as "cdEmp",
+		( SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(CUPOM))) 
+                                  FROM   ( 
+		select  cd_emp as "cdEmp",
 		  cd_filial as "cdFilial",
 		  cd_cx as "cdCx",
 		  nr_ecf as "nrEcf",
 		  st_Vd as "stVd"
-		from pdv_vd where cd_emp = 1 and cd_filial = (select cd_filial from prc_filial) and dt_vd = current_date and st_vd >= 0;    
+		from pdv_vd where cd_emp = 1 and cd_filial = (select cd_filial from prc_filial) and dt_vd = current_date and st_vd >= 0 ) CUPOM ) AS "cupons" 
   ) ROW;
 	 ]]>
 	 </select>

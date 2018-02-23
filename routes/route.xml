@@ -20,23 +20,20 @@
                 <property name="brokerURL" value="tcp://mq.itecdomain.com.br:61616" />
             </bean>
         </property>
-    </bean>
-    
+    </bean>    
     
     <bean id="mapProcessor" class="io.convergencia.tentacle.engine.processors.MapProcessor">
       <property name="extractPath" value="json"/>
     </bean>    
     <bean id="mapPutProcessor" class="io.convergencia.tentacle.engine.processors.MapPutProcessor">
       <property name="key" value="json"/>
-    </bean>    
-    
+    </bean>   
 	
     <bean id="pgObjectProcessor" class="io.convergencia.tentacle.engine.processors.PgObjectProcessor"/>
     <bean id="gzipProcessor" class="io.convergencia.tentacle.engine.processors.GZIPDecompress"></bean>
     <bean id="rollback" class="io.convergencia.camel.dbmapper.DBMapperRollbackProcessor"></bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-
         <dataFormats>
           <json id="json" library="Jackson"/>
           <jacksonxml id="xml"/>
@@ -58,7 +55,7 @@
         </route>
 		
 		<route>
-            <from uri="dbmapper:selectCupomErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdv" />
+            <from uri="dbmapper:selectCupomErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=10000&amp;consumer.onConsume=consumePdv" />
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -88,7 +85,7 @@
         </route>
 		
 		<route>
-            <from uri="dbmapper:selectCupomNaoFiscalErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvNaoFiscal" />
+            <from uri="dbmapper:selectCupomNaoFiscalErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=10000&amp;consumer.onConsume=consumePdvNaoFiscal" />
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -103,7 +100,7 @@
         </route>
 				
 		<route>
-            <from uri="dbmapper:selectOrcamento?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=500&amp;consumer.onConsume=consumeOrcamento" />
+            <from uri="dbmapper:selectOrcamento?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeOrcamento" />
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -118,7 +115,7 @@
         </route> 
 		
 		<route>
-            <from uri="dbmapper:selectOrcamentoReprocessar?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=500&amp;consumer.onConsume=consumeOrcamento" />
+            <from uri="dbmapper:selectOrcamentoReprocessar?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeOrcamento" />
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -133,7 +130,7 @@
         </route> 
 		
 		<route>
-            <from uri="dbmapper:selectMapaResumo?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumeMapaResumo" />
+            <from uri="dbmapper:selectMapaResumo?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeMapaResumo" />
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -142,7 +139,7 @@
         </route>
 			
 		<route>
-            <from uri="dbmapper:selectConsoldVd?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumeConsoldVd" />
+            <from uri="dbmapper:selectConsoldVd?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeConsoldVd" />
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -157,7 +154,7 @@
         </route>
 		
 		<route>
-            <from uri="dbmapper:selectConsoldVdReprocessar?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumeConsoldVd" />
+            <from uri="dbmapper:selectConsoldVdReprocessar?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeConsoldVd" />
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -171,9 +168,17 @@
 			</onException> 
         </route>
 		
+		<route>
+            <from uri="dbmapper:selectOrcamentoCplFalta?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeOrcamentoCplFalta" />
+            <to uri="log:com.mycompany.order?level=INFO"/>
+            <process ref="mapProcessor"/>
+            <process ref="pgObjectProcessor"/>
+			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
+			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+        </route> 
 		
 		<route>
-            <from uri="dbmapper:selectOrcamentoCplFalta?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumeOrcamentoCplFalta" />
+            <from uri="dbmapper:selectConciliacaoPdvVd?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=3500000" />
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -202,8 +207,6 @@
              	 <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;queue=sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/>
              </when> 
         </choice>         
-       </route>
-	   
-
+       </route> 
     </camelContext>
 </beans>

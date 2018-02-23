@@ -1345,5 +1345,20 @@ FROM   (
   <update id="consumeConsoldVdErro" parameterType="Map">
     update pdv_consld_vd set flag_consolidado = 3 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_MOV =  #{dtMov}
   </update>
+  
+  
+  <select id="selectConciliacaoPdvVd" resultMap="CupomJsonResult">
+  <![CDATA[
+	SELECT row_to_json(row) from (
+		select 'pdvVdConciliacao' as "tipoRegistro",
+		  cd_emp as "cdEmp",
+		  cd_filial as "cdFilial",
+		  cd_cx as "cdCx",
+		  nr_ecf as "nrEcf",
+		  st_Vd as "stVd"
+		from pdv_vd where cd_emp = 1 and cd_filial = (select cd_filial from prc_filial) and dt_vd = current_date and st_vd >= 0;    
+  ) ROW;
+	 ]]>
+	 </select>
 
 </mapper>

@@ -1359,7 +1359,7 @@ FROM   (
 		  nr_ecf as "nrEcf",
 		  dt_vd as "dtVd",
 		  st_Vd as "stVd"
-		from pdv_vd where cd_emp = 1 and cd_filial = (select cd_filial from prc_filial) and dt_vd = current_date and st_vd >= 0 ) CUPOM ) AS "cupons" 
+		from pdv_vd where cd_emp = 1 and cd_filial = (select cd_filial from prc_filial) and dt_vd = current_date and st_vd >= 0 order by cd_cx,nr_ecf) CUPOM ) AS "cupons" 
   ) ROW;
 	 ]]>
 	 </select>

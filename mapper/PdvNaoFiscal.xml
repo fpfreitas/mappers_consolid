@@ -796,4 +796,20 @@ FROM   (
     update pdv_cupom_nao_fiscal set flag_consolidado = 3 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
   </update>
 
+    <select id="selectConciliacaoPdvCupomNaoFiscal" resultMap="CupomNaoFiscalJsonResult">
+  <![CDATA[
+	SELECT row_to_json(row) from (
+		select 'pdvCupomNaoFiscalConciliacao' as "tipoRegistro",
+		( SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(CUPOM))) 
+                                  FROM   ( 
+		select  cd_emp as "cdEmp",
+		  cd_filial as "cdFilial",
+		  cd_cx as "cdCx",
+		  nr_coo as "nrCoo",
+		  dt_cupom as "dtCupom",
+		  st_cupom as "stCupom"
+		from pdv_cupom_nao_fiscal where cd_emp = 1 and cd_filial = (select cd_filial from prc_filial) and dt_cupom = current_date and st_cupom >= 0 ) CUPOM ) AS "cupons" 
+  ) ROW;
+	 ]]>
+	 </select>
 </mapper>

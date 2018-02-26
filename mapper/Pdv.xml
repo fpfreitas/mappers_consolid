@@ -358,7 +358,7 @@ FROM   (
 							COALESCE(orc.sexo,NULL::integer) AS paciente_sexo,
 							0 AS paciente_tipo_idade
 						   FROM PDV_VD_IT IT
-						   JOIN est_orc_glb_medico orc ON it.cd_emp = orc.cd_emp::numeric AND it.cd_filial = orc.cd_filial::numeric AND vd.nr_orc = orc.nr_orc::numeric AND it.cd_prod = orc.cd_prod::numeric
+						   JOIN est_orc_glb_medico orc ON it.cd_emp = orc.cd_emp::numeric AND it.cd_filial = orc.cd_filial::numeric AND vd.nr_orc = orc.nr_orc::numeric AND it.cd_prod = orc.cd_prod::numeric and it.cd_it = orc.cd_it
 						   WHERE     IT.CD_EMP 		= vd.cd_emp 
 								 AND IT.CD_FILIAL 	= vd.cd_filial
 						         AND IT.CD_VD 		= vd.cd_vd

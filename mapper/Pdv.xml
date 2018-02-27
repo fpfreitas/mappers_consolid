@@ -63,7 +63,7 @@ FROM   (
                            COALESCE(VD.ST_CANC_PAF, 0)                                    AS "stCancPaf",
                            COALESCE(AUDIT.CD_OUTR_PROCD, 0::NUMERIC)                      AS "cdOutroProcedimento",
                            COALESCE(AUDIT.CD_USU, 0::       NUMERIC)                      AS "cdUsuProcedimento",
-                           CLI_PBM.CD_CLI                                                 AS "cdCliPbm",
+                           COALESCE(VD.CD_CLI_PBM      , 0::NUMERIC)                      AS "cdCliPbm",
                            COALESCE(VD.REG_ALTERADO, 0)                                   AS "registroalterado",
                            VD.VD_TROCA_FIDEL                                              AS "isDebitarPontos",
                            COALESCE(VD.VLR_IMPOSTO, 0::   NUMERIC)                        AS "valorIbpt",
@@ -609,11 +609,6 @@ FROM   (
                  AND       VD.CD_VD = AUDIT.CD_VD 
                  AND       ( 
                                      AUDIT.CD_OUTR_PROCD = ANY (ARRAY[90::numeric, 91::numeric, 93::numeric, 94::numeric]))
-                 LEFT JOIN RC_CLI CLI_PBM 
-                 ON        VD.CD_EMP = CLI_PBM.CD_EMP 
-                 AND       VD.TIPO_PBM::NUMERIC = CLI_PBM.ROT_CONV_EXT 
-                 AND       ( 
-                                     CLI_PBM.ROT_CONV_EXT <> ALL (ARRAY['-1'::integer::numeric, 0::numeric]))
 									 
 				INNER JOIN PRC_FILIAL FILIAL ON
 					VD.CD_EMP = FILIAL.CD_EMP
@@ -680,7 +675,7 @@ FROM   (
                            COALESCE(VD.ST_CANC_PAF, 0)                                    AS "stCancPaf",
                            COALESCE(AUDIT.CD_OUTR_PROCD, 0::NUMERIC)                      AS "cdOutroProcedimento",
                            COALESCE(AUDIT.CD_USU, 0::       NUMERIC)                      AS "cdUsuProcedimento",
-                           CLI_PBM.CD_CLI                                                 AS "cdCliPbm",
+                           COALESCE(VD.CD_CLI_PBM      , 0::NUMERIC)                      AS "cdCliPbm",
                            COALESCE(VD.REG_ALTERADO, 0)                                   AS "registroalterado",
                            VD.VD_TROCA_FIDEL                                              AS "isDebitarPontos",
                            COALESCE(VD.VLR_IMPOSTO, 0::   NUMERIC)                        AS "valorIbpt",
@@ -1226,11 +1221,6 @@ FROM   (
                  AND       VD.CD_VD = AUDIT.CD_VD 
                  AND       ( 
                                      AUDIT.CD_OUTR_PROCD = ANY (ARRAY[90::numeric, 91::numeric, 93::numeric, 94::numeric]))
-                 LEFT JOIN RC_CLI CLI_PBM 
-                 ON        VD.CD_EMP = CLI_PBM.CD_EMP 
-                 AND       VD.TIPO_PBM::NUMERIC = CLI_PBM.ROT_CONV_EXT 
-                 AND       ( 
-                                     CLI_PBM.ROT_CONV_EXT <> ALL (ARRAY['-1'::integer::numeric, 0::numeric]))
 									 
 				INNER JOIN PRC_FILIAL FILIAL ON
 					VD.CD_EMP = FILIAL.CD_EMP

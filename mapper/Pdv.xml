@@ -614,8 +614,7 @@ FROM   (
 					VD.CD_EMP = FILIAL.CD_EMP
 					AND VD.CD_FILIAL = FILIAL.CD_FILIAL
                  WHERE VD.FLAG_CONSOLIDADO = 0
-                 AND VD.ST_VD >= 0  
-                  ORDER BY DT_VD ASC LIMIT 1) ROW;
+                 AND VD.ST_VD >= 0  LIMIT 1) ROW;
 
 ]]>
   </select>
@@ -1225,8 +1224,7 @@ FROM   (
 				INNER JOIN PRC_FILIAL FILIAL ON
 					VD.CD_EMP = FILIAL.CD_EMP
 					AND VD.CD_FILIAL = FILIAL.CD_FILIAL
-                 WHERE VD.FLAG_CONSOLIDADO = 2 
-                  ORDER BY DT_VD ASC LIMIT 1) ROW;
+                 WHERE VD.FLAG_CONSOLIDADO = 2  LIMIT 1) ROW;
 
 ]]>
   </select>

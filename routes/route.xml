@@ -178,7 +178,7 @@
         </route> 
 		
 		<route>
-            <from uri="dbmapper:selectConciliacaoPdvVd?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=3500000" />
+            <from uri="dbmapper:selectConciliacaoPdvVd?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=600000" />
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -187,7 +187,7 @@
         </route> 
 		
 		<route>
-            <from uri="dbmapper:selectConciliacaoPdvCupomNaoFiscal?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=3500000" />
+            <from uri="dbmapper:selectConciliacaoPdvCupomNaoFiscal?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=600000" />
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>

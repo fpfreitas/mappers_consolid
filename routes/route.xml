@@ -104,6 +104,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
+			<marshal ref="json"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
@@ -113,7 +114,7 @@
 				<to uri="dbmapper:consumeOrcamentoReprocessar?dataSource=dataSourcePdv&amp;statementType=Update" />
 			</onException>  
         </route> 
-		
+		<!--
 		<route>
             <from uri="dbmapper:selectOrcamentoReprocessar?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeOrcamento" />
             <to uri="log:com.mycompany.order?level=INFO"/>
@@ -128,7 +129,7 @@
 				<to uri="dbmapper:consumeOrcamentoErro?dataSource=dataSourcePdv&amp;statementType=Update" />
 			</onException>  
         </route> 
-		
+		-->
 		<route>
             <from uri="dbmapper:selectMapaResumo?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeMapaResumo" />
             <to uri="log:com.mycompany.order?level=INFO"/>
@@ -173,6 +174,7 @@
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
+			<marshal ref="json"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route> 

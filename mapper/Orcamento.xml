@@ -352,7 +352,7 @@ FROM   (
 				cd_vend as "cdVend",
 				qtde_estoque as "qtdeEstoque",
 				COALESCE(tp_falta,0::NUMERIC) as "tpFalta",
-				COALESCE(nm_concorrente,' '::CHARACTER VARYING) as "nmConcorrente",
+				COALESCE(nm_concorrente,'SEM CONCORRENTE INFORMADO'::CHARACTER VARYING) as "nmConcorrente",
 				COALESCE(vlr_preco_concorrente::money::numeric::float8,0.0::money::numeric::float8) as "vlrPrecoConcorrente"
 			FROM est_orc_cpl_falta 
 			where flag_consolidado = 0 LIMIT 1

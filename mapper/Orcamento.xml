@@ -46,7 +46,8 @@
             orc.orig_orc            ,
             orc.obs                 ,
             COALESCE(est_cancel.cd_mt_cancel_orc, 0) AS cd_mt_cancel_orc,
-            est_cancel.desc_mt_cancel             			
+            est_cancel.desc_mt_cancel ,
+			COALESCE(orc.versao, 'SN') AS versao,	
 			FROM      est_orc orc 
                  left join est_orc_mt_cancel est_cancel 
                  ON        est_cancel.cd_emp::   NUMERIC = orc.cd_emp::NUMERIC 
@@ -208,6 +209,7 @@
 	<result property="cd_mt_cancel_orc" column="cdMtCancelOrc"/>
 	<result property="cd_cli" column="descMtCancel"/>	
 	<result property="tipoRegistro" column="tipoRegistro"/>	
+	<result property="versao" column="versao"/>	
 	<collection property="itens" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC}" javaType="ArrayList" ofType="map" select="selectOrcamentoItem" />
 	<collection property="receita" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc = CD_ORC}" javaType="ArrayList" ofType="map" select="selectOrcamentoReceita" />
   </resultMap>	

@@ -192,6 +192,7 @@ FROM   (
                            END                                      AS "orcamentoCancel", 
                            COALESCE(est_cancel.cd_mt_cancel_orc, 0) AS "cdMtCancelOrc", 
                            est_cancel.desc_mt_cancel                AS "descMtCancel",
+						   COALESCE(orc.versao, 'SN') AS versao,
 						    (SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(ORCIT))) 
 							FROM   (SELECT 	    est_orc_cpl.cd_prod as "cdProd",
 									    est_orc_cpl.cd_barra as "cdBarra",
@@ -797,6 +798,7 @@ FROM   (
                            orc.cd_frm_pgto          AS "cdFrmPgto", 
                            orc.orig_orc             AS "origOrc", 
                            orc.obs                  AS "obs", 
+						   COALESCE(orc.versao, 'SN') AS versao,
                            CASE 
                                      WHEN COALESCE(est_cancel.cd_mt_cancel_orc, 0) > 0 THEN TRUE
                                      ELSE FALSE 

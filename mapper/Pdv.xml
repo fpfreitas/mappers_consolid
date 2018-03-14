@@ -4,346 +4,383 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="Pdv">
-  <resultMap id="CupomJsonResult" type="Map">
-    <result property="json" column="row_to_json"/>
-  </resultMap>
 
-  <select id="selectCupom" resultMap="CupomJsonResult">
-<![CDATA[
-
-SELECT ROW_TO_JSON(ROW) , "cdEmp", "cdFilial", "cdVd"
-FROM   ( 
-                 SELECT    FILIAL.CGC					    AS "cnpjFilial",
-						   VD.CD_EMP                        AS "cdEmp", 
-                           VD.CD_FILIAL                     AS "cdFilial", 
-                           VD.CD_CX                         AS "cdCx", 
-                           VD.DT_VD                         AS "dtVd", 
-                           COALESCE(VD.DT_CAD, VD.DT_VD)    AS "dtCad", 
-                           COALESCE(VD.HR_VD, VD.DT_CAD)    AS "hrVd",  
-                           VD.NR_PED_TELEVD                 AS "nrPedTelevd", 
-                           VD.ORIG_ORC                      AS "origemOrc", 
-                           VD.CD_VD                         AS "cdVd", 
-                           VD.NR_ECF                        AS "nrEcf", 
-                           VD.ST_VD                         AS "stVd", 
-                           VD.CONT_CUPOM_FISC               AS "contadorCupomFiscal", 
-                           VD.CD_MOV                        AS "codigoMovimento", 
-                           VD.CD_CLI                        AS "cdCli", 
-                           VD.CGC_CPF                       AS "cgcCli", 
-                           VD.NR_CARTAO_MARKA               AS "numeroCartao",                           
-                           COALESCE(VD.QTD_DIAS_PRORROG, 0) AS "diasProrrogConv", 
-                           VD.VLR_LIQ_VD                    AS "vlrLiqVd", 
-                           VD.VLR_TOT_PROD                  AS "vlrTotProd", 
-                           VD.VLR_VD                        AS "vlrVd", 
-                           VD.VLR_DESC                      AS "vlrDesc", 
-                           VD.VLR_DESC_ITENS                AS "vlrDescItens", 
-						   VD.VLR_DINH                      AS "vlrDinh", 
-                           VD.VLR_TROCO                     AS "vlrTroco", 
+	<select id="selectCupom" resultMap="selectCupom">
+		<![CDATA[
+                 SELECT    FILIAL.CGC					    ,
+						   VD.CD_EMP                        ,
+                           VD.CD_FILIAL                     ,
+                           VD.NR_ORC                        ,
+                           VD.CD_CX                         ,
+                           VD.DT_VD                         ,
+                           COALESCE(VD.DT_CAD, VD.DT_VD)    AS DT_CAD,
+                           COALESCE(VD.HR_VD, VD.DT_CAD)    AS HR_VD,
+                           VD.NR_PED_TELEVD                 ,
+                           VD.ORIG_ORC                      ,
+                           VD.VLR_CARTAO                    ,
+                           VD.CD_VD                         ,
+                           VD.NR_ECF                        ,
+                           VD.ST_VD                         ,
+                           VD.CONT_CUPOM_FISC               ,
+                           VD.CD_MOV                        ,
+                           VD.CD_CLI                        ,
+                           VD.CGC_CPF                       ,
+                           VD.NR_CARTAO_MARKA               ,                   
+                           COALESCE(VD.QTD_DIAS_PRORROG, 0) AS QTD_DIAS_PRORROG,
+                           VD.VLR_LIQ_VD                    ,
+                           VD.VLR_TOT_PROD                  ,
+                           VD.VLR_VD                        ,
+                           VD.VLR_DESC                      ,
+                           VD.VLR_DESC_ITENS                ,
+						   VD.VLR_DINH                      ,
+                           VD.VLR_TROCO                     ,
                            CASE 
                                      WHEN VD.TIPO_PBM > 0 
                                      AND       COALESCE(VD.VLR_CONV_PBM, 0::NUMERIC) = 0::NUMERIC
                                      AND       VD.VLR_CONV = 0::NUMERIC THEN 0::NUMERIC 
                                      ELSE VD.VLR_CONV 
-                           END                                                            AS "vlrConv",
-						   VD.CD_CONV													  AS "cdConv",
-                           VD.QT_PARC_CONV                  							  AS "qtParcConv",
-                           VD.VLR_DUP                                                     AS "vlrDup",
-                           VD.VL_CHQS_A_VISTA                                             AS "valorChequeAVista",
-                           VD.VL_CHQS_A_PRZ                                               AS "valorChequeAPrazo",                           
-                           VD.NR_CEL_RECARGA                                              AS "nrCelRecarga",
-                           VD.VLR_RECARGA_CEL                                             AS "vlrRecargaCel",
-                           VD.NM_OPER_CEL                                                 AS "nmOperCel",
-                           VD.NM_COMPRADOR                                                AS "nmComprador",
-                           VD.DADOS_ADICIONAIS                                            AS "dadosAdicionais",
-                           VD.NR_SERIE_IMP                                                AS "nrSerieEcf",
-                           VD.VS_PDV                                                      AS "versaoPdv",
-                           VD.VS_PDV_RC                                                   AS "versaoPdvRc",
-                           VD.CD_USU                                                      AS "cdOperador",
-                           VD.CD_USU_CANCEL                                               AS "cdUsuCancel",
-                           VD.CD_MT_CANCEL                                                AS "codigoMotivoCancelamento",
-                           COALESCE(VD.ST_CANC_PAF, 0)                                    AS "stCancPaf",
-                           COALESCE(AUDIT.CD_OUTR_PROCD, 0::NUMERIC)                      AS "cdOutroProcedimento",
-                           COALESCE(AUDIT.CD_USU, 0::       NUMERIC)                      AS "cdUsuProcedimento",
-                           COALESCE(VD.CD_CLI_PBM      , 0::NUMERIC)                      AS "cdCliPbm",
-                           COALESCE(VD.REG_ALTERADO, 0)                                   AS "registroalterado",
-                           VD.VD_TROCA_FIDEL                                              AS "isDebitarPontos",
-                           COALESCE(VD.VLR_IMPOSTO, 0::   NUMERIC)                        AS "valorIbpt",
-                           COALESCE(VD.TX_MED_IMPOSTO, 0::NUMERIC)                        AS "percentualIbpt",
-                           VD.VLR_CONV_PBM                                                AS "vlrConvPbm",
-                           VD.FLAG_NFCE                                                   AS "flagNfce",
-                           COALESCE(NF_SAI.CD_NF, 0::   NUMERIC)                          AS "cdNfSai",
-                           COALESCE(VD.NR_CARTAO_MARKA, ''::CHARACTER VARYING)            AS "nrCartaoMarka",
-                           COALESCE(VD.QTDE_PONTOS_FIDEL_EXTERNO, 0::NUMERIC)             AS "qtdePontosFidelExterno",
-                           COALESCE(VD.NR_TEL_CUPOM, ''::CHARACTER VARYING)               AS "nrTelCupom",
-						   COALESCE(VD.CHV_NFCE ,''::CHARACTER VARYING)                   AS "chvNfce",
-                           (SELECT ROW_TO_JSON(NFCE) FROM   (SELECT CD_NF AS "cdNf" ,
-                                                                    CD_NF_SERIE AS "cdNfSerie",
-                                                                    CHV_NFCE AS "chvNfce",
-                                                                    AUT_NFCE as "autNfce",
-                                                                    cast(XML_NFCE as xml) as "xmlNfce",
-                                                                    DS_MOTIVO as "dsMotivo",
-																	COALESCE(STS_PEND, 0::   NUMERIC) as "stsValid"
-                                                              FROM EST_NFCE_ENV WHERE
-                                                              CD_EMP = VD.CD_EMP
-                                                              AND CD_FILIAL = VD.CD_FILIAL
-                                                              AND CD_NF = VD.NR_ECF
-                                                              AND CD_NF_SERIE = VD.CD_NF_SERIE)  NFCE ) as "nfce",
-                           (SELECT ROW_TO_JSON(NFCECANCEL) FROM   (SELECT 
-                                                                        cast(NFCE_CANCEL.XML_CANC as xml)             AS "xmlCancel",
-                                                                        COALESCE(NFCE_CANCEL.TP_CANC, 0)                                        AS "tpCanc",
-                                                                        COALESCE(NFCE_CANCEL.CHV_NFCE, ''::CHARACTER VARYING)                   AS "chvNfceCancel",
-                                                                        NFCE_CANCEL.DT_EMIS                                                     AS "dtEmisCancel",
-                                                                        COALESCE(NFCE_CANCEL.AUT_CANC, ''::CHARACTER VARYING)                   AS "autCanc",
-                                                                        COALESCE(NFCE_CANCEL.DS_MOTIVO, ''::CHARACTER VARYING)                  AS "dsMotivoCancel"
-                                                                    FROM EST_NFCE_CANC NFCE_CANCEL WHERE
-                                                              NFCE_CANCEL.CD_EMP = VD.CD_EMP
-                                                              AND NFCE_CANCEL.CD_FILIAL = VD.CD_FILIAL
-                                                              AND NFCE_CANCEL.CD_VD = VD.CD_VD)NFCECANCEL ) as "nfceCancel",    
+                           END                                                            AS VLR_CONV,
+						   VD.CD_CONV													  ,
+                           VD.QT_PARC_CONV                  							  ,
+                           VD.VLR_DUP                                                     ,
+                           VD.VL_CHQS_A_VISTA                                             ,
+                           VD.VL_CHQS_A_PRZ                                               ,                    
+                           VD.NR_CEL_RECARGA                                              ,
+                           VD.VLR_RECARGA_CEL                                             ,
+                           VD.NM_OPER_CEL                                                 ,
+                           VD.NM_COMPRADOR                                                ,
+                           VD.DADOS_ADICIONAIS                                            ,
+                           VD.NR_SERIE_IMP                                                ,
+                           VD.VS_PDV                                                      ,
+                           VD.VS_PDV_RC                                                   ,
+                           VD.CD_USU                                                      ,
+                           VD.CD_USU_CANCEL                                               ,
+                           VD.CD_MT_CANCEL                                                ,
+                           COALESCE(VD.ST_CANC_PAF, 0)                                    AS ST_CANC_PAF,
+                           COALESCE(AUDIT.CD_OUTR_PROCD, 0::NUMERIC)                      AS CD_OUTR_PROCD,
+                           COALESCE(AUDIT.CD_USU, 0::       NUMERIC)                      AS CD_USU_PROCEDIMENTO,
+                           COALESCE(VD.CD_CLI_PBM      , 0::NUMERIC)                      AS CD_CLI_PBM,
+                           COALESCE(VD.REG_ALTERADO, 0)                                   AS REG_ALTERADO,
+                           VD.VD_TROCA_FIDEL                                              ,
+                           COALESCE(VD.VLR_IMPOSTO, 0::   NUMERIC)                        AS VLR_IMPOSTO,
+                           COALESCE(VD.TX_MED_IMPOSTO, 0::NUMERIC)                        AS TX_MED_IMPOSTO,
+                           VD.VLR_CONV_PBM                                                ,
+                           VD.FLAG_NFCE                                                   ,
+                           COALESCE(NF_SAI.CD_NF, 0::   NUMERIC)                          AS CD_NF,
+                           COALESCE(VD.NR_CARTAO_MARKA, ''::CHARACTER VARYING)            AS NR_CARTAO_MARKA,
+                           COALESCE(VD.QTDE_PONTOS_FIDEL_EXTERNO, 0::NUMERIC)             AS QTDE_PONTOS_FIDEL_EXTERNO,
+                           COALESCE(VD.NR_TEL_CUPOM, ''::CHARACTER VARYING)               AS NR_TEL_CUPOM,
+						   COALESCE(VD.CHV_NFCE ,''::CHARACTER VARYING)                   AS CHV_NFCE								   
+                 FROM      PDV_VD VD 
+                 LEFT JOIN PDV_VD_EST_NF_SAI NF_SAI 
+                 ON        VD.CD_EMP = NF_SAI.CD_EMP 
+                 AND       VD.CD_FILIAL = NF_SAI.CD_FILIAL 
+                 AND       VD.CD_VD = NF_SAI.CD_VD 
 
-                                 ( SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(ITEN))) 
-                                  FROM   ( 
-                                                   SELECT    IT.CD_IT                          AS "cdIt",
-															 IT.CD_BARRAS					   AS "cdBarra",
-                                                             IT.CD_PROD                        AS "cdProd",
-                                                             IT.QT_IT                          AS "qtIt",
-                                                             IT.VLR_IT                         AS "vlrIt",
-                                                             IT.VLR_LIQ_IT                     AS "totIt",
-                                                             IT.ST_IT                          AS "stIt",
-                                                             IT.TIPO_DESCONTO                  AS "tipoDesconto",
-                                                             COALESCE(IT.TX_DESC, 0::         NUMERIC) AS "txDesc",
-															 COALESCE(IT.PERC_DESC_VERBA, 0::  NUMERIC) AS "percDescVerba",
-                                                             COALESCE(IT.VLR_DESC_VERBA, 0::  NUMERIC) AS "vlrDescVerba",
-                                                             COALESCE(IT.VLR_DESC_TOT_RAT, 0::NUMERIC) AS "vlrDescRateio",
-                                                             IT.CD_TRIB_FC                             AS "cdTribFc",
-                                                             IT.TX_ICMS_IT                             AS "txIcmsIt",
-                                                             IT.TX_RED_IT                              AS "txRedIt",
-                                                             IT.CD_VEND                                AS "cdVend",
-                                                             IT.CD_VEND_VERBA                          AS "cdVendVerba",
-                                                             IT.CD_USU_CANCEL                          AS "cdUsuCancel",
-                                                             IT.QTDE_PONTO_FIDEL                       AS "qtPontosFidel",
-                                                             IT.CD_GRP_COMIS_PDV                       AS "cdGrupoComissao",
-                                                             IT.ST_IT <> 1::NUMERIC                    AS "isCancelado",
-                                                             COALESCE(IT.REG_ALTERADO, 0) = 1          AS "registroalteradoitem",
-                                                             COALESCE(IT.TIPO_IMPOSTO, 0::NUMERIC)     AS "tipoImposto",
-                                                             IT.VLR_IMPOSTO_IT                         AS "valorIbptItem",
-                                                             IT.TX_IMPOSTO_IT                          AS "percentualIbptItem",
-                                                             IT.NR_PROTOCOLO_MANIPULADO                AS "nrProtocoloManipulado",
-                                                             COALESCE(IT.PERC_DESC_DIFF, 0::NUMERIC)   AS "percDescDiff",
-                                                             COALESCE(IT.PERC_DESC_MAX, 0:: NUMERIC)   AS "percDescMax",
-                                                             COALESCE(IT.PERC_DESC_MIN, 0:: NUMERIC)   AS "percDescMin",
-                                                             COALESCE(IT.CD_TBL_DESC, 0::   NUMERIC)   AS "cdTblDesc",
-                                                             COALESCE(IT.TP_NIVEL, 0::      NUMERIC)   AS "tpNivel",
-															 COALESCE(it.tp_tbl_desc::numeric, 0::numeric) AS "tpTblDesc",
-                                                             ( SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(LOTE))) 
-																FROM   ( 
-																	SELECT  CD_LOTE AS "cdLote"
-																		,NR_LOTE AS "nrLote"
-																		,QTDE_LOTE AS "qtdeLote" 
-																	FROM PDV_VD_IT_LOTE LOTE
-																	WHERE LOTE.CD_EMP  = IT.CD_EMP
-																	AND LOTE.CD_FILIAL = IT.CD_FILIAL
-																	AND LOTE.CD_VD     = IT.CD_VD
-																	AND LOTE.CD_IT     = IT.CD_IT
-																) LOTE ) AS "lote"
-                                                   FROM      PDV_VD_IT IT 
-                                                   WHERE     IT.CD_EMP = VD.CD_EMP 
-                                                   AND       IT.CD_FILIAL = VD.CD_FILIAL 
-                                                   AND       IT.CD_VD = VD.CD_VD ) ITEN ) AS "itens",
+                 LEFT JOIN PDV_VD_GLB_PROCD_OUTR_LIB AUDIT 
+                 ON        VD.CD_EMP = AUDIT.CD_EMP 
+                 AND       VD.CD_FILIAL = AUDIT.CD_FILIAL 
+                 AND       VD.CD_VD = AUDIT.CD_VD 
+                 AND       ( 
+                                     AUDIT.CD_OUTR_PROCD = ANY (ARRAY[90::numeric, 91::numeric, 93::numeric, 94::numeric]))
+									 
+				INNER JOIN PRC_FILIAL FILIAL ON
+					VD.CD_EMP = FILIAL.CD_EMP
+					AND VD.CD_FILIAL = FILIAL.CD_FILIAL
+                 WHERE VD.FLAG_CONSOLIDADO = #{flagConsolid}::numeric
+                 AND VD.ST_VD >= 0  LIMIT 1
+
+]]>
+	</select>
+	<select id="selectCupomNfce" resultMap="selectCupomNfce">
+		SELECT 	CD_EMP,
+				CD_FILIAL,
+				CD_NF ,
+				CD_NF_SERIE ,
+				CHV_NFCE ,
+				AUT_NFCE ,
+				cast(XML_NFCE as xml) AS "XML_NFCE",
+				DS_MOTIVO ,
+				COALESCE(STS_PEND, 0::   NUMERIC) AS "STS_VALID"
+        FROM EST_NFCE_ENV WHERE
+        CD_EMP = #{cdEmp}
+        AND CD_FILIAL = #{cdFilial}
+        AND CD_NF = #{cdNf} 
+        AND CD_NF_SERIE = #{cdNfSerie}
+	</select>
+	<select id="selectCupomNfceCancel" resultMap="selectCupomNfceCancel">
+	SELECT 	CD_EMP,
+			CD_FILIAL,
+			CD_VD,
+			cast(NFCE_CANCEL.XML_CANC as xml)             AS XML_CANC,
+			COALESCE(NFCE_CANCEL.TP_CANC, 0)                                        AS TP_CANC,
+			COALESCE(NFCE_CANCEL.CHV_NFCE, ''::CHARACTER VARYING)                   AS CHV_NFCE,
+			NFCE_CANCEL.DT_EMIS                                                     AS DT_EMIS,
+			COALESCE(NFCE_CANCEL.AUT_CANC, ''::CHARACTER VARYING)                   AS AUT_CANC,
+			COALESCE(NFCE_CANCEL.DS_MOTIVO, ''::CHARACTER VARYING)                  AS DS_MOTIVO
+    FROM 
+		EST_NFCE_CANC NFCE_CANCEL 
+	WHERE
+		NFCE_CANCEL.CD_EMP = #{cdEmp}
+		AND NFCE_CANCEL.CD_FILIAL = #{cdFilial}
+		AND NFCE_CANCEL.CD_VD = #{cdVd}
+	</select>
+	<select id="selectCupomItens" resultMap="selectCupomItens">
+		SELECT    
+		IT.CD_EMP                                                           ,
+		IT.CD_FILIAL                                                        ,
+		IT.CD_VD                                                            ,
+		IT.CD_IT                                                            ,
+		IT.CD_BARRAS					                                    ,
+        IT.CD_PROD                                                          ,
+        IT.QT_IT                                                            ,
+        IT.VLR_IT                                                           ,
+        IT.VLR_LIQ_IT                                                       ,
+        IT.ST_IT                                                            ,
+        IT.TIPO_DESCONTO                                                    ,
+        COALESCE(IT.TX_DESC, 0::         NUMERIC)  AS TX_DESC               ,
+		COALESCE(IT.PERC_DESC_VERBA, 0::  NUMERIC) AS PERC_DESC_VERBA       ,
+        COALESCE(IT.VLR_DESC_VERBA, 0::  NUMERIC)  AS VLR_DESC_VERBA        ,
+        COALESCE(IT.VLR_DESC_TOT_RAT, 0::NUMERIC)  AS VLR_DESC_TOT_RAT      ,
+        IT.CD_TRIB_FC                                                       ,
+        IT.TX_ICMS_IT                                                       ,
+        IT.TX_RED_IT                                                        ,
+        IT.CD_VEND                                                          ,
+        IT.CD_VEND_VERBA                                                    ,
+        IT.CD_USU_CANCEL                                                    ,
+        IT.QTDE_PONTO_FIDEL                                                 ,
+        IT.CD_GRP_COMIS_PDV                                                 ,
+        COALESCE(IT.REG_ALTERADO, 0) = 1          AS REG_ALTERADO           ,
+        COALESCE(IT.TIPO_IMPOSTO, 0::NUMERIC)     AS TIPO_IMPOSTO           ,
+        IT.VLR_IMPOSTO_IT                                                   ,
+        IT.TX_IMPOSTO_IT                                                    ,
+        IT.NR_PROTOCOLO_MANIPULADO                                          ,
+        COALESCE(IT.PERC_DESC_DIFF, 0::NUMERIC)   AS PERC_DESC_DIFF         ,
+        COALESCE(IT.PERC_DESC_MAX, 0:: NUMERIC)   AS PERC_DESC_MAX          ,
+        COALESCE(IT.PERC_DESC_MIN, 0:: NUMERIC)   AS PERC_DESC_MIN          ,
+        COALESCE(IT.CD_TBL_DESC, 0::   NUMERIC)   AS CD_TBL_DESC            ,
+        COALESCE(IT.TP_NIVEL, 0::      NUMERIC)   AS TP_NIVEL               ,
+		COALESCE(it.tp_tbl_desc::numeric, 0::numeric) AS TP_TBL_DESC        
+        FROM      PDV_VD_IT IT 
+        WHERE     IT.CD_EMP = #{cdEmp} 
+        AND       IT.CD_FILIAL = #{cdFilial} 
+        AND       IT.CD_VD = #{cdVd} 
+	</select>
+	<select id="selectCupomItensLote" resultMap="selectCupomItensLote">
+		SELECT  CD_EMP,
+				CD_FILIAL,
+				CD_VD,
+				CD_IT,
+				CD_LOTE, 
+				NR_LOTE, 
+				QTDE_LOTE 
+		FROM PDV_VD_IT_LOTE LOTE
+		WHERE LOTE.CD_EMP  = #{cdEmp}
+		AND LOTE.CD_FILIAL = #{cdFilial}
+		AND LOTE.CD_VD     = #{cdVd}
+		AND LOTE.CD_IT     = #{cdIt}
+	</select>
+	<select id="selectOrcamentoPdv" resultMap="OrcaJsonResult">
+		<![CDATA[
+	
+	 SELECT  orc.cd_emp              ,
+			orc.cd_filial           ,
+            orc.cd_orc              ,
+            orc.vd_troca_fidel      ,
+            orc.cd_cli              ,
+            orc.cd_conv             ,
+            orc.qt_parc_conv        ,
+            orc.nr_ped_televd       ,
+            orc.tipo_prazo_pgto     ,
+            orc.nr_cartao_pbm       ,
+            orc.cd_projeto_pbm      ,
+            orc.tp_perc_rec_conv    ,
+            orc.perc_rec_conv       ,
+            orc.dados_adicionais    ,
+            orc.nm_comprador        ,
+            orc.qtd_dias_prorrog    ,
+            orc.tipo_pbm            ,
+            orc.cd_cli_dep          ,
+            orc.vlr_prod            ,
+            orc.tp_orc_entg         ,
+            2		      AS sts_orc, 
+            orc.nm_cli              ,
+            orc.nr_autr_pbm         ,
+            orc.cpf_cli_pbm         ,
+            orc.dt_emi              ,
+            orc.hr_emi              ,
+            orc.vlr_tot             ,
+			orc.vlr_desc			,
+			orc.vlr_desc_geral		,
+            orc.nr_cartao_fidelidade,
+            orc.fone_cli            ,
+            orc.tp_orc              ,
+            orc.cd_frm_pgto         ,
+            orc.orig_orc            ,
+            orc.obs                 ,
+            COALESCE(est_cancel.cd_mt_cancel_orc, 0) AS cd_mt_cancel_orc,
+            est_cancel.desc_mt_cancel             			
+			FROM      est_orc orc 
+                 left join est_orc_mt_cancel est_cancel 
+                 ON        est_cancel.cd_emp::   NUMERIC = orc.cd_emp::NUMERIC 
+                 AND       est_cancel.cd_filial::NUMERIC = orc.cd_filial::NUMERIC 
+                 AND       est_cancel.cd_orc::   NUMERIC = orc.cd_orc::NUMERIC 
+				 WHERE     orc.cd_emp = #{cdEmp}
+				AND       orc.CD_FILIAL = #{cdFilial}
+				AND       orc.CD_ORC = #{nrOrc}
 				 
-                                   (SELECT ROW_TO_JSON(ORC) 
-                                  FROM   (SELECT    
-						   orc.cd_emp               AS "cdEmp", 
-						   orc.cd_filial            AS "cdFilial", 
-                           orc.cd_orc               AS "cdOrc", 
-                           orc.vd_troca_fidel       AS "vdTrocaFidel", 
-                           orc.cd_cli               AS "cdCli", 
-                           orc.cd_conv              AS "cdConv", 
-                           orc.qt_parc_conv         AS "qtParcConv", 
-                           orc.nr_ped_televd        AS "nrPedTelevd", 
-                           orc.tipo_prazo_pgto      AS "tipoPrazoPgto", 
-                           orc.nr_cartao_pbm        AS "nrCartaoPbm", 
-                           orc.cd_projeto_pbm       AS "cdProjetoPbm", 
-                           orc.tp_perc_rec_conv     AS "tpPercRecConv", 
-                           orc.perc_rec_conv        AS "percRecConv", 
-                           orc.dados_adicionais     AS "dadosAdicionais", 
-                           orc.nm_comprador         AS "nmComprador", 
-                           orc.qtd_dias_prorrog     AS "qtdDiasProrrog" , 
-                           orc.tipo_pbm             AS "tipoPbm", 
-                           orc.cd_cli_dep           AS "cdCliDep", 
-						   orc.vlr_desc				AS "vlrDesc",
-						   orc.vlr_desc_geral		AS "vlrDescGeral",
-                           orc.vlr_prod             AS "vlrProd", 
-                           orc.tp_orc_entg          AS "tpOrcEntg", 
-                           orc.sts_orc              AS "stsOrc", 
-                           orc.nm_cli               AS "nmCli", 
-                           orc.nr_autr_pbm          AS "nrAutrPbm", 
-                           orc.cpf_cli_pbm          AS "cpfCliPbm", 
-                           orc.dt_emi               AS "dtEmi", 
-                           orc.hr_emi               AS "hrEmi", 
-                           orc.vlr_tot              AS "vlrTot", 
-                           orc.nr_cartao_fidelidade AS "nrCartaoCli", 
-                           orc.fone_cli             AS "foneCli", 
-                           orc.tp_orc               AS "tpOrc", 
-                           orc.cd_frm_pgto          AS "cdFrmPgto", 
-                           orc.orig_orc             AS "origOrc", 
-                           orc.obs                  AS "obs", 
-                           CASE 
-                                     WHEN COALESCE(est_cancel.cd_mt_cancel_orc, 0) > 0 THEN TRUE
-                                     ELSE FALSE 
-                           END                                      AS "orcamentoCancel", 
-                           COALESCE(est_cancel.cd_mt_cancel_orc, 0) AS "cdMtCancelOrc", 
-                           est_cancel.desc_mt_cancel                AS "descMtCancel",
-						   COALESCE(orc.versao, 'SN') AS versao,
-						    (SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(ORCIT))) 
-							FROM   (SELECT 	    est_orc_cpl.cd_prod as "cdProd",
-									    est_orc_cpl.cd_barra as "cdBarra",
-									    est_orc_cpl.qt as "qt", 
-									    est_orc_cpl.vlr_it as "vlrIt",
-										est_orc_cpl.vlr_tot_it as "vlrTotIt",
-										est_orc_cpl.vlr_desc as "vlrDesc",
-									    est_orc_cpl.perc_desc as "percDesc",
-									    est_orc_cpl.cd_medico_rec as "cdMedicoRec",
-									    est_orc_cpl.cd_vend as "cdVend",
-										est_orc_cpl.cd_vend_lib as "cdVendLib",
-										est_orc_cpl.pr_tab as "prTab",
-									    est_orc_cpl.nr_autr_pbm_item as "nrAutrPbmItem",
-									    est_orc_cpl.cd_vend_verba as "cdVendVerba",
-									    est_orc_cpl.libera_vd_conv as "liberaVdConv" , 
-									    est_orc_cpl.cd_it as "cdIt",
-									    est_orc_cpl.perc_desc_min as "percDescMin",
-									    est_orc_cpl.perc_desc_max as "percDescMax",
-									    est_orc_cpl.cd_tbl_desc as "cdTblDesc",
-										est_orc_cpl.oferta as "oferta",
-										est_orc_cpl.perc_desc_cad as "percDescCad",
-										est_orc_cpl.perc_desc_fix as "percDescFix",
-										est_orc_cpl.vlr_desc_fix  as "vlrDescFix",
-										est_orc_cpl.tipo_desconto as "tipoDesconto",
-										est_orc_cpl.vlr_economia  as "vlrEconomia",
-										est_orc_cpl.venda_dependente        AS "vendaDependente",
-                                         est_orc_cpl.perc_desconto_pos_pbm   AS "percDescontoPosPbm",
-                                         est_orc_cpl.nr_protocolo_manipulado AS "nrProtocoloManipulado",
-                                         est_orc_cpl.tipo_desconto           AS "tpDesc",
-                                         est_orc_cpl.qtde_ponto_fidel        AS "qtPontosFidel",
-                                         est_orc_cpl.vlr_desc_verba          AS "vlrDescVerba",
-                                         est_orc_cpl.perc_desc_verba         AS "percDescVerba",
-                                         est_orc_cpl.cd_vend_verba           AS "cdVendVerba",
-                                         est_orc_cpl.vlr_custo_semaforo      AS "vlrCustoSemaforo",
-                                         est_orc_cpl.qt_est                  AS "qtEst",
-                                         est_orc_cpl.cd_grp                  AS "cdGrupoComissao",
-                                                                               (                             SELECT row_to_json(CONCORRENTE)
-                                                                   FROM   (  SELECT desconto_concorrente.cd_prod                AS "cdProd",
-                                                                                    desconto_concorrente.nr_orc                 AS "nrOrc",
-                                                                                    desconto_concorrente.cd_vend                AS "cdVend",
-                                                                                    desconto_concorrente.cd_concor              AS "cdConcorrente",
-                                                                                    desconto_concorrente.vlr_concor             AS "vlrConcorrente",
-                                                                                    desconto_concorrente.perc_desc              AS "percDesc",
-                                                                                    desconto_concorrente.cd_it                     AS "cdIt"
-                                                                                    from est_orc_cpl_concor desconto_concorrente
-                                                                                    WHERE     est_orc_cpl.cd_emp = desconto_concorrente.cd_emp::      NUMERIC
-                                                                                    AND       est_orc_cpl.cd_filial = desconto_concorrente.cd_filial::NUMERIC
-                                                                                    AND       est_orc_cpl.cd_orc = desconto_concorrente.nr_orc::      NUMERIC
-                                                                                    AND       est_orc_cpl.cd_it = desconto_concorrente.cd_it::        NUMERIC
-                                                                                    AND       est_orc_cpl.cd_prod = desconto_concorrente.cd_prod::    NUMERIC) CONCORRENTE ) AS "concorrente",
-                                         ( 
-                                                SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(LOTE))) 
-                                                FROM   ( 
-                                                              SELECT lote.cd_lote   AS "cdLote",
-                                                                     lote.qtde_lote AS "qtdeLote"
-                                                              FROM   est_orc_cpl_lote lote
-                                                              WHERE  est_orc_cpl.cd_emp = lote.cd_emp::      NUMERIC
-                                                              AND    est_orc_cpl.cd_filial = lote.cd_filial::NUMERIC
-                                                              AND    est_orc_cpl.cd_orc = lote.cd_orc::      NUMERIC
-                                                              AND    est_orc_cpl.cd_prod = lote.cd_prod::    NUMERIC
-                                                              AND    est_orc_cpl.cd_it = lote.cd_it::        NUMERIC ) LOTE ) AS "lote"
-                                         FROM      est_orc_cpl 
-                                         left join est_orc_cpl_concor desconto_concorrente
-                                         ON        est_orc_cpl.cd_emp = desconto_concorrente.cd_emp::      NUMERIC
-                                         AND       est_orc_cpl.cd_filial = desconto_concorrente.cd_filial::NUMERIC
-                                         AND       est_orc_cpl.cd_orc = desconto_concorrente.nr_orc::      NUMERIC
-                                         AND       est_orc_cpl.cd_it = desconto_concorrente.cd_it::        NUMERIC
-                                         AND       est_orc_cpl.cd_prod = desconto_concorrente.cd_prod::    NUMERIC
-										WHERE     est_orc_cpl.cd_emp = vd.cd_emp
-										AND       est_orc_cpl.CD_FILIAL = vd.cd_filial
-										AND       est_orc_cpl.CD_ORC = vd.nr_orc ) ORCIT ) AS "itens",
-										
-                           ( 
-                                  SELECT array_to_json(array_agg(row_to_json(ORCREC))) 
-                                  FROM   ( 
-                                                SELECT receita.cd_prod                   AS "cdProd",
-                                                       receita.cd_it                     AS "cdIt",
-													   item.cd_vend						 AS "cdVend",
-                                                       receita.nm_comprador              AS "nmCompradorRec",
-                                                       receita.idade                     AS "idadeRec",
-                                                       receita.nm_paciente               AS "nmPacienteRec",
-                                                       receita.receita_tipo              AS "receitaTipoRec",
-                                                       coalesce(receita.cid, 0)          AS "cidRec",
-                                                       receita.uf                        AS "ufRec",
-                                                       receita.nr_doc_cli                AS "nrDocCliRec",
-                                                       receita.tipo_documento            AS "tipoDocumentoRec",
-                                                       coalesce(receita.cd_medico_rec,0) AS "cdMedicoRec",
-                                                       receita.qt_prod                   AS "qtProd",
-                                                       receita.dt_receita                AS "dtReceita",
-                                                       receita.tp_capt_receita           AS "tipoCaptacaoReceita"
-                                                FROM   est_orc_glb_medico receita 
-														inner join est_orc_cpl item on (receita.cd_emp = item.cd_emp and
-																						receita.cd_filial = item.cd_filial and
-																						receita.nr_orc = item.cd_orc and
-																						receita.cd_it = item.cd_it)
-                                                WHERE  receita.cd_emp = orc.cd_emp 
-                                                AND    receita.cd_filial = orc.cd_filial 
-                                                AND    receita.nr_orc = orc.cd_orc ) ORCREC ) AS "receita"
-							FROM      est_orc orc 
-							left join est_orc_mt_cancel est_cancel 
-							ON        est_cancel.cd_emp::   NUMERIC = orc.cd_emp::NUMERIC 
-							AND       est_cancel.cd_filial::NUMERIC = orc.cd_filial::NUMERIC 
-							AND       est_cancel.cd_orc::   NUMERIC = orc.cd_orc::NUMERIC 
-							    	 WHERE     orc.cd_emp = vd.cd_emp
-										AND       orc.CD_FILIAL = vd.cd_filial
-										AND       orc.CD_ORC = vd.nr_orc ) ORC ) AS "orcamento",
+				 	]]>
 
-                           ( 
-                                  SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(REC))) 
-                                  FROM   (  SELECT  pdv_vd_it.cd_it as "cdIt",
-						    pdv_vd_it.cd_medico_rec + vdit.cd_medico_rec::numeric AS "prescritorId",
-						    pdv_vd_it.nr_receita + vdit.nr_receita AS "receitaNumero",
+	</select>	
+	<select id="selectOrcamentoPdvItem" resultMap="OrcamentoItem">                    
+    SELECT    est_orc_cpl.cd_prod                 ,
+              est_orc_cpl.cd_barra                ,
+              est_orc_cpl.cd_emp                  ,
+              est_orc_cpl.cd_filial               ,
+              est_orc_cpl.qt                      ,
+              est_orc_cpl.vlr_it                  ,
+              est_orc_cpl.vlr_tot_it              ,
+              est_orc_cpl.vlr_desc                ,
+              est_orc_cpl.perc_desc               ,
+              est_orc_cpl.cd_medico_rec           ,
+              est_orc_cpl.cd_vend                 ,
+              est_orc_cpl.cd_vend_lib             ,
+              est_orc_cpl.pr_tab                  ,
+              est_orc_cpl.nr_autr_pbm_item        ,
+              est_orc_cpl.cd_vend_verba           ,
+              est_orc_cpl.libera_vd_conv          ,
+              est_orc_cpl.cd_it                   ,
+              est_orc_cpl.perc_desc_min           ,
+              est_orc_cpl.perc_desc_max           ,
+              est_orc_cpl.cd_tbl_desc             ,
+              est_orc_cpl.oferta                  ,
+              est_orc_cpl.perc_desc_cad           ,
+              est_orc_cpl.perc_desc_fix           ,
+              est_orc_cpl.vlr_desc_fix            ,
+              est_orc_cpl.tipo_desconto           ,
+              est_orc_cpl.vlr_economia            ,
+              est_orc_cpl.venda_dependente        ,
+              est_orc_cpl.perc_desconto_pos_pbm   ,
+              est_orc_cpl.nr_protocolo_manipulado ,
+              est_orc_cpl.tipo_desconto           ,
+              est_orc_cpl.qtde_ponto_fidel        ,
+              est_orc_cpl.vlr_desc_verba          ,
+              est_orc_cpl.perc_desc_verba         ,
+              est_orc_cpl.cd_vend_verba           ,
+              est_orc_cpl.vlr_custo_semaforo      ,
+              est_orc_cpl.qt_est                  ,
+              est_orc_cpl.cd_orc                  ,
+              est_orc_cpl.cd_grp                  
+	 FROM      est_orc_cpl 
+	   left join est_orc_cpl_concor desconto_concorrente
+	   ON        est_orc_cpl.cd_emp = desconto_concorrente.cd_emp::      NUMERIC
+	   AND       est_orc_cpl.cd_filial = desconto_concorrente.cd_filial::NUMERIC
+	   AND       est_orc_cpl.cd_orc = desconto_concorrente.nr_orc::      NUMERIC
+	   AND       est_orc_cpl.cd_it = desconto_concorrente.cd_it::        NUMERIC
+	   AND       est_orc_cpl.cd_prod = desconto_concorrente.cd_prod::    NUMERIC
+	   WHERE     est_orc_cpl.cd_emp = #{cdEmp} 
+	   AND       est_orc_cpl.cd_filial = #{cdFilial}
+	   AND       est_orc_cpl.cd_orc = #{cdOrc}
+
+	</select>
+	<select id="selectOrcamentoPdvItemConcorrente" resultMap="OrcamentoItemConcorrente"> 
+		SELECT desconto_concorrente.cd_prod                ,
+               desconto_concorrente.nr_orc                 ,
+               desconto_concorrente.cd_vend                ,
+               desconto_concorrente.cd_concor              ,
+               desconto_concorrente.vlr_concor             ,
+               desconto_concorrente.perc_desc              ,
+               desconto_concorrente.cd_it                  
+               from est_orc_cpl_concor desconto_concorrente
+               WHERE     #{cdEmp}= desconto_concorrente.cd_emp::      NUMERIC
+               AND       #{cdFilial} = desconto_concorrente.cd_filial::NUMERIC
+               AND       #{cdOrc} = desconto_concorrente.nr_orc::      NUMERIC
+               AND       #{cdIt} = desconto_concorrente.cd_it::        NUMERIC
+               AND       #{cdProd} = desconto_concorrente.cd_prod::    NUMERIC
+	</select>  	
+	<select id="selectOrcamentoPdvItemLote" resultMap="OrcamentoItemLote">     
+
+	 SELECT lote.cd_lote   ,
+            lote.qtde_lote 
+     FROM   est_orc_cpl_lote lote
+     WHERE  #{cdEmp}   = lote.cd_emp::      NUMERIC
+     AND    #{cdFilial}= lote.cd_filial::NUMERIC
+     AND    #{cdOrc}   = lote.cd_orc::      NUMERIC
+     AND    #{cdProd}  = lote.cd_prod::    NUMERIC
+     AND    #{cdIt}    = lote.cd_it::        NUMERIC 
+
+	</select>	
+	<select id="selectOrcamentoPdvReceita" resultMap="OrcamentoReceita">    
+	 SELECT receita.cd_prod                   ,
+            receita.cd_it                     ,
+            receita.nm_comprador              ,
+            receita.idade                     ,
+            receita.nm_paciente               ,
+            receita.receita_tipo              ,
+            coalesce(receita.cid, 0)          AS cid,
+            receita.uf                        ,
+            receita.nr_doc_cli                ,
+            receita.tipo_documento            ,
+            coalesce(receita.cd_medico_rec,0) AS cd_medico_rec,
+            receita.qt_prod                   ,
+            receita.dt_receita                ,
+            receita.tp_capt_receita           
+     FROM   est_orc_glb_medico receita 
+     WHERE  receita.cd_emp = #{cdEmp}
+     AND    receita.cd_filial = #{cdFilial}
+     AND    receita.nr_orc = #{cdOrc}
+
+	</select>
+	<select id="selectCupomReceita" resultMap="selectCupomReceita"> 
+		<![CDATA[
+	  SELECT  pdv_vd_it.cd_emp,
+							pdv_vd_it.cd_vd,
+							pdv_vd_it.cd_filial,
+							pdv_vd_it.cd_it,
+						    pdv_vd_it.cd_medico_rec + vdit.cd_medico_rec::numeric AS prescritor_id,
+						    pdv_vd_it.nr_receita + vdit.nr_receita AS nr_receita,
 							CASE
 							    WHEN date_part('day'::text, min(pdv_vd_it.dt_receita)) > 0::double precision THEN pdv_vd_it.dt_receita
 							    WHEN date_part('day'::text, min(vdit.dt_receita)) > 0::double precision THEN vdit.dt_receita
 							    ELSE 'now'::text::date::timestamp without time zone
-							END AS "receitaData",
+							END AS receita_data,
 							CASE
 							    WHEN pdv_vd_it.nm_comprador_receita::text <> ''::text THEN pdv_vd_it.nm_comprador_receita
 							    WHEN vdit.nm_comprador::text <> ''::text THEN vdit.nm_comprador
 							    ELSE ''::character varying
-							END AS "compradorNome",
+							END AS COMPRADOR_NOME,
 							CASE
 							    WHEN pdv_vd_it.nr_doc_cli_receita::text <> ''::text THEN pdv_vd_it.nr_doc_cli_receita
 							    WHEN vdit.nr_doc_cli::text <> ''::text THEN vdit.nr_doc_cli
 							    ELSE ''::character varying
-							END AS "compradorDocNumero",
-						    pdv_vd_it.tp_doc_cli_receita + vdit.tipo_documento AS "compradorDocTipo",
-						    COALESCE(vdit.tp_doc_exp, 0) AS "compradorDocExpedidor",
+							END AS COMPRADOR_DOC_NUMERO,
+						    pdv_vd_it.tp_doc_cli_receita + vdit.tipo_documento AS COMPRADOR_DOC_TIPO,
+						    COALESCE(vdit.tp_doc_exp, 0) AS tp_doc_exp,
 							CASE
 							    WHEN pdv_vd_it.uf_receita::text <> ''::text THEN pdv_vd_it.uf_receita
 							    WHEN vdit.uf::text <> ''::text THEN vdit.uf
 							    ELSE ''::character varying
-							END AS "compradorDocUf",
-						    COALESCE(vdit.cid, 0) AS "pacienteCid",
-						    pdv_vd_it.idade_receita + vdit.idade AS "pacienteIdade",
+							END AS COMPRADOR_DOC_UF,
+						    COALESCE(vdit.cid, 0) AS PACIENTE_CID,
+						    pdv_vd_it.idade_receita + vdit.idade AS PACIENTE_IDADE,
 							CASE
 							    WHEN pdv_vd_it.nm_paciente_receita::text <> ''::text THEN pdv_vd_it.nm_paciente_receita
 							    WHEN vdit.nm_paciente::text <> ''::text THEN vdit.nm_paciente
 							    ELSE ''::character varying
-							END AS "pacienteNome",
-						    COALESCE(vdit.sexo, 0) AS "pacienteSexo",
-						    0 AS "pacienteTipoIdade"
+							END AS PACIENTE_NOME,
+						    COALESCE(vdit.sexo, 0) AS PACIENTE_SEXO,
+						    0 AS "pacienteTipoIdade"	
 						   FROM pdv_vd_it
 						     INNER JOIN pdv_vd_it_rec vdit ON pdv_vd_it.cd_emp = vdit.cd_emp AND pdv_vd_it.cd_filial = vdit.cd_filial AND pdv_vd_it.cd_prod = vdit.cd_prod AND pdv_vd_it.cd_vd = vdit.cd_vd
-						   WHERE     pdv_vd_it.CD_EMP 		= vd.cd_emp 
-								 AND pdv_vd_it.CD_FILIAL 	= vd.cd_filial
-						         AND pdv_vd_it.CD_VD 		= vd.cd_vd
+						   WHERE     pdv_vd_it.CD_EMP 		= #{cdEmp}
+								 AND pdv_vd_it.CD_FILIAL 	= #{cdFilial}
+						         AND pdv_vd_it.CD_VD 		= #{cdVd}
 						  GROUP BY pdv_vd_it.cd_emp, pdv_vd_it.cd_filial, pdv_vd_it.cd_vd, pdv_vd_it.cd_it, vdit.cd_medico_rec, vdit.nr_receita, vdit.dt_receita, vdit.nm_comprador, vdit.nr_doc_cli, vdit.tipo_documento, vdit.tp_doc_exp, vdit.uf, vdit.cid, vdit.idade, vdit.nm_paciente, vdit.sexo
 						  UNION
 						 SELECT 
+						    it.cd_emp,
+							it.cd_vd,
+							it.cd_filial,
 							it.cd_it,
 							COALESCE(orc.cd_medico_rec,0) AS prescritor_id,
 							COALESCE(orc.nr_receita,0) AS receita_numero,
@@ -359,89 +396,91 @@ FROM   (
 							COALESCE(orc.sexo,NULL::integer) AS paciente_sexo,
 							0 AS paciente_tipo_idade
 						   FROM PDV_VD_IT IT
-						   JOIN est_orc_glb_medico orc ON it.cd_emp = orc.cd_emp::numeric AND it.cd_filial = orc.cd_filial::numeric AND vd.nr_orc = orc.nr_orc::numeric AND it.cd_prod = orc.cd_prod::numeric and it.cd_it = orc.cd_it
-						   WHERE     IT.CD_EMP 		= vd.cd_emp 
-								 AND IT.CD_FILIAL 	= vd.cd_filial
-						         AND IT.CD_VD 		= vd.cd_vd
-						 ) REC ) AS "receita" ,				   
-                           ( 
-							SELECT row_to_json(PAGAMENTO)
-							FROM   ( SELECT 
-									  (SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(CHEQUE))) 
-									  FROM   ( 
-                                                   SELECT    
-                                                             CHQ.CD_BC_CHQ                    AS "cdBc",
-                                                             CHQ.NR_ORD                       AS "nrOrd",
-                                                             CHQ.NR_CHQ                       AS "nrChq",
-                                                             CHQ.ANO_CHQ                      AS "anoChq",
-                                                             CHQ.VL_CHQ                       AS "vlrChq",
-                                                             CHQ.DT_EMI                       AS "dtEmi",
-                                                             CHQ.DT_VENCTO                    AS "dtVencto",
-                                                             CHQ.AG_CHQ                       AS "agChq",
-                                                             CH_EMI.CD_EMI                    AS "cdEmi",
-                                                             CHQ.CPF_CGC_EMI                  AS "cgcEmi",
-                                                             CHQ.NM_EMI                       AS "nmEmi",
-                                                             CHQ.FONE_EMI                     AS "foneEmi",
-                                                             CHQ.NR_CNT_CHQ                   AS "nrCntChq",
-                                                             CHQ.AUT_CHQ                      AS "autChq",
-                                                             CHQ.COMP_CHQ                     AS "compChq",
-                                                             CHQ.C1_CHQ                       AS "c1Chq",
-                                                             CHQ.C2_CHQ                       AS "c2Chq",
-                                                             CHQ.SR_CHQ                       AS "c3Chq",
-                                                             CHQ.CMC7_CHQ                     AS "cmc7Chq",
-                                                             CHQ.MES_ANO_CNT_CHQ              AS "mesAnoCntChq"
-                                                   FROM      PDV_VD_CHQS CHQ
-                                                   LEFT JOIN CHQ_EMI CH_EMI 
-                                                   ON        CHQ.CPF_CGC_EMI::TEXT = CH_EMI.CGC_CPF::TEXT
-                                                   WHERE     CHQ.CD_EMP = VD.CD_EMP 
-														 AND CHQ.cd_filial =  VD.CD_FILIAL
-														 AND CHQ.cd_vd = VD.CD_VD) CHEQUE ) AS "cheque"  ,
-                           ( 
-                                  SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(CREDIARIO)))
-                                  FROM   ( 
-                                                   SELECT     
-                                                             TEF.CD_ADM_CARTAO   AS "cdAdmCartao", 
-                                                             ADM.NM_USUAL        AS "nmUsual", 
-                                                             TEF.VL_CARTAO       AS "vlrCartao",
-                                                             TEF.VL_SAQUE_CARTAO AS "vlrSaque", 
-                                                             ADM.PARC            AS "qtParc", 
-                                                             TEF.COD_REDE        AS "codRede", 
-                                                             TEF.COD_BANDEIRA    AS "codBandeira",
-                                                             TEF.COD_MODALIDADE  AS "codModalidade",
-                                                             TEF.NSU_TEF         AS "nsuTef" ,
-                                                             TEF.NR_AUTORIZACAO  AS "nrAutorizacao",
-                                                             CASE 
-                                                                       WHEN TEF.GERENCIADOR_TEF = 1 THEN 'scope'::TEXT
-                                                                       WHEN TEF.TRN_POS = 1 THEN 'pos'::TEXT
-                                                                       ELSE 'sitef'::TEXT 
-                                                             END                                   AS "tefGateway",
-                                                             COALESCE(CRED.CD_PARC, 1::NUMERIC)    AS "cdParc",
-                                                             COALESCE(CRED.DT_PARC, VD.DT_VD)      AS "dtParc",
-                                                             COALESCE(CRED.VL_PARC, TEF.VL_CARTAO) AS "vlrParc",
-                                                             CASE 
-                                                                       WHEN COALESCE(CRED.CD_PARC, 0::NUMERIC) = 0::NUMERIC THEN 1
-                                                                       ELSE 0 
-                                                             END                              AS "parcMntPdvErro",
-                                                             CRED.CGC_CPF                     AS "cgcCpf",
-                                                             CRED.NR_FATURA                   AS "nrFatura"
-                                                   FROM     
-                                                         PDV_VD_TEF TEF 
-                                                   LEFT JOIN RC_ADM_CARTAO ADM 
-														ON        TEF.CD_EMP = ADM.CD_EMP 
-														AND       TEF.CD_ADM_CARTAO = ADM.CD_ADM_CARTAO
-                                                   LEFT JOIN PDV_VD_CRED CRED 
-														ON        TEF.CD_EMP = CRED.CD_EMP 
-														AND       TEF.CD_FILIAL = CRED.CD_FILIAL 
-														AND       TEF.CD_VD = CRED.CD_VD 
-                                                   WHERE     ADM.TP_ADM = 6::   NUMERIC 
-														AND       VD.VLR_CARTAO > 0::NUMERIC 
-                                                        AND TEF.CD_EMP = VD.CD_EMP 
-														AND TEF.CD_FILIAL =  VD.CD_FILIAL
-														AND TEF.CD_VD = VD.CD_VD ) CREDIARIO ) AS "crediario" ,
-                           ( 
-                                  SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(TEF))) 
-                                  FROM   ( 
-                                                   SELECT    
+						   JOIN est_orc_glb_medico orc ON it.cd_emp = orc.cd_emp::numeric AND it.cd_filial = orc.cd_filial::numeric AND #{nrOrc} = orc.nr_orc::numeric AND it.cd_prod = orc.cd_prod::numeric and it.cd_it = orc.cd_it
+						   WHERE     IT.CD_EMP 		= #{cdEmp}
+								 AND IT.CD_FILIAL 	= #{cdFilial}
+						         AND IT.CD_VD 		= #{cdVd} ]]>
+	</select>
+	<select id="pagamentoCheque" resultMap="pagamentoCheque"> 
+		SELECT    CHQ.CD_EMP,
+				  CHQ.CD_FILIAL,
+				  CHQ.CD_VD,
+                  CHQ.CD_BC_CHQ                    ,
+                  CHQ.NR_ORD                       ,
+                  CHQ.NR_CHQ                       ,
+                  CHQ.ANO_CHQ                      ,
+                  CHQ.VL_CHQ                       ,
+                  CHQ.DT_EMI                       ,
+                  CHQ.DT_VENCTO                    ,
+                  CHQ.AG_CHQ                       ,
+                  CH_EMI.CD_EMI                    ,
+                  CHQ.CPF_CGC_EMI                  ,
+                  CHQ.NM_EMI                       ,
+                  CHQ.FONE_EMI                     ,
+                  CHQ.NR_CNT_CHQ                   ,
+                  CHQ.AUT_CHQ                      ,
+                  CHQ.COMP_CHQ                     ,
+                  CHQ.C1_CHQ                       ,
+                  CHQ.C2_CHQ                       ,
+                  CHQ.SR_CHQ                       ,
+                  CHQ.CMC7_CHQ                     ,
+                  CHQ.MES_ANO_CNT_CHQ              
+        FROM      PDV_VD_CHQS CHQ
+        LEFT JOIN CHQ_EMI CH_EMI 
+        ON        CHQ.CPF_CGC_EMI::TEXT = CH_EMI.CGC_CPF::TEXT
+        WHERE     CHQ.CD_EMP = #{cdEmp}
+		AND CHQ.cd_filial =  #{cdFilial}
+		AND CHQ.cd_vd = #{cdVd}
+	</select>
+	<select id="pagamentoCrediario" resultMap="pagamentoCrediario"> 
+		SELECT      TEF.CD_EMP , 
+                    TEF.CD_FILIAL,
+                    TEF.CD_VD,		
+					TEF.CD_ADM_CARTAO   ,
+					ADM.NM_USUAL        ,
+					TEF.VL_CARTAO       ,
+					TEF.VL_SAQUE_CARTAO ,
+					ADM.PARC            ,
+					TEF.COD_REDE        ,
+					TEF.COD_BANDEIRA    ,
+					TEF.COD_MODALIDADE  ,
+					TEF.NSU_TEF         ,
+					TEF.NR_AUTORIZACAO  ,
+					CASE 
+							  WHEN TEF.GERENCIADOR_TEF = 1 THEN 'scope'::TEXT
+							  WHEN TEF.TRN_POS = 1 THEN 'pos'::TEXT
+							  ELSE 'sitef'::TEXT 
+					END                                   AS TEF_GATEWAY,
+					COALESCE(CRED.CD_PARC, 1::NUMERIC)    AS CD_PARC,
+					COALESCE(CRED.DT_PARC, #{dtVd})       AS DT_PARC,
+					COALESCE(CRED.VL_PARC, TEF.VL_CARTAO) AS VL_PARC,
+					CASE 
+							  WHEN COALESCE(CRED.CD_PARC, 0::NUMERIC) = 0::NUMERIC THEN 1
+							  ELSE 0 
+					END                              AS PARC_MNT_PDV_ERRO,
+					CRED.CGC_CPF                     ,
+					CRED.NR_FATURA                   
+		  FROM     
+				PDV_VD_TEF TEF 
+		  LEFT JOIN RC_ADM_CARTAO ADM 
+		ON        TEF.CD_EMP = ADM.CD_EMP 
+		AND       TEF.CD_ADM_CARTAO = ADM.CD_ADM_CARTAO
+		  LEFT JOIN PDV_VD_CRED CRED 
+		ON        TEF.CD_EMP = CRED.CD_EMP 
+		AND       TEF.CD_FILIAL = CRED.CD_FILIAL 
+		AND       TEF.CD_VD = CRED.CD_VD 
+		WHERE     
+		  ADM.TP_ADM = 6::   NUMERIC 
+			AND #{vlrCartao} > 0::NUMERIC 
+			AND TEF.CD_EMP = #{cdEmp}
+			AND TEF.CD_FILIAL =  #{cdFilial}
+			AND TEF.CD_VD = #{cdVd}
+	</select>
+	<select id="pagamentoCartao" resultMap="pagamentoCartao"> 
+		<![CDATA[	
+	SELECT    TEF.CD_EMP , 
+                    TEF.CD_FILIAL,
+                    TEF.CD_VD,		
                                                              CASE 
                                                                        WHEN COALESCE(TEF.CD_ADM_CARTAO, 0::NUMERIC) > 0::NUMERIC THEN TEF.CD_ADM_CARTAO
                                                                        WHEN TEF.CD_ADM_CARTAO = 0::NUMERIC
@@ -454,7 +493,7 @@ FROM   (
                                                                                         AND    RC_ADM_CARTAO.PARC = TEF.QT_PARC:: NUMERIC
                                                                                         AND    RC_ADM_CARTAO.STS_ADM = 0 LIMIT 1)
                                                                        ELSE NULL::NUMERIC 
-                                                             END AS "cdAdmCartao", 
+                                                             END AS CD_ADM_CARTAO, 
                                                              CASE 
                                                                        WHEN COALESCE(TEF.CD_ADM_CARTAO, 0::NUMERIC) > 0::NUMERIC THEN ADM.NM_USUAL
                                                                        WHEN TEF.CD_ADM_CARTAO = 0::NUMERIC
@@ -467,20 +506,20 @@ FROM   (
                                                                                         AND    RC_ADM_CARTAO.PARC = TEF.QT_PARC:: NUMERIC
                                                                                         AND    RC_ADM_CARTAO.STS_ADM = 0 LIMIT 1)
                                                                        ELSE NULL::CHARACTER VARYING
-                                                             END                 AS "nmUsual", 
-                                                             TEF.VL_CARTAO       AS "vlrCartao",
-                                                             TEF.VL_SAQUE_CARTAO AS "vlrSaque", 
+                                                             END                 AS NM_USUAL, 
+                                                             TEF.VL_CARTAO       AS VL_CARTAO,
+                                                             TEF.VL_SAQUE_CARTAO AS VL_SAQUE_CARTAO, 
                                                              CASE 
                                                                        WHEN TEF.QT_PARC > 0 THEN TEF.QT_PARC::NUMERIC
                                                                        ELSE ADM.PARC 
-                                                             END              AS "qtParc", 
-                                                             TEF.COD_REDE     AS "codRede", 
-                                                             TEF.COD_BANDEIRA AS "codBandeira", 
+                                                             END              AS PARC, 
+                                                             TEF.COD_REDE     AS COD_REDE, 
+                                                             TEF.COD_BANDEIRA AS COD_BANDEIRA, 
                                                              CASE 
                                                                        WHEN TEF.COD_MODALIDADE::TEXT = ''::TEXT THEN '0'::CHARACTER VARYING
                                                                        ELSE TEF.COD_MODALIDADE 
-                                                             END        AS "codModalidade", 
-                                                             TEF.TP_ADM AS "tpAdministradora", 
+                                                             END        AS COD_MODALIDADE, 
+                                                             TEF.TP_ADM AS TP_ADM, 
                                                              CASE 
                                                                        WHEN COALESCE( 
                                                                                  CASE 
@@ -503,34 +542,38 @@ FROM   (
                                                                                            ELSE TEF.NSU_TEF
                                                                                  END, 0::NUMERIC) = 0::NUMERIC THEN TEF.CD_TRN_TEF
                                                                        ELSE NULL::NUMERIC 
-                                                             END AS "nrTransacao", 
+                                                             END AS "NR_TRANSACAO", 
                                                              CASE 
                                                                        WHEN COALESCE(TEF.NR_AUTORIZACAO, '0'::CHARACTER VARYING)::TEXT > '0'::TEXT
                                                                        AND       TEF.NR_AUTORIZACAO::TEXT <> '1'::TEXT THEN TEF.NR_AUTORIZACAO
                                                                        WHEN TEF.NR_AUTORIZACAO::TEXT = '1'::TEXT THEN TEF.CD_TRN_TEF::CHARACTER VARYING
                                                                        WHEN TEF.NR_AUTORIZACAO::TEXT = '0'::TEXT THEN TEF.CD_TRN_TEF::CHARACTER VARYING
                                                                        ELSE NULL::CHARACTER VARYING
-                                                             END                                                     AS "nrAutorizacao",
-                                                             TEF.DS_BANDEIRA                                         AS "bandeira",
-                                                             COALESCE(TEF.NR_ESTABELECIMENTO, ''::CHARACTER VARYING) AS "nrEstabelecimento",
-                                                             COALESCE(TEF.NR_COMPROVANTE, ''::CHARACTER VARYING)     AS "nrComprovante",
+                                                             END                                                     AS NR_AUTORIZACAO,
+                                                             TEF.DS_BANDEIRA                                         AS BANDEIRA,
+                                                             COALESCE(TEF.NR_ESTABELECIMENTO, ''::CHARACTER VARYING) AS NR_ESTABELECIMENTO,
+                                                             COALESCE(TEF.NR_COMPROVANTE, ''::CHARACTER VARYING)     AS NR_COMPROVANTE,
                                                              CASE 
                                                                        WHEN TEF.GERENCIADOR_TEF = 1 THEN 'SCOPE'::CHARACTER VARYING
                                                                        WHEN TEF.TRN_POS = 1 THEN 'POS'::CHARACTER VARYING
                                                                        ELSE 'SITEF'::CHARACTER VARYING
-                                                             END                              AS "tefGateway"
+                                                             END                              AS TEF_GATEWAY
                                                    FROM      PDV_VD_TEF TEF
 												   LEFT JOIN RC_ADM_CARTAO ADM 
 														ON        TEF.CD_EMP = ADM.CD_EMP 
 														AND       TEF.CD_ADM_CARTAO = ADM.CD_ADM_CARTAO
-                                                   WHERE    TEF.CD_EMP 		= VD.CD_EMP 
-														AND TEF.CD_FILIAL 	=  VD.CD_FILIAL
-														AND TEF.CD_VD 		= VD.CD_VD ) TEF ) AS "cartao" ,
-                           ( 
-                                  SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(PBM)))
-                                  FROM   ( 
-                                                SELECT  
-                                                       VD.CD_CONV   AS "cdConv", 
+                                                   WHERE    TEF.CD_EMP 		= #{cdEmp}
+														AND TEF.CD_FILIAL 	= #{cdFilial}
+														AND TEF.CD_VD 		= #{cdVd}
+														]]>
+	</select>
+	<select id="pagamentoPbm" resultMap="pagamentoPbm"> 
+		<![CDATA[
+	 SELECT  
+             VD.CD_EMP , 
+                    VD.CD_FILIAL,
+                    VD.CD_VD,                       
+					VD.CD_CONV   AS CD_CONV, 
                                                        CASE 
                                                               WHEN VD.TIPO_PBM::NUMERIC > 0::NUMERIC THEN
                                                                      CASE 
@@ -543,9 +586,9 @@ FROM   (
                                                                             ELSE VD.CD_CLI_PBM 
                                                                      END 
                                                               ELSE VD.CD_CLI 
-                                                       END                     AS "cdCliConv", 
-                                                       NULL::CHARACTER VARYING AS "cgcConv", 
-                                                       VD.TIPO_PBM             AS "tipoPbm", 
+                                                       END                     AS CD_CLI_CONV, 
+                                                       NULL::CHARACTER VARYING AS CGC, 
+                                                       VD.TIPO_PBM             AS TIPO_PBM, 
                                                        CASE VD.TIPO_PBM 
                                                               WHEN 1 THEN 'prevsaude'::TEXT 
                                                               WHEN 2 THEN 'vida-link'::TEXT 
@@ -554,760 +597,126 @@ FROM   (
                                                               WHEN 5 THEN 'farmacia popular'::TEXT
                                                               WHEN 6 THEN 'funcional card'::TEXT
                                                               ELSE 'outros'::TEXT 
-                                                       END                                                AS "nmConv",
-                                                       VD.VLR_CONV_PBM                                    AS "vlrConv",
-                                                       COALESCE(IT.NR_AUTORIZACAO_PBM, IT.NR_ORC_VD_LINK) AS "cdAutorizacao",
-                                                       IT.CD_IT                                           AS "cdIt",
-                                                       IT.CD_PROD                                         AS "cdProd",
-                                                       IT.VLR_AVISTA_PBM                                  AS "vlrProdCli",
+                                                       END                                                AS NM_CONV,
+                                                       VD.VLR_CONV_PBM                                    AS VLR_CONV_PBM,
+                                                       COALESCE(IT.NR_AUTORIZACAO_PBM, IT.NR_ORC_VD_LINK) AS CD_AUTORIZACAO,
+                                                       IT.CD_IT                                           AS CD_IT,
+                                                       IT.CD_PROD                                         AS CD_PROD,
+                                                       IT.VLR_AVISTA_PBM                                  AS VLR_AVISTA_PBM,
                                                        COALESCE( 
                                                        CASE 
                                                               WHEN IT.VLR_REEMBOL_PBM = 0::NUMERIC THEN NULL::NUMERIC
                                                               ELSE IT.VLR_REEMBOL_PBM 
-                                                       END, 
+                                                       END , 
                                                        CASE 
                                                               WHEN IT.VLR_REEMBOL = 0::NUMERIC THEN 0::NUMERIC
                                                               ELSE IT.VLR_REEMBOL 
-                                                       END)		    AS "vlrProdReembolso",                       
-                                                       COALESCE(IT.VLR_CONV_PBM   , 0::NUMERIC)               AS "vlrProdConv"
-													   FROM      PDV_VD_IT IT 
-															WHERE     IT.CD_EMP = VD.CD_EMP 
-															AND       IT.CD_FILIAL = VD.CD_FILIAL 
-															AND       IT.CD_VD = VD.CD_VD
-															AND 	  ( LENGTH(IT.NR_AUTORIZACAO_PBM) > 1 OR LENGTH(IT.NR_ORC_VD_LINK)> 1)) PBM ) AS "pbm" , 
-                           ( 
-                                  SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(VALECP)))
-                                  FROM   ( 
-                                                SELECT 
-                                                       VD.VLR_TICKETS                              AS "vlrTickets",
-                                                       PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_CTR_VALE_CP AS "cdCtrValeCp",
-                                                       PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.VLR_VALE_CP    AS "vlrValeCp"
-                                                FROM PDV_VD_RC_CLI_FIDELI_VALE_COMPRA 
-                                                WHERE  VD.CD_EMP = PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_EMP
+                                                       END)		    AS VLR_REEMBOL,                       
+                                                       COALESCE(IT.VLR_CONV_PBM   , 0::NUMERIC)               AS VLR_PROD_CONV
+													   FROM   PDV_VD VD 
+													   INNER JOIN    PDV_VD_IT IT ON
+													   VD.CD_EMP = IT.CD_EMP
+													   AND       IT.CD_FILIAL = VD.CD_FILIAL 
+														AND       IT.CD_VD = VD.CD_VD
+														WHERE     #{cdEmp} = VD.CD_EMP 
+															AND   #{cdFilial} = VD.CD_FILIAL 
+															AND   #{cdVd} = VD.CD_VD
+															AND 	  ( LENGTH(IT.NR_AUTORIZACAO_PBM) > 1 OR LENGTH(IT.NR_ORC_VD_LINK)> 1 )
+															]]>
+	</select>
+	<select id="pagamentoNcc" resultMap="pagamentoNcc"> 
+	SELECT  NCC.CD_EMP ,
+			NCC.CD_FILIAL ,
+			NCC.CD_VD,
+            NCC.CD_CTR_NCC  ,
+			NCC.VLR_NCC 	
+    FROM 
+		PDV_VD_NCC NCC 
+	 WHERE
+		#{cdEmp} = NCC.CD_EMP 
+		AND #{cdFilial} = NCC.CD_FILIAL 
+		AND #{cdVd} = NCC.CD_VD LIMIT 1	
+	</select>
+	<select id="pagamentoValeCp" resultMap="pagamentoValeCp"> 
+	SELECT VD.CD_EMP, VD.CD_FILIAL, VD.CD_VD,
+                                                       VD.VLR_TICKETS                                  ,
+                                                       PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_CTR_VALE_CP ,
+                                                       PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.VLR_VALE_CP    
+                                                FROM PDV_VD VD INNER JOIN PDV_VD_RC_CLI_FIDELI_VALE_COMPRA ON
+                                                VD.CD_EMP = PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_EMP
                                                 AND    VD.CD_FILIAL = PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_FILIAL
-                                                AND    VD.CD_VD = PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_VD LIMIT 1) VALECP ) AS "valeCompra" ,
-			( 
-                                  SELECT ROW_TO_JSON(NCC)
-                                  FROM   ( 
-                                                SELECT 
-                                                       NCC.CD_CTR_NCC   AS "cdCtrNcc",
-						       NCC.VLR_NCC 	AS "vlrNcc"
-                                                FROM PDV_VD_NCC NCC 
-							 WHERE     VD.CD_EMP = NCC.CD_EMP 
-							 AND       VD.CD_FILIAL = NCC.CD_FILIAL 
-							 AND       VD.CD_VD = NCC.CD_VD LIMIT 1) NCC ) AS "ncc" 
-                                                ) PAGAMENTO ) as "pagamento" 
-													   
-                 FROM      PDV_VD VD 
-                 LEFT JOIN PDV_VD_EST_NF_SAI NF_SAI 
-                 ON        VD.CD_EMP = NF_SAI.CD_EMP 
-                 AND       VD.CD_FILIAL = NF_SAI.CD_FILIAL 
-                 AND       VD.CD_VD = NF_SAI.CD_VD 
-
-                 LEFT JOIN PDV_VD_GLB_PROCD_OUTR_LIB AUDIT 
-                 ON        VD.CD_EMP = AUDIT.CD_EMP 
-                 AND       VD.CD_FILIAL = AUDIT.CD_FILIAL 
-                 AND       VD.CD_VD = AUDIT.CD_VD 
-                 AND       ( 
-                                     AUDIT.CD_OUTR_PROCD = ANY (ARRAY[90::numeric, 91::numeric, 93::numeric, 94::numeric]))
-									 
-				INNER JOIN PRC_FILIAL FILIAL ON
-					VD.CD_EMP = FILIAL.CD_EMP
-					AND VD.CD_FILIAL = FILIAL.CD_FILIAL
-                 WHERE VD.FLAG_CONSOLIDADO = 0
-                 AND VD.ST_VD >= 0  LIMIT 1) ROW;
-
-]]>
-  </select>
-  
-  <select id="selectCupomErro" resultMap="CupomJsonResult">
-<![CDATA[
-
-SELECT ROW_TO_JSON(ROW) , "cdEmp", "cdFilial", "cdVd"
-FROM   ( 
-                 SELECT    FILIAL.CGC					    AS "cnpjFilial",
-						   VD.CD_EMP                        AS "cdEmp", 
-                           VD.CD_FILIAL                     AS "cdFilial", 
-                           VD.CD_CX                         AS "cdCx", 
-                           VD.DT_VD                         AS "dtVd", 
-                           COALESCE(VD.DT_CAD, VD.DT_VD)    AS "dtCad", 
-                           COALESCE(VD.HR_VD, VD.DT_CAD)    AS "hrVd",  
-                           VD.NR_PED_TELEVD                 AS "nrPedTelevd", 
-                           VD.ORIG_ORC                      AS "origemOrc", 
-                           VD.CD_VD                         AS "cdVd", 
-                           VD.NR_ECF                        AS "nrEcf", 
-                           VD.ST_VD                         AS "stVd", 
-                           VD.CONT_CUPOM_FISC               AS "contadorCupomFiscal", 
-                           VD.CD_MOV                        AS "codigoMovimento", 
-                           VD.CD_CLI                        AS "cdCli", 
-                           VD.CGC_CPF                       AS "cgcCli", 
-                           VD.NR_CARTAO_MARKA               AS "numeroCartao",                           
-                           COALESCE(VD.QTD_DIAS_PRORROG, 0) AS "diasProrrogConv", 
-                           VD.VLR_LIQ_VD                    AS "vlrLiqVd", 
-                           VD.VLR_TOT_PROD                  AS "vlrTotProd", 
-                           VD.VLR_VD                        AS "vlrVd", 
-                           VD.VLR_DESC                      AS "vlrDesc", 
-                           VD.VLR_DESC_ITENS                AS "vlrDescItens", 
-						   VD.VLR_DINH                      AS "vlrDinh", 
-                           VD.VLR_TROCO                     AS "vlrTroco", 
-                           CASE 
-                                     WHEN VD.TIPO_PBM > 0 
-                                     AND       COALESCE(VD.VLR_CONV_PBM, 0::NUMERIC) = 0::NUMERIC
-                                     AND       VD.VLR_CONV = 0::NUMERIC THEN 0::NUMERIC 
-                                     ELSE VD.VLR_CONV 
-                           END                                                            AS "vlrConv",
-						   VD.CD_CONV													  AS "cdConv",
-                           VD.QT_PARC_CONV                  							  AS "qtParcConv",
-                           VD.VLR_DUP                                                     AS "vlrDup",
-                           VD.VL_CHQS_A_VISTA                                             AS "valorChequeAVista",
-                           VD.VL_CHQS_A_PRZ                                               AS "valorChequeAPrazo",                           
-                           VD.NR_CEL_RECARGA                                              AS "nrCelRecarga",
-                           VD.VLR_RECARGA_CEL                                             AS "vlrRecargaCel",
-                           VD.NM_OPER_CEL                                                 AS "nmOperCel",
-                           VD.NM_COMPRADOR                                                AS "nmComprador",
-                           VD.DADOS_ADICIONAIS                                            AS "dadosAdicionais",
-                           VD.NR_SERIE_IMP                                                AS "nrSerieEcf",
-                           VD.VS_PDV                                                      AS "versaoPdv",
-                           VD.VS_PDV_RC                                                   AS "versaoPdvRc",
-                           VD.CD_USU                                                      AS "cdOperador",
-                           VD.CD_USU_CANCEL                                               AS "cdUsuCancel",
-                           VD.CD_MT_CANCEL                                                AS "codigoMotivoCancelamento",
-                           COALESCE(VD.ST_CANC_PAF, 0)                                    AS "stCancPaf",
-                           COALESCE(AUDIT.CD_OUTR_PROCD, 0::NUMERIC)                      AS "cdOutroProcedimento",
-                           COALESCE(AUDIT.CD_USU, 0::       NUMERIC)                      AS "cdUsuProcedimento",
-                           COALESCE(VD.CD_CLI_PBM      , 0::NUMERIC)                      AS "cdCliPbm",
-                           COALESCE(VD.REG_ALTERADO, 0)                                   AS "registroalterado",
-                           VD.VD_TROCA_FIDEL                                              AS "isDebitarPontos",
-                           COALESCE(VD.VLR_IMPOSTO, 0::   NUMERIC)                        AS "valorIbpt",
-                           COALESCE(VD.TX_MED_IMPOSTO, 0::NUMERIC)                        AS "percentualIbpt",
-                           VD.VLR_CONV_PBM                                                AS "vlrConvPbm",
-                           VD.FLAG_NFCE                                                   AS "flagNfce",
-                           COALESCE(NF_SAI.CD_NF, 0::   NUMERIC)                          AS "cdNfSai",
-                           COALESCE(VD.NR_CARTAO_MARKA, ''::CHARACTER VARYING)            AS "nrCartaoMarka",
-                           COALESCE(VD.QTDE_PONTOS_FIDEL_EXTERNO, 0::NUMERIC)             AS "qtdePontosFidelExterno",
-                           COALESCE(VD.NR_TEL_CUPOM, ''::CHARACTER VARYING)               AS "nrTelCupom",
-						   COALESCE(VD.CHV_NFCE ,''::CHARACTER VARYING)                   AS "chvNfce",
-                           (SELECT ROW_TO_JSON(NFCE) FROM   (SELECT CD_NF AS "cdNf" ,
-                                                                    CD_NF_SERIE AS "cdNfSerie",
-                                                                    CHV_NFCE AS "chvNfce",
-                                                                    AUT_NFCE as "autNfce",
-                                                                    cast(XML_NFCE as xml) as "xmlNfce",
-                                                                    DS_MOTIVO as "dsMotivo",
-																	COALESCE(STS_PEND, 0::   NUMERIC) as "stsValid"
-                                                              FROM EST_NFCE_ENV WHERE
-                                                              CD_EMP = VD.CD_EMP
-                                                              AND CD_FILIAL = VD.CD_FILIAL
-                                                              AND CD_NF = VD.NR_ECF
-                                                              AND CD_NF_SERIE = VD.CD_NF_SERIE)  NFCE ) as "nfce",
-                           (SELECT ROW_TO_JSON(NFCECANCEL) FROM   (SELECT 
-                                                                        cast(NFCE_CANCEL.XML_CANC as xml)             AS "xmlCancel",
-                                                                        COALESCE(NFCE_CANCEL.TP_CANC, 0)                                        AS "tpCanc",
-                                                                        COALESCE(NFCE_CANCEL.CHV_NFCE, ''::CHARACTER VARYING)                   AS "chvNfceCancel",
-                                                                        NFCE_CANCEL.DT_EMIS                                                     AS "dtEmisCancel",
-                                                                        COALESCE(NFCE_CANCEL.AUT_CANC, ''::CHARACTER VARYING)                   AS "autCanc",
-                                                                        COALESCE(NFCE_CANCEL.DS_MOTIVO, ''::CHARACTER VARYING)                  AS "dsMotivoCancel"
-                                                                    FROM EST_NFCE_CANC NFCE_CANCEL WHERE
-                                                              NFCE_CANCEL.CD_EMP = VD.CD_EMP
-                                                              AND NFCE_CANCEL.CD_FILIAL = VD.CD_FILIAL
-                                                              AND NFCE_CANCEL.CD_VD = VD.CD_VD)NFCECANCEL ) as "nfceCancel",    
-
-                                 ( SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(ITEN))) 
-                                  FROM   ( 
-                                                   SELECT    IT.CD_IT                          AS "cdIt",
-															 IT.CD_BARRAS					   AS "cdBarra",
-                                                             IT.CD_PROD                        AS "cdProd",
-                                                             IT.QT_IT                          AS "qtIt",
-                                                             IT.VLR_IT                         AS "vlrIt",
-                                                             IT.VLR_LIQ_IT                     AS "totIt",
-                                                             IT.ST_IT                          AS "stIt",
-                                                             IT.TIPO_DESCONTO                  AS "tipoDesconto",
-                                                             COALESCE(IT.TX_DESC, 0::         NUMERIC) AS "txDesc",
-															 COALESCE(IT.PERC_DESC_VERBA, 0::  NUMERIC) AS "percDescVerba",
-                                                             COALESCE(IT.VLR_DESC_VERBA, 0::  NUMERIC) AS "vlrDescVerba",
-                                                             COALESCE(IT.VLR_DESC_TOT_RAT, 0::NUMERIC) AS "vlrDescRateio",
-                                                             IT.CD_TRIB_FC                             AS "cdTribFc",
-                                                             IT.TX_ICMS_IT                             AS "txIcmsIt",
-                                                             IT.TX_RED_IT                              AS "txRedIt",
-                                                             IT.CD_VEND                                AS "cdVend",
-                                                             IT.CD_VEND_VERBA                          AS "cdVendVerba",
-                                                             IT.CD_USU_CANCEL                          AS "cdUsuCancel",
-                                                             IT.QTDE_PONTO_FIDEL                       AS "qtPontosFidel",
-                                                             IT.CD_GRP_COMIS_PDV                       AS "cdGrupoComissao",
-                                                             IT.ST_IT <> 1::NUMERIC                    AS "isCancelado",
-                                                             COALESCE(IT.REG_ALTERADO, 0) = 1          AS "registroalteradoitem",
-                                                             COALESCE(IT.TIPO_IMPOSTO, 0::NUMERIC)     AS "tipoImposto",
-                                                             IT.VLR_IMPOSTO_IT                         AS "valorIbptItem",
-                                                             IT.TX_IMPOSTO_IT                          AS "percentualIbptItem",
-                                                             IT.NR_PROTOCOLO_MANIPULADO                AS "nrProtocoloManipulado",
-                                                             COALESCE(IT.PERC_DESC_DIFF, 0::NUMERIC)   AS "percDescDiff",
-                                                             COALESCE(IT.PERC_DESC_MAX, 0:: NUMERIC)   AS "percDescMax",
-                                                             COALESCE(IT.PERC_DESC_MIN, 0:: NUMERIC)   AS "percDescMin",
-                                                             COALESCE(IT.CD_TBL_DESC, 0::   NUMERIC)   AS "cdTblDesc",
-                                                             COALESCE(IT.TP_NIVEL, 0::      NUMERIC)   AS "tpNivel",
-															 COALESCE(it.tp_tbl_desc::numeric, 0::numeric) AS "tpTblDesc",
-                                                             ( SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(LOTE))) 
-																FROM   ( 
-																	SELECT  CD_LOTE AS "cdLote"
-																		,NR_LOTE AS "nrLote"
-																		,QTDE_LOTE AS "qtdeLote" 
-																	FROM PDV_VD_IT_LOTE LOTE
-																	WHERE LOTE.CD_EMP  = IT.CD_EMP
-																	AND LOTE.CD_FILIAL = IT.CD_FILIAL
-																	AND LOTE.CD_VD     = IT.CD_VD
-																	AND LOTE.CD_IT     = IT.CD_IT
-																) LOTE ) AS "lote"
-                                                   FROM      PDV_VD_IT IT 
-                                                   WHERE     IT.CD_EMP = VD.CD_EMP 
-                                                   AND       IT.CD_FILIAL = VD.CD_FILIAL 
-                                                   AND       IT.CD_VD = VD.CD_VD ) ITEN ) AS "itens",
-				 
-                                   (SELECT ROW_TO_JSON(ORC) 
-                                  FROM   (SELECT    
-						   orc.cd_emp               AS "cdEmp", 
-						   orc.cd_filial            AS "cdFilial", 
-                           orc.cd_orc               AS "cdOrc", 
-                           orc.vd_troca_fidel       AS "vdTrocaFidel", 
-                           orc.cd_cli               AS "cdCli", 
-                           orc.cd_conv              AS "cdConv", 
-                           orc.qt_parc_conv         AS "qtParcConv", 
-                           orc.nr_ped_televd        AS "nrPedTelevd", 
-                           orc.tipo_prazo_pgto      AS "tipoPrazoPgto", 
-                           orc.nr_cartao_pbm        AS "nrCartaoPbm", 
-                           orc.cd_projeto_pbm       AS "cdProjetoPbm", 
-                           orc.tp_perc_rec_conv     AS "tpPercRecConv", 
-                           orc.perc_rec_conv        AS "percRecConv", 
-                           orc.dados_adicionais     AS "dadosAdicionais", 
-                           orc.nm_comprador         AS "nmComprador", 
-                           orc.qtd_dias_prorrog     AS "qtdDiasProrrog" , 
-                           orc.tipo_pbm             AS "tipoPbm", 
-                           orc.cd_cli_dep           AS "cdCliDep", 
-						   orc.vlr_desc				AS "vlrDesc",
-						   orc.vlr_desc_geral		AS "vlrDescGeral",
-                           orc.vlr_prod             AS "vlrProd", 
-                           orc.tp_orc_entg          AS "tpOrcEntg", 
-                           orc.sts_orc              AS "stsOrc", 
-                           orc.nm_cli               AS "nmCli", 
-                           orc.nr_autr_pbm          AS "nrAutrPbm", 
-                           orc.cpf_cli_pbm          AS "cpfCliPbm", 
-                           orc.dt_emi               AS "dtEmi", 
-                           orc.hr_emi               AS "hrEmi", 
-                           orc.vlr_tot              AS "vlrTot", 
-                           orc.nr_cartao_fidelidade AS "nrCartaoCli", 
-                           orc.fone_cli             AS "foneCli", 
-                           orc.tp_orc               AS "tpOrc", 
-                           orc.cd_frm_pgto          AS "cdFrmPgto", 
-                           orc.orig_orc             AS "origOrc", 
-                           orc.obs                  AS "obs", 
-						   COALESCE(orc.versao, 'SN') AS versao,
-                           CASE 
-                                     WHEN COALESCE(est_cancel.cd_mt_cancel_orc, 0) > 0 THEN TRUE
-                                     ELSE FALSE 
-                           END                                      AS "orcamentoCancel", 
-                           COALESCE(est_cancel.cd_mt_cancel_orc, 0) AS "cdMtCancelOrc", 
-                           est_cancel.desc_mt_cancel                AS "descMtCancel",
-						    (SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(ORCIT))) 
-							FROM   (SELECT 	    est_orc_cpl.cd_prod as "cdProd",
-									    est_orc_cpl.cd_barra as "cdBarra",
-									    est_orc_cpl.qt as "qt", 
-									    est_orc_cpl.vlr_it as "vlrIt",
-										est_orc_cpl.vlr_tot_it as "vlrTotIt",
-										est_orc_cpl.vlr_desc as "vlrDesc",
-									    est_orc_cpl.perc_desc as "percDesc",
-									    est_orc_cpl.cd_medico_rec as "cdMedicoRec",
-									    est_orc_cpl.cd_vend as "cdVend",
-										est_orc_cpl.cd_vend_lib as "cdVendLib",
-										est_orc_cpl.pr_tab as "prTab",
-									    est_orc_cpl.nr_autr_pbm_item as "nrAutrPbmItem",
-									    est_orc_cpl.cd_vend_verba as "cdVendVerba",
-									    est_orc_cpl.libera_vd_conv as "liberaVdConv" , 
-									    est_orc_cpl.cd_it as "cdIt",
-									    est_orc_cpl.perc_desc_min as "percDescMin",
-									    est_orc_cpl.perc_desc_max as "percDescMax",
-									    est_orc_cpl.cd_tbl_desc as "cdTblDesc",
-										est_orc_cpl.oferta as "oferta",
-										est_orc_cpl.perc_desc_cad as "percDescCad",
-										est_orc_cpl.perc_desc_fix as "percDescFix",
-										est_orc_cpl.vlr_desc_fix  as "vlrDescFix",
-										est_orc_cpl.tipo_desconto as "tipoDesconto",
-										est_orc_cpl.vlr_economia  as "vlrEconomia",
-										est_orc_cpl.venda_dependente        AS "vendaDependente",
-                                         est_orc_cpl.perc_desconto_pos_pbm   AS "percDescontoPosPbm",
-                                         est_orc_cpl.nr_protocolo_manipulado AS "nrProtocoloManipulado",
-                                         est_orc_cpl.tipo_desconto           AS "tpDesc",
-                                         est_orc_cpl.qtde_ponto_fidel        AS "qtPontosFidel",
-                                         est_orc_cpl.vlr_desc_verba          AS "vlrDescVerba",
-                                         est_orc_cpl.perc_desc_verba         AS "percDescVerba",
-                                         est_orc_cpl.cd_vend_verba           AS "cdVendVerba",
-                                         est_orc_cpl.vlr_custo_semaforo      AS "vlrCustoSemaforo",
-                                         est_orc_cpl.qt_est                  AS "qtEst",
-                                         est_orc_cpl.cd_grp                  AS "cdGrupoComissao",
-                                                                               (                             SELECT row_to_json(CONCORRENTE)
-                                                                   FROM   (  SELECT desconto_concorrente.cd_prod                AS "cdProd",
-                                                                                    desconto_concorrente.nr_orc                 AS "nrOrc",
-                                                                                    desconto_concorrente.cd_vend                AS "cdVend",
-                                                                                    desconto_concorrente.cd_concor              AS "cdConcorrente",
-                                                                                    desconto_concorrente.vlr_concor             AS "vlrConcorrente",
-                                                                                    desconto_concorrente.perc_desc              AS "percDesc",
-                                                                                    desconto_concorrente.cd_it                     AS "cdIt"
-                                                                                    from est_orc_cpl_concor desconto_concorrente
-                                                                                    WHERE     est_orc_cpl.cd_emp = desconto_concorrente.cd_emp::      NUMERIC
-                                                                                    AND       est_orc_cpl.cd_filial = desconto_concorrente.cd_filial::NUMERIC
-                                                                                    AND       est_orc_cpl.cd_orc = desconto_concorrente.nr_orc::      NUMERIC
-                                                                                    AND       est_orc_cpl.cd_it = desconto_concorrente.cd_it::        NUMERIC
-                                                                                    AND       est_orc_cpl.cd_prod = desconto_concorrente.cd_prod::    NUMERIC) CONCORRENTE ) AS "concorrente",
-                                         ( 
-                                                SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(LOTE))) 
-                                                FROM   ( 
-                                                              SELECT lote.cd_lote   AS "cdLote",
-                                                                     lote.qtde_lote AS "qtdeLote"
-                                                              FROM   est_orc_cpl_lote lote
-                                                              WHERE  est_orc_cpl.cd_emp = lote.cd_emp::      NUMERIC
-                                                              AND    est_orc_cpl.cd_filial = lote.cd_filial::NUMERIC
-                                                              AND    est_orc_cpl.cd_orc = lote.cd_orc::      NUMERIC
-                                                              AND    est_orc_cpl.cd_prod = lote.cd_prod::    NUMERIC
-                                                              AND    est_orc_cpl.cd_it = lote.cd_it::        NUMERIC ) LOTE ) AS "lote"
-                                         FROM      est_orc_cpl 
-                                         left join est_orc_cpl_concor desconto_concorrente
-                                         ON        est_orc_cpl.cd_emp = desconto_concorrente.cd_emp::      NUMERIC
-                                         AND       est_orc_cpl.cd_filial = desconto_concorrente.cd_filial::NUMERIC
-                                         AND       est_orc_cpl.cd_orc = desconto_concorrente.nr_orc::      NUMERIC
-                                         AND       est_orc_cpl.cd_it = desconto_concorrente.cd_it::        NUMERIC
-                                         AND       est_orc_cpl.cd_prod = desconto_concorrente.cd_prod::    NUMERIC
-										WHERE     est_orc_cpl.cd_emp = vd.cd_emp
-										AND       est_orc_cpl.CD_FILIAL = vd.cd_filial
-										AND       est_orc_cpl.CD_ORC = vd.nr_orc ) ORCIT ) AS "itens",
-										
-                           ( 
-                                  SELECT array_to_json(array_agg(row_to_json(ORCREC))) 
-                                  FROM   ( 
-                                                SELECT receita.cd_prod                   AS "cdProd",
-                                                       receita.cd_it                     AS "cdIt",
-													   item.cd_vend						 AS "cdVend",
-                                                       receita.nm_comprador              AS "nmCompradorRec",
-                                                       receita.idade                     AS "idadeRec",
-                                                       receita.nm_paciente               AS "nmPacienteRec",
-                                                       receita.receita_tipo              AS "receitaTipoRec",
-                                                       coalesce(receita.cid, 0)          AS "cidRec",
-                                                       receita.uf                        AS "ufRec",
-                                                       receita.nr_doc_cli                AS "nrDocCliRec",
-                                                       receita.tipo_documento            AS "tipoDocumentoRec",
-                                                       coalesce(receita.cd_medico_rec,0) AS "cdMedicoRec",
-                                                       receita.qt_prod                   AS "qtProd",
-                                                       receita.dt_receita                AS "dtReceita",
-                                                       receita.tp_capt_receita           AS "tipoCaptacaoReceita"
-                                                FROM   est_orc_glb_medico receita 
-														inner join est_orc_cpl item on (receita.cd_emp = item.cd_emp and
-																						receita.cd_filial = item.cd_filial and
-																						receita.nr_orc = item.cd_orc and
-																						receita.cd_it = item.cd_it)
-                                                WHERE  receita.cd_emp = orc.cd_emp 
-                                                AND    receita.cd_filial = orc.cd_filial 
-                                                AND    receita.nr_orc = orc.cd_orc ) ORCREC ) AS "receita"
-							FROM      est_orc orc 
-							left join est_orc_mt_cancel est_cancel 
-							ON        est_cancel.cd_emp::   NUMERIC = orc.cd_emp::NUMERIC 
-							AND       est_cancel.cd_filial::NUMERIC = orc.cd_filial::NUMERIC 
-							AND       est_cancel.cd_orc::   NUMERIC = orc.cd_orc::NUMERIC 
-							    	 WHERE     orc.cd_emp = vd.cd_emp
-										AND       orc.CD_FILIAL = vd.cd_filial
-										AND       orc.CD_ORC = vd.nr_orc ) ORC ) AS "orcamento",
-
-                           ( 
-                                  SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(REC))) 
-                                  FROM   (  SELECT  pdv_vd_it.cd_it as "cdIt",
-						    pdv_vd_it.cd_medico_rec + vdit.cd_medico_rec::numeric AS "prescritorId",
-						    pdv_vd_it.nr_receita + vdit.nr_receita AS "receitaNumero",
-							CASE
-							    WHEN date_part('day'::text, min(pdv_vd_it.dt_receita)) > 0::double precision THEN pdv_vd_it.dt_receita
-							    WHEN date_part('day'::text, min(vdit.dt_receita)) > 0::double precision THEN vdit.dt_receita
-							    ELSE 'now'::text::date::timestamp without time zone
-							END AS "receitaData",
-							CASE
-							    WHEN pdv_vd_it.nm_comprador_receita::text <> ''::text THEN pdv_vd_it.nm_comprador_receita
-							    WHEN vdit.nm_comprador::text <> ''::text THEN vdit.nm_comprador
-							    ELSE ''::character varying
-							END AS "compradorNome",
-							CASE
-							    WHEN pdv_vd_it.nr_doc_cli_receita::text <> ''::text THEN pdv_vd_it.nr_doc_cli_receita
-							    WHEN vdit.nr_doc_cli::text <> ''::text THEN vdit.nr_doc_cli
-							    ELSE ''::character varying
-							END AS "compradorDocNumero",
-						    pdv_vd_it.tp_doc_cli_receita + vdit.tipo_documento AS "compradorDocTipo",
-						    COALESCE(vdit.tp_doc_exp, 0) AS "compradorDocExpedidor",
-							CASE
-							    WHEN pdv_vd_it.uf_receita::text <> ''::text THEN pdv_vd_it.uf_receita
-							    WHEN vdit.uf::text <> ''::text THEN vdit.uf
-							    ELSE ''::character varying
-							END AS "compradorDocUf",
-						    COALESCE(vdit.cid, 0) AS "pacienteCid",
-						    pdv_vd_it.idade_receita + vdit.idade AS "pacienteIdade",
-							CASE
-							    WHEN pdv_vd_it.nm_paciente_receita::text <> ''::text THEN pdv_vd_it.nm_paciente_receita
-							    WHEN vdit.nm_paciente::text <> ''::text THEN vdit.nm_paciente
-							    ELSE ''::character varying
-							END AS "pacienteNome",
-						    COALESCE(vdit.sexo, 0) AS "pacienteSexo",
-						    0 AS "pacienteTipoIdade"
-						   FROM pdv_vd_it
-						     INNER JOIN pdv_vd_it_rec vdit ON pdv_vd_it.cd_emp = vdit.cd_emp AND pdv_vd_it.cd_filial = vdit.cd_filial AND pdv_vd_it.cd_prod = vdit.cd_prod AND pdv_vd_it.cd_vd = vdit.cd_vd
-						   WHERE     pdv_vd_it.CD_EMP 		= vd.cd_emp 
-								 AND pdv_vd_it.CD_FILIAL 	= vd.cd_filial
-						         AND pdv_vd_it.CD_VD 		= vd.cd_vd
-						  GROUP BY pdv_vd_it.cd_emp, pdv_vd_it.cd_filial, pdv_vd_it.cd_vd, pdv_vd_it.cd_it, vdit.cd_medico_rec, vdit.nr_receita, vdit.dt_receita, vdit.nm_comprador, vdit.nr_doc_cli, vdit.tipo_documento, vdit.tp_doc_exp, vdit.uf, vdit.cid, vdit.idade, vdit.nm_paciente, vdit.sexo
-						  UNION
-						 SELECT 
-							it.cd_it,
-							COALESCE(orc.cd_medico_rec,0) AS prescritor_id,
-							COALESCE(orc.nr_receita,0) AS receita_numero,
-							COALESCE(orc.dt_receita,current_date) AS receita_data,
-							COALESCE(orc.nm_comprador,NULL::character varying) AS comprador_nome,
-							COALESCE(orc.nr_doc_cli,NULL::character varying) AS comprador_doc_numero,
-							COALESCE(orc.tipo_documento,NULL::integer) AS comprador_doc_tipo,
-							COALESCE(orc.tp_doc_exp,NULL::integer) AS comprador_doc_expedidor,
-							COALESCE(orc.uf,NULL::character varying) AS comprador_doc_uf,
-							NULL::integer AS paciente_cid,
-							COALESCE(orc.idade,NULL::integer) AS paciente_idade,
-							COALESCE(orc.nm_paciente,NULL::character varying) AS paciente_nome,
-							COALESCE(orc.sexo,NULL::integer) AS paciente_sexo,
-							0 AS paciente_tipo_idade
-						   FROM PDV_VD_IT IT
-						   JOIN est_orc_glb_medico orc ON it.cd_emp = orc.cd_emp::numeric AND it.cd_filial = orc.cd_filial::numeric AND vd.nr_orc = orc.nr_orc::numeric AND it.cd_prod = orc.cd_prod::numeric and it.cd_it= orc.cd_it::numeric and it.cd_it= orc.cd_it::numeric 
-						   WHERE     IT.CD_EMP 		= vd.cd_emp 
-								 AND IT.CD_FILIAL 	= vd.cd_filial
-						         AND IT.CD_VD 		= vd.cd_vd
-						 ) REC ) AS "receita" ,				   
-                           ( 
-							SELECT row_to_json(PAGAMENTO)
-							FROM   ( SELECT 
-									  (SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(CHEQUE))) 
-									  FROM   ( 
-                                                   SELECT    
-                                                             CHQ.CD_BC_CHQ                    AS "cdBc",
-                                                             CHQ.NR_ORD                       AS "nrOrd",
-                                                             CHQ.NR_CHQ                       AS "nrChq",
-                                                             CHQ.ANO_CHQ                      AS "anoChq",
-                                                             CHQ.VL_CHQ                       AS "vlrChq",
-                                                             CHQ.DT_EMI                       AS "dtEmi",
-                                                             CHQ.DT_VENCTO                    AS "dtVencto",
-                                                             CHQ.AG_CHQ                       AS "agChq",
-                                                             CH_EMI.CD_EMI                    AS "cdEmi",
-                                                             CHQ.CPF_CGC_EMI                  AS "cgcEmi",
-                                                             CHQ.NM_EMI                       AS "nmEmi",
-                                                             CHQ.FONE_EMI                     AS "foneEmi",
-                                                             CHQ.NR_CNT_CHQ                   AS "nrCntChq",
-                                                             CHQ.AUT_CHQ                      AS "autChq",
-                                                             CHQ.COMP_CHQ                     AS "compChq",
-                                                             CHQ.C1_CHQ                       AS "c1Chq",
-                                                             CHQ.C2_CHQ                       AS "c2Chq",
-                                                             CHQ.SR_CHQ                       AS "c3Chq",
-                                                             CHQ.CMC7_CHQ                     AS "cmc7Chq",
-                                                             CHQ.MES_ANO_CNT_CHQ              AS "mesAnoCntChq"
-                                                   FROM      PDV_VD_CHQS CHQ
-                                                   LEFT JOIN CHQ_EMI CH_EMI 
-                                                   ON        CHQ.CPF_CGC_EMI::TEXT = CH_EMI.CGC_CPF::TEXT
-                                                   WHERE     CHQ.CD_EMP = VD.CD_EMP 
-														 AND CHQ.cd_filial =  VD.CD_FILIAL
-														 AND CHQ.cd_vd = VD.CD_VD) CHEQUE ) AS "cheque"  ,
-                           ( 
-                                  SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(CREDIARIO)))
-                                  FROM   ( 
-                                                   SELECT     
-                                                             TEF.CD_ADM_CARTAO   AS "cdAdmCartao", 
-                                                             ADM.NM_USUAL        AS "nmUsual", 
-                                                             TEF.VL_CARTAO       AS "vlrCartao",
-                                                             TEF.VL_SAQUE_CARTAO AS "vlrSaque", 
-                                                             ADM.PARC            AS "qtParc", 
-                                                             TEF.COD_REDE        AS "codRede", 
-                                                             TEF.COD_BANDEIRA    AS "codBandeira",
-                                                             TEF.COD_MODALIDADE  AS "codModalidade",
-                                                             TEF.NSU_TEF         AS "nsuTef" ,
-                                                             TEF.NR_AUTORIZACAO  AS "nrAutorizacao",
-                                                             CASE 
-                                                                       WHEN TEF.GERENCIADOR_TEF = 1 THEN 'scope'::TEXT
-                                                                       WHEN TEF.TRN_POS = 1 THEN 'pos'::TEXT
-                                                                       ELSE 'sitef'::TEXT 
-                                                             END                                   AS "tefGateway",
-                                                             COALESCE(CRED.CD_PARC, 1::NUMERIC)    AS "cdParc",
-                                                             COALESCE(CRED.DT_PARC, VD.DT_VD)      AS "dtParc",
-                                                             COALESCE(CRED.VL_PARC, TEF.VL_CARTAO) AS "vlrParc",
-                                                             CASE 
-                                                                       WHEN COALESCE(CRED.CD_PARC, 0::NUMERIC) = 0::NUMERIC THEN 1
-                                                                       ELSE 0 
-                                                             END                              AS "parcMntPdvErro",
-                                                             CRED.CGC_CPF                     AS "cgcCpf",
-                                                             CRED.NR_FATURA                   AS "nrFatura"
-                                                   FROM     
-                                                         PDV_VD_TEF TEF 
-                                                   LEFT JOIN RC_ADM_CARTAO ADM 
-														ON        TEF.CD_EMP = ADM.CD_EMP 
-														AND       TEF.CD_ADM_CARTAO = ADM.CD_ADM_CARTAO
-                                                   LEFT JOIN PDV_VD_CRED CRED 
-														ON        TEF.CD_EMP = CRED.CD_EMP 
-														AND       TEF.CD_FILIAL = CRED.CD_FILIAL 
-														AND       TEF.CD_VD = CRED.CD_VD 
-                                                   WHERE     ADM.TP_ADM = 6::   NUMERIC 
-														AND       VD.VLR_CARTAO > 0::NUMERIC 
-                                                        AND TEF.CD_EMP = VD.CD_EMP 
-														AND TEF.CD_FILIAL =  VD.CD_FILIAL
-														AND TEF.CD_VD = VD.CD_VD ) CREDIARIO ) AS "crediario" ,
-                           ( 
-                                  SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(TEF))) 
-                                  FROM   ( 
-                                                   SELECT    
-                                                             CASE 
-                                                                       WHEN COALESCE(TEF.CD_ADM_CARTAO, 0::NUMERIC) > 0::NUMERIC THEN TEF.CD_ADM_CARTAO
-                                                                       WHEN TEF.CD_ADM_CARTAO = 0::NUMERIC
-                                                                       AND       TEF.TP_ADM = 6 THEN
-                                                                                 ( 
-                                                                                        SELECT RC_ADM_CARTAO.CD_ADM_CARTAO
-                                                                                        FROM   RC_ADM_CARTAO
-                                                                                        WHERE  RC_ADM_CARTAO.CD_EMP = TEF.CD_EMP
-                                                                                        AND    RC_ADM_CARTAO.TP_ADM = TEF.TP_ADM::NUMERIC
-                                                                                        AND    RC_ADM_CARTAO.PARC = TEF.QT_PARC:: NUMERIC
-                                                                                        AND    RC_ADM_CARTAO.STS_ADM = 0 LIMIT 1)
-                                                                       ELSE NULL::NUMERIC 
-                                                             END AS "cdAdmCartao", 
-                                                             CASE 
-                                                                       WHEN COALESCE(TEF.CD_ADM_CARTAO, 0::NUMERIC) > 0::NUMERIC THEN ADM.NM_USUAL
-                                                                       WHEN TEF.CD_ADM_CARTAO = 0::NUMERIC
-                                                                       AND       TEF.TP_ADM = 6 THEN
-                                                                                 ( 
-                                                                                        SELECT RC_ADM_CARTAO.NM_USUAL
-                                                                                        FROM   RC_ADM_CARTAO
-                                                                                        WHERE  RC_ADM_CARTAO.CD_EMP = TEF.CD_EMP
-                                                                                        AND    RC_ADM_CARTAO.TP_ADM = TEF.TP_ADM::NUMERIC
-                                                                                        AND    RC_ADM_CARTAO.PARC = TEF.QT_PARC:: NUMERIC
-                                                                                        AND    RC_ADM_CARTAO.STS_ADM = 0 LIMIT 1)
-                                                                       ELSE NULL::CHARACTER VARYING
-                                                             END                 AS "nmUsual", 
-                                                             TEF.VL_CARTAO       AS "vlrCartao",
-                                                             TEF.VL_SAQUE_CARTAO AS "vlrSaque", 
-                                                             CASE 
-                                                                       WHEN TEF.QT_PARC > 0 THEN TEF.QT_PARC::NUMERIC
-                                                                       ELSE ADM.PARC 
-                                                             END              AS "qtParc", 
-                                                             TEF.COD_REDE     AS "codRede", 
-                                                             TEF.COD_BANDEIRA AS "codBandeira", 
-                                                             CASE 
-                                                                       WHEN TEF.COD_MODALIDADE::TEXT = ''::TEXT THEN '0'::CHARACTER VARYING
-                                                                       ELSE TEF.COD_MODALIDADE 
-                                                             END        AS "codModalidade", 
-                                                             TEF.TP_ADM AS "tpAdministradora", 
-                                                             CASE 
-                                                                       WHEN COALESCE( 
-                                                                                 CASE 
-                                                                                           WHEN TEF.NSU_TEF = 0::NUMERIC THEN NULL::NUMERIC
-                                                                                           ELSE TEF.NSU_TEF
-                                                                                 END, 0::NUMERIC) > 0::NUMERIC
-                                                                       AND 
-                                                                                 CASE 
-                                                                                           WHEN TEF.NSU_TEF = 0::NUMERIC THEN NULL::NUMERIC
-                                                                                           ELSE TEF.NSU_TEF
-                                                                                 END <> 1::NUMERIC THEN TEF.NSU_TEF
-                                                                       WHEN 
-                                                                                 CASE 
-                                                                                           WHEN TEF.NSU_TEF = 0::NUMERIC THEN NULL::NUMERIC
-                                                                                           ELSE TEF.NSU_TEF
-                                                                                 END = 1::NUMERIC THEN TEF.CD_TRN_TEF
-                                                                       WHEN COALESCE( 
-                                                                                 CASE 
-                                                                                           WHEN TEF.NSU_TEF = 0::NUMERIC THEN NULL::NUMERIC
-                                                                                           ELSE TEF.NSU_TEF
-                                                                                 END, 0::NUMERIC) = 0::NUMERIC THEN TEF.CD_TRN_TEF
-                                                                       ELSE NULL::NUMERIC 
-                                                             END AS "nrTransacao", 
-                                                             CASE 
-                                                                       WHEN COALESCE(TEF.NR_AUTORIZACAO, '0'::CHARACTER VARYING)::TEXT > '0'::TEXT
-                                                                       AND       TEF.NR_AUTORIZACAO::TEXT <> '1'::TEXT THEN TEF.NR_AUTORIZACAO
-                                                                       WHEN TEF.NR_AUTORIZACAO::TEXT = '1'::TEXT THEN TEF.CD_TRN_TEF::CHARACTER VARYING
-                                                                       WHEN TEF.NR_AUTORIZACAO::TEXT = '0'::TEXT THEN TEF.CD_TRN_TEF::CHARACTER VARYING
-                                                                       ELSE NULL::CHARACTER VARYING
-                                                             END                                                     AS "nrAutorizacao",
-                                                             TEF.DS_BANDEIRA                                         AS "bandeira",
-                                                             COALESCE(TEF.NR_ESTABELECIMENTO, ''::CHARACTER VARYING) AS "nrEstabelecimento",
-                                                             COALESCE(TEF.NR_COMPROVANTE, ''::CHARACTER VARYING)     AS "nrComprovante",
-                                                             CASE 
-                                                                       WHEN TEF.GERENCIADOR_TEF = 1 THEN 'SCOPE'::CHARACTER VARYING
-                                                                       WHEN TEF.TRN_POS = 1 THEN 'POS'::CHARACTER VARYING
-                                                                       ELSE 'SITEF'::CHARACTER VARYING
-                                                             END                              AS "tefGateway"
-                                                   FROM      PDV_VD_TEF TEF
-												   LEFT JOIN RC_ADM_CARTAO ADM 
-														ON        TEF.CD_EMP = ADM.CD_EMP 
-														AND       TEF.CD_ADM_CARTAO = ADM.CD_ADM_CARTAO
-                                                   WHERE    TEF.CD_EMP 		= VD.CD_EMP 
-														AND TEF.CD_FILIAL 	=  VD.CD_FILIAL
-														AND TEF.CD_VD 		= VD.CD_VD ) TEF ) AS "cartao" ,
-                           ( 
-                                  SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(PBM)))
-                                  FROM   ( 
-                                                SELECT  
-                                                       VD.CD_CONV   AS "cdConv", 
-                                                       CASE 
-                                                              WHEN VD.TIPO_PBM::NUMERIC > 0::NUMERIC THEN
-                                                                     CASE 
-                                                                            WHEN VD.CD_CLI_PBM = 0::NUMERIC THEN
-                                                                                   ( 
-                                                                                          SELECT RC_CLI.CD_CLI
-                                                                                          FROM   RC_CLI
-                                                                                          WHERE  RC_CLI.ROT_CONV_EXT = VD.TIPO_PBM::NUMERIC
-                                                                                          AND    RC_CLI.STS_CLI = 0::               NUMERIC LIMIT 1)
-                                                                            ELSE VD.CD_CLI_PBM 
-                                                                     END 
-                                                              ELSE VD.CD_CLI 
-                                                       END                     AS "cdCliConv", 
-                                                       NULL::CHARACTER VARYING AS "cgcConv", 
-                                                       VD.TIPO_PBM             AS "tipoPbm", 
-                                                       CASE VD.TIPO_PBM 
-                                                              WHEN 1 THEN 'prevsaude'::TEXT 
-                                                              WHEN 2 THEN 'vida-link'::TEXT 
-                                                              WHEN 3 THEN 'e-pharma'::TEXT 
-                                                              WHEN 4 THEN 'transaction center'::TEXT
-                                                              WHEN 5 THEN 'farmacia popular'::TEXT
-                                                              WHEN 6 THEN 'funcional card'::TEXT
-                                                              ELSE 'outros'::TEXT 
-                                                       END                                                AS "nmConv",
-                                                       VD.VLR_CONV_PBM                                    AS "vlrConv",
-                                                       COALESCE(IT.NR_AUTORIZACAO_PBM, IT.NR_ORC_VD_LINK) AS "cdAutorizacao",
-                                                       IT.CD_IT                                           AS "cdIt",
-                                                       IT.CD_PROD                                         AS "cdProd",
-                                                       IT.VLR_AVISTA_PBM                                  AS "vlrProdCli",
-                                                       COALESCE( 
-                                                       CASE 
-                                                              WHEN IT.VLR_REEMBOL_PBM = 0::NUMERIC THEN NULL::NUMERIC
-                                                              ELSE IT.VLR_REEMBOL_PBM 
-                                                       END, 
-                                                       CASE 
-                                                              WHEN IT.VLR_REEMBOL = 0::NUMERIC THEN 0::NUMERIC
-                                                              ELSE IT.VLR_REEMBOL 
-                                                       END)                             AS "vlrProdReembolso",
-                                                       COALESCE( IT.VLR_CONV_PBM   ,0::NUMERIC)               AS "vlrProdConv"
-													   FROM      PDV_VD_IT IT 
-															WHERE     IT.CD_EMP = VD.CD_EMP 
-															AND       IT.CD_FILIAL = VD.CD_FILIAL 
-															AND       IT.CD_VD = VD.CD_VD
-															AND 	  ( LENGTH(IT.NR_AUTORIZACAO_PBM) > 1 OR LENGTH(IT.NR_ORC_VD_LINK)> 1)) PBM ) AS "pbm" , 
-                           ( 
-                                  SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(VALECP)))
-                                  FROM   ( 
-                                                SELECT 
-                                                       VD.VLR_TICKETS                              AS "vlrTickets",
-                                                       PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_CTR_VALE_CP AS "cdCtrValeCp",
-                                                       PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.VLR_VALE_CP    AS "vlrValeCp"
-                                                FROM PDV_VD_RC_CLI_FIDELI_VALE_COMPRA 
-                                                WHERE  VD.CD_EMP = PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_EMP
-                                                AND    VD.CD_FILIAL = PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_FILIAL
-                                                AND    VD.CD_VD = PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_VD LIMIT 1) VALECP ) AS "valeCompra" ,
-			( 
-                                  SELECT ROW_TO_JSON(NCC)
-                                  FROM   ( 
-                                                SELECT 
-                                                       NCC.CD_CTR_NCC   AS "cdCtrNcc",
-						       NCC.VLR_NCC 	AS "vlrNcc"
-                                                FROM PDV_VD_NCC NCC 
-							 WHERE     VD.CD_EMP = NCC.CD_EMP 
-							 AND       VD.CD_FILIAL = NCC.CD_FILIAL 
-							 AND       VD.CD_VD = NCC.CD_VD LIMIT 1) NCC ) AS "ncc" 
-                                                ) PAGAMENTO ) as "pagamento" 
-													   
-                 FROM      PDV_VD VD 
-                 LEFT JOIN PDV_VD_EST_NF_SAI NF_SAI 
-                 ON        VD.CD_EMP = NF_SAI.CD_EMP 
-                 AND       VD.CD_FILIAL = NF_SAI.CD_FILIAL 
-                 AND       VD.CD_VD = NF_SAI.CD_VD 
-
-                 LEFT JOIN PDV_VD_GLB_PROCD_OUTR_LIB AUDIT 
-                 ON        VD.CD_EMP = AUDIT.CD_EMP 
-                 AND       VD.CD_FILIAL = AUDIT.CD_FILIAL 
-                 AND       VD.CD_VD = AUDIT.CD_VD 
-                 AND       ( 
-                                     AUDIT.CD_OUTR_PROCD = ANY (ARRAY[90::numeric, 91::numeric, 93::numeric, 94::numeric]))
-									 
-				INNER JOIN PRC_FILIAL FILIAL ON
-					VD.CD_EMP = FILIAL.CD_EMP
-					AND VD.CD_FILIAL = FILIAL.CD_FILIAL
-                 WHERE VD.FLAG_CONSOLIDADO = 2  LIMIT 1) ROW;
-
-]]>
-  </select>
-
-  <update id="consumePdv" parameterType="Map">
+                                                AND    VD.CD_VD = PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_VD 
+												WHERE  VD.CD_EMP    = #{cdEmp}
+                                                AND    VD.CD_FILIAL = #{cdFilial}
+                                                AND    VD.CD_VD     = #{cdVd}
+	</select>
+	<update id="consumePdv" parameterType="Map">
     update pdv_vd set flag_consolidado = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_VD = #{cdVd}
-  </update>
-  
-  <update id="consumePdvReprocessar" parameterType="Map">
+	</update>
+	<update id="consumePdvReprocessar" parameterType="Map">
     update pdv_vd set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_VD = #{cdVd}
-  </update>
-  
-  <update id="consumePdvErro" parameterType="Map">
+	</update>
+	<update id="consumePdvErro" parameterType="Map">
     update pdv_vd set flag_consolidado = 3 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_VD = #{cdVd}
-  </update>
-  
-  <select id="selectMapaResumo" resultMap="CupomJsonResult">
-  <![CDATA[
-	SELECT row_to_json(row), "cdEmp" , "cdFilial", "cdCx", "dtEcf" from (
-  SELECT 'mapaResumo' as "tipoRegistro",
-    resumo.cd_emp AS "cdEmp",
-    resumo.cd_filial as "cdFilial",
-    resumo.dt_ecf as "dtEcf",
-    resumo.cd_cx as "cdCx",
+	</update>
+	<select id="selectMapaResumo" resultMap="selectMapaResumo">
+
+	SELECT 'mapaResumo' as "tipoRegistro",
+    resumo.cd_emp ,
+    resumo.cd_filial ,
+    resumo.dt_ecf,
+    resumo.cd_cx ,
     0 AS "stVd",
-    resumo.dt_cad as "dtCad",
+    resumo.dt_cad ,
     resumo.dt_cad::date + resumo.hr_cad::time without time zone AS "hrCad",
-    resumo.cont_red_z as "contRedZ",
-    resumo.cont_ord_op_ini as "contOrdOpIni",
-    resumo.cont_ord_op_fin as "contOrdOpFin",
-    resumo.cont_reinicio_op as "contReinicioOp",
-    resumo.vlr_gt_ini as "gtIni",
-    resumo.vlr_gt_fin as "gtFin",
-    resumo.vlr_vend_bruta as "vlrVendaBruta", 
-    resumo.vlr_desc as "vlrDesc", 
-    resumo.vlr_canc as "vlrCanc", 
-    resumo.vlr_contab as "vlrContab", 
-    resumo.vlr_icms as "vlrIcms", 
-    resumo.vlr_isentas as "vlrIsentas", 
-    resumo.vlr_n_trib as "vlrNaoTrib", 
-    resumo.vlr_base_icms_subs as "vlrBaseIcmsSubs", 
-    resumo.vlr_issqn as "vlrIssqn", 
-    resumo.vlr_desc_issqn as "vlrDescIssqn", 
-    resumo.vlr_cancel_issqn as "vlrCancelIssqn", 
-    aliquotas.tx_icms as "txIcms", 
-    aliquotas.base_calc as "baseCalc", 
-    COALESCE(aliquotas.tipo_imposto, 0::numeric) AS "tipoImposto",
+    resumo.cont_red_z ,
+    resumo.cont_ord_op_ini ,
+    resumo.cont_ord_op_fin ,
+    resumo.cont_reinicio_op,
+    resumo.vlr_gt_ini ,
+    resumo.vlr_gt_fin ,
+    resumo.vlr_vend_bruta ,
+    resumo.vlr_desc ,
+    resumo.vlr_canc ,
+    resumo.vlr_contab  ,
+    resumo.vlr_icms    ,
+    resumo.vlr_isentas ,
+    resumo.vlr_n_trib  ,
+    resumo.vlr_base_icms_subs 	,
+    resumo.vlr_issqn 			,
+    resumo.vlr_desc_issqn 		,
+    resumo.vlr_cancel_issqn 	, 
+    aliquotas.tx_icms 			,
+    aliquotas.base_calc 		,
+    COALESCE(aliquotas.tipo_imposto, 0::numeric) AS tipo_imposto,
     round(aliquotas.base_calc * aliquotas.tx_icms / 100::numeric, 2) AS "vlrTxIcms"
    FROM pdv_mapa_resumo resumo
      LEFT JOIN pdv_mapa_resumo_cpl aliquotas ON resumo.cd_emp = aliquotas.cd_emp AND resumo.cd_filial = aliquotas.cd_filial AND resumo.dt_ecf = aliquotas.dt_ecf AND resumo.cd_cx = aliquotas.cd_cx
-	 WHERE resumo.flag_consolidado = 0 order by resumo.dt_ecf desc LIMIT 1 ) ROW;
-	 ]]>
-	 </select>
-
-  <update id="consumeMapaResumo" parameterType="Map">
+	 WHERE resumo.flag_consolidado = 0 order by resumo.dt_ecf desc LIMIT 1 
+	</select>
+	<update id="consumeMapaResumo" parameterType="Map">
     update pdv_mapa_resumo set flag_consolidado = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_ECF =  #{dtEcf}
-  </update>
-      
-<select id="selectConsoldVd" resultMap="CupomJsonResult">
-  <![CDATA[
-	SELECT row_to_json(row), "cdEmp" , "cdFilial", "cdCx", "dtMov" from (
+	</update>
+	<select id="selectConsoldVd" resultMap="selectConsoldVd">
+		<![CDATA[
+	
 		select 'pdvConsoldVd' as "tipoRegistro",
-		  cd_emp as "cdEmp",
-		  cd_filial as "cdFilial",
-		  cd_cx as "cdCx",
-		  dt_mov as "dtMov",
-		  nr_cupom_ini as "nrCupomIni",
-		  nr_cupom_fim as "nrCupomFim",
-		  vlr_vd_liq as "vlrVdLiq",
-		  cd_usu as "cdUsu",
-		  dt_cad as "dtCad",
-		  vl_receb as "vlReceb",
-		  vl_serv as "vlServ"
+		  cd_emp ,
+		  cd_filial ,
+		  cd_cx ,
+		  dt_mov ,
+		  nr_cupom_ini ,
+		  nr_cupom_fim ,
+		  vlr_vd_liq ,
+		  cd_usu ,
+		  dt_cad ,
+		  vl_receb ,
+		  vl_serv 
 		from pdv_consld_vd where flag_consolidado = 0 and cd_usu > 1 order by dt_mov desc LIMIT 1 
-  ) ROW;
 	 ]]>
-	 </select>
-	 
-	 
-	 <select id="selectConsoldVdReprocessar" resultMap="CupomJsonResult">
-  <![CDATA[
+	</select>
+	<!--<select id="selectConsoldVdReprocessar" resultMap="CupomJsonResult">
+		<![CDATA[
 	SELECT row_to_json(row), "cdEmp" , "cdFilial", "cdCx", "dtMov" from (
 		select 'pdvConsoldVd' as "tipoRegistro",
 		  cd_emp as "cdEmp",
@@ -1324,39 +733,472 @@ FROM   (
 		from pdv_consld_vd where flag_consolidado = 2 and cd_usu > 1 order by dt_mov desc LIMIT 1 
   ) ROW;
 	 ]]>
-	 </select>
-
-  <update id="consumeConsoldVd" parameterType="Map">
+	</select>-->
+	<update id="consumeConsoldVd" parameterType="Map">
     update pdv_consld_vd set flag_consolidado = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_MOV =  #{dtMov}
-  </update>
-  <update id="consumeConsoldVdReprocessar" parameterType="Map">
+	</update>
+	<update id="consumeConsoldVdReprocessar" parameterType="Map">
     update pdv_consld_vd set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_MOV =  #{dtMov}
-  </update>
-  <update id="consumeConsoldVdErro" parameterType="Map">
+	</update>
+	<update id="consumeConsoldVdErro" parameterType="Map">
     update pdv_consld_vd set flag_consolidado = 3 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_MOV =  #{dtMov}
-  </update>
-  
-  
-  <select id="selectConciliacaoPdvVd" resultMap="CupomJsonResult">
-  <![CDATA[
-	SELECT row_to_json(row) from (
-		select 'pdvVdConciliacao' as "tipoRegistro",
-		( SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(CUPOM))) 
-                                  FROM   ( 
-		select  cd_emp as "cdEmp",
-		  cd_filial as "cdFilial",
-		  cd_cx as "cdCx",
-		  nr_ecf as "nrEcf",
-		  dt_vd as "dtVd",
-		  st_Vd as "stVd"
+	</update>
+	<select id="selectConciliacaoPdvVd" resultMap="selectConciliacaoPdvVd">
+		select 'pdvVdConciliacao' as "tipoRegistro"
+	</select>
+	<select id="selectConciliacaoPdvVdCupons" resultMap="selectConciliacaoPdvVdCupons">
+		<![CDATA[select  cd_emp ,
+		  cd_filial ,
+		  cd_cx ,
+		  nr_ecf ,
+		  dt_vd ,
+		  st_Vd 
 		from pdv_vd 
 		where cd_emp = 1 
 				and cd_filial = (select cd_filial from prc_filial) 
 				and dt_vd = current_date and st_vd >= 0 
-				AND HR_VD >= (now() - interval '3 hours')
-				) CUPOM ) AS "cupons" 
-  ) ROW;
-	 ]]>
-	 </select>
+				AND HR_VD >= (now() - interval '3 hours' ]]>
+	</select>
+	<resultMap id="selectCupom" type="Map"> 	
+		<result property="cnpjFilial" column="CGC"/>
+		<result property="cdEmp" column="CD_EMP"/> 
+		<result property="cdFilial" column="CD_FILIAL"/> 
+		<result property="cdCx" column="CD_CX"/> 
+		<result property="dtVd" column="DT_VD"/> 
+		<result property="dtCad" column="DT_CAD"/> 
+		<result property="hrVd" column="HR_VD"/>  
+		<result property="nrPedTelevd" column="NR_PED_TELEVD"/> 
+		<result property="origemOrc" column="ORIG_ORC"/> 
+		<result property="cdVd" column="CD_VD"/> 
+		<result property="nrEcf" column="NR_ECF"/> 
+		<result property="stVd" column="ST_VD"/> 
+		<result property="contadorCupomFiscal" column="CONT_CUPOM_FISC"/> 
+		<result property="codigoMovimento" column="CD_MOV"/> 
+		<result property="cdCli" column="CD_CLI"/> 
+		<result property="cgcCli" column="CGC_CPF"/> 
+		<result property="numeroCartao" column="NR_CARTAO_MARKA"/>                           
+		<result property="diasProrrogConv" column="QTD_DIAS_PRORROG"/> 
+		<result property="vlrLiqVd" column="VLR_LIQ_VD"/> 
+		<result property="vlrTotProd" column="VLR_TOT_PROD"/> 
+		<result property="vlrVd" column="VLR_VD"/> 
+		<result property="vlrDesc" column="VLR_DESC"/> 
+		<result property="vlrDescItens" column="VLR_DESC_ITENS"/> 
+		<result property="vlrDinh" column="VLR_DINH"/> 
+		<result property="vlrTroco" column="VLR_TROCO"/> 
+		<result property="vlrConv" column="VLR_CONV"/>
+		<result property="cdConv" column="CD_CONV"/>
+		<result property="qtParcConv" column="QT_PARC_CONV"/>
+		<result property="vlrDup" column="VLR_DUP"/>
+		<result property="valorChequeAVista" column="VL_CHQS_A_VISTA"/>
+		<result property="valorChequeAPrazo" column="VL_CHQS_A_PRZ"/>                           
+		<result property="nrCelRecarga" column="NR_CEL_RECARGA"/>
+		<result property="vlrRecargaCel" column="VLR_RECARGA_CEL"/>
+		<result property="nmOperCel" column="NM_OPER_CEL"/>
+		<result property="nmComprador" column="NM_COMPRADOR"/>
+		<result property="dadosAdicionais" column="DADOS_ADICIONAIS"/>
+		<result property="nrSerieEcf" column="NR_SERIE_IMP"/>
+		<result property="versaoPdv" column="VS_PDV"/>
+		<result property="versaoPdvRc" column="VS_PDV_RC"/>
+		<result property="cdOperador" column="CD_USU"/>
+		<result property="cdUsuCancel" column="CD_USU_CANCEL"/>
+		<result property="codigoMotivoCancelamento" column="CD_MT_CANCEL"/>
+		<result property="stCancPaf" column="ST_CANC_PAF"/>
+		<result property="cdOutroProcedimento" column="CD_OUTR_PROCD"/>
+		<result property="cdUsuProcedimento" column="CD_USU_PROCEDIMENTO"/>
+		<result property="cdCliPbm" column="CD_CLI_PBM"/>
+		<result property="registroalterado" column="REG_ALTERADO"/>
+		<result property="isDebitarPontos" column="VD_TROCA_FIDEL"/>
+		<result property="valorIbpt" column="VLR_IMPOSTO"/>
+		<result property="percentualIbpt" column="TX_MED_IMPOSTO"/>
+		<result property="vlrConvPbm" column="VLR_CONV_PBM"/>
+		<result property="flagNfce" column="FLAG_NFCE"/>
+		<result property="cdNfSai" column="CD_NF"/>
+		<result property="nrCartaoMarka" column="NR_CARTAO_MARKA"/>
+		<result property="qtdePontosFidelExterno" column="QTDE_PONTOS_FIDEL_EXTERNO"/>
+		<result property="nrTelCupom" column="NR_TEL_CUPOM"/>
+		<result property="chvNfce"	column="CHV_NFCE"/>	
+		<association property="nfce" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdNf=NR_ECF}" select="selectCupomNfce"/>
+		<association property="nfceCancel" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" select="selectCupomNfceCancel"/>
+		<association property="orcamento" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,nrOrc=NR_ORC}" select="selectOrcamentoPdv"/>
+		<association property="pagamento" javaType="Map">
+			<association property="ncc" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" javaType="Map" select="pagamentoNcc"/>
+			<collection property="cheque" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" javaType="ArrayList" ofType="map" select="pagamentoCheque" />	
+			<collection property="crediario" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD,vlrCartao=VLR_CARTAO,dtVd=DT_VD}" javaType="ArrayList" ofType="map" select="pagamentoCrediario" />	
+			<collection property="cartao" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" javaType="ArrayList" ofType="map" select="pagamentoCartao" />
+			<collection property="pbm" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" javaType="ArrayList" ofType="map" select="pagamentoPbm" />		
+			<collection property="valeCompra" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" javaType="ArrayList" ofType="map" select="pagamentoValeCp" />				
+		</association>
+		<collection property="itens" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" javaType="ArrayList" ofType="map" select="selectCupomItens" />		
+		<collection property="receita" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,nrOrc=NR_ORC,cdVd=CD_VD}" javaType="ArrayList" ofType="map" select="selectCupomReceita" />
+	</resultMap>
 
+
+	<resultMap id="selectCupomItens" type="Map"> 
+		<result property="cdEmp" column="CD_EMP"/> 
+		<result property="cdFilial" column="CD_FILIAL"/> 
+		<result property="cdVd" column="CD_VD"/> 
+		<result property="cdIt"	column="CD_IT"/>	
+		<result property="cdBarra"	column="CD_BARRAS"/>	
+		<result property="cdProd"	column="CD_PROD"/>	
+		<result property="qtIt"	column="QT_IT"/>	
+		<result property="vlrIt"	column="VLR_IT"/>	
+		<result property="totIt"	column="VLR_LIQ_IT"/>	
+		<result property="stIt"	column="ST_IT"/>	
+		<result property="tipoDesconto"	column="TIPO_DESCONTO"/>	
+		<result property="txDesc"	column="TX_DESC"/>	
+		<result property="percDescVerba"	column="PERC_DESC_VERBA"/>	
+		<result property="vlrDescVerba"	column="VLR_DESC_VERBA"/>	
+		<result property="vlrDescRateio"	column="VLR_DESC_TOT_RAT"/>	
+		<result property="cdTribFc"	column="CD_TRIB_FC"/>	
+		<result property="txIcmsIt"	column="TX_ICMS_IT"/>	
+		<result property="txRedIt"	column="TX_RED_IT"/>	
+		<result property="cdVend"	column="CD_VEND"/>	
+		<result property="cdVendVerba"	column="CD_VEND_VERBA"/>	
+		<result property="cdUsuCancel"	column="CD_USU_CANCEL"/>	
+		<result property="qtPontosFidel"	column="QTDE_PONTO_FIDEL"/>	
+		<result property="cdGrupoComissao"	column="CD_GRP_COMIS_PDV"/>	
+		<result property="registroalteradoitem"	column="REG_ALTERADO"/>	
+		<result property="tipoImposto"	column="TIPO_IMPOSTO"/>	
+		<result property="valorIbptItem"	column="VLR_IMPOSTO_IT"/>	
+		<result property="percentualIbptItem"	column="TX_IMPOSTO_IT"/>	
+		<result property="nrProtocoloManipulado"	column="NR_PROTOCOLO_MANIPULADO"/>	
+		<result property="percDescDiff"	column="PERC_DESC_DIFF"/>	
+		<result property="percDescMax"	column="PERC_DESC_MAX"/>	
+		<result property="percDescMin"	column="PERC_DESC_MIN"/>	
+		<result property="cdTblDesc"	column="CD_TBL_DESC"/>	
+		<result property="tpNivel"	column="TP_NIVEL"/>	
+		<result property="tpTblDesc" column="TP_TBL_DESC"/>	
+		<!-- 
+		<collection property="lote" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD,cdIt=CD_IT}" javaType="ArrayList" ofType="map" select="selectCupomItensLote" />
+		 -->
+	</resultMap>
+	<resultMap id="selectCupomItensLote" type="Map"> 
+		<result property="cdEmp" column="CD_EMP"/> 
+		<result property="cdFilial" column="CD_FILIAL"/> 
+		<result property="cdVd" column="CD_VD"/> 
+		<result property="cdIt"	column="CD_IT"/>
+		<result property="cdLote"	column="CD_LOTE"/>
+		<result property="nrLote"	column="NR_LOTE"/>
+		<result property="qtdeLote"	column="QTDE_LOTE"/>
+	</resultMap>
+	<resultMap id="selectCupomNfce" type="Map"> 
+		<result property="cdEmp" column="CD_EMP"/> 
+		<result property="cdFilial" column="CD_FILIAL"/> 
+		<result property="cdNf"	column="CD_NF"/>	
+		<result property="cdNfSerie"	column="CD_NF_SERIE"/>	
+		<result property="chvNfce"	column="CHV_NFCE"/>	
+		<result property="autNfce"	column="AUT_NFCE"/>	
+		<result property="xmlNfce"	column="XML_NFCE"/>	
+		<result property="dsMotivo"	column="DS_MOTIVO"/>	
+		<result property="stsValid"	column="STS_VALID"/>	
+	</resultMap>
+	<resultMap id="selectCupomNfceCancel" type="Map"> 
+		<result property="cdEmp" column="CD_EMP"/> 
+		<result property="cdFilial" column="CD_FILIAL"/> 
+		<result property="cdVd"	column="CD_VD"/>	
+		<result property="tpCanc"	column="TP_CANC"/>	
+		<result property="xmlCancel"	column="XML_CANC"/>	
+		<result property="chvNfceCancel"	column="CHV_NFCE"/>	
+		<result property="dtEmisCancel"	column="DT_EMIS"/>	
+		<result property="autCanc"	column="AUT_CANC"/>	
+		<result property="dsMotivoCancel"	column="DS_MOTIVO"/>	
+	</resultMap>	
+	<resultMap id="OrcaJsonResult" type="Map">
+		<result column="cd_emp" property="cdEmp"/>
+		<result column="cd_filial" property="cdFilial"/>
+		<result column="cd_orc" property="cdOrc"/>
+		<result column="vd_troca_fidel" property="vdTrocaFidel"/>
+		<result column="cd_conv" property="cdConv"/>
+		<result column="qt_parc_conv" property="qtParcConv"/>
+		<result column="nr_ped_televd" property="nrPedTelevd"/>
+		<result column="tipo_prazo_pgto" property="tipoPrazoPgto"/>
+		<result column="nr_cartao_pbm" property="nrCartaoPbm"/>
+		<result column="cd_projeto_pbm" property="cdProjetoPbm"/>
+		<result column="tp_perc_rec_conv" property="tpPercRecConv"/>
+		<result column="perc_rec_conv" property="percRecConv"/>
+		<result column="dados_adicionais" property="dadosAdicionais"/>
+		<result column="nm_comprador" property="nmComprador"/>
+		<result column="qtd_dias_prorrog" property="qtdDiasProrrog"/>
+		<result column="tipo_pbm" property="tipoPbm"/>
+		<result column="cd_cli_dep" property="cdCliDep"/>
+		<result column="vlr_prod" property="vlrProd"/>
+		<result column="cd_cli" property="tpOrcEntg"/>
+		<result column="sts_orc" property="stsOrc"/>
+		<result column="nm_cli" property="nmCli"/>
+		<result column="nr_autr_pbm" property="nrAutrPbm"/>
+		<result column="cpf_cli_pbm" property="cpfCliPbm"/>
+		<result column="dt_emi" property="dtEmi"/>
+		<result column="hr_emi" property="hrEmi"/>
+		<result column="vlr_tot" property="vlrTot"/>
+		<result column="vlr_desc" property="vlrDesc"/>
+		<result column="vlr_desc_geral" property="vlrDescGeral"/>
+		<result column="nr_carta" property="nrCartaoCli"/>
+		<result column="cd_cli" property="foneCli"/>
+		<result column="cd_cli" property="tpOrc"/>
+		<result column="cd_cli" property="cdFrmPgto"/>
+		<result column="cd_cli" property="origOrc"/>
+		<result column="obs" property="obs"/>
+		<result column="cd_mt_cancel_orc" property="cdMtCancelOrc"/>
+		<result column="cd_cli" property="descMtCancel"/>	
+		<collection property="itens" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC}" javaType="ArrayList" ofType="map" select="selectOrcamentoPdvItem" />
+		<collection property="receita" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC}" javaType="ArrayList" ofType="map" select="selectOrcamentoPdvReceita" />
+	</resultMap>	
+	<resultMap id="OrcamentoItem" type="Map">
+		<result column="cd_emp"                  property="cdEmp"/>
+		<result column="cd_prod"                 property="cdProd"/>
+		<result column="cd_barra"                property="cdBarra"/>
+		<result column="qt"                      property="qt"/>
+		<result column="vlr_it"                  property="vlrIt"/>
+		<result column="vlr_tot_it"              property="vlrTotIt"/>
+		<result column="vlr_desc"                property="vlrDesc"/>
+		<result column="perc_desc"               property="percDesc"/>
+		<result column="cd_medico_rec"           property="cdMedicoRec"/>
+		<result column="cd_vend"                 property="cdVend"/>
+		<result column="cd_vend_lib"             property="cdVendLib"/>
+		<result column="pr_tab"                  property="prTab"/>
+		<result column="nr_autr_pbm_item"        property="nrAutrPbmItem"/>
+		<result column="cd_vend_verba"           property="cdVendVerba"/>
+		<result column="libera_vd_conv"          property="liberaVdConv" />
+		<result column="cd_it"                   property="cdIt"/>
+		<result column="perc_desc_min"           property="percDescMin"/>
+		<result column="perc_desc_max"           property="percDescMax"/>
+		<result column="cd_tbl_desc"             property="cdTblDesc"/>
+		<result column="oferta"                  property="oferta"/>
+		<result column="perc_desc_cad"           property="percDescCad"/>
+		<result column="perc_desc_fix"           property="percDescFix"/>
+		<result column="vlr_desc_fix"            property="vlrDescFix"/>
+		<result column="tipo_desconto"           property="tipoDesconto"/>
+		<result column="vlr_economia"            property="vlrEconomia"/>
+		<result column="venda_dependente"        property="vendaDependente"/>
+		<result column="perc_desconto_pos_pbm"   property="percDescontoPosPbm"/>
+		<result column="nr_protocolo_manipulado" property="nrProtocoloManipulado"/>
+		<result column="tipo_desconto"           property="tpDesc"/>
+		<result column="qtde_ponto_fidel"        property="qtPontosFidel"/>
+		<result column="vlr_desc_verba"          property="vlrDescVerba"/>
+		<result column="perc_desc_verba"         property="percDescVerba"/>
+		<result column="cd_vend_verba"           property="cdVendVerba"/>
+		<result column="vlr_custo_semaforo"      property="vlrCustoSemaforo"/>
+		<result column="qt_est"                  property="qtEst"/>
+		<result column="cd_grp"                  property="cdGrupoComissao"/>	
+		<collection property="concorrente" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC,cdProd=CD_PROD,cdIt=CD_IT}" javaType="ArrayList" ofType="map" select="selectOrcamentoPdvItemConcorrente" />
+		<collection property="lote" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC,cdProd=CD_PROD,cdIt=CD_IT}" javaType="ArrayList" ofType="map" select="selectOrcamentoPdvItemLote" />
+	</resultMap>
+	<resultMap id="OrcamentoItemConcorrente" type="Map">
+		<result column="cd_prod"                property="cdProd"/>
+		<result column="nr_orc"                 property="nrOrc"/>
+		<result column="cd_vend"                property="cdVend"/>
+		<result column="cd_concor"              property="cdConcorrente"/>
+		<result column="vlr_concor"             property="vlrConcorrente"/>
+		<result column="perc_desc"              property="percDesc"/>
+		<result column="cd_it"                  property="cdIt"/>
+	</resultMap>
+	<resultMap id="OrcamentoReceita" type="Map">
+		<result column="cd_prod"                  property="cdProd"/> 
+		<result column="cd_it"                    property="cdIt"/> 
+		<result column="nm_comprador"             property="nmCompradorRec"/> 
+		<result column="idade"                    property="idadeRec"/> 
+		<result column="nm_paciente"              property="nmPacienteRec"/> 
+		<result column="receita_tipo"             property="receitaTipoRec"/> 
+		<result column="cid"          			property="cidRec"/> 
+		<result column="uf"                       property="ufRec"/> 
+		<result column="nr_doc_cli"               property="nrDocCliRec"/> 
+		<result column="tipo_documento"           property="tipoDocumentoRec"/> 
+		<result column="cd_medico_rec" 			property="cdMedicoRec"/> 
+		<result column="qt_prod"                  property="qtProd"/> 
+		<result column="dt_receita"               property="dtReceita"/> 
+		<result column="tp_capt_receita"          property="tipoCaptacaoReceita"/>                     
+	</resultMap>	
+	<resultMap id="OrcamentoItemLote" type="Map">
+		<result column="cd_lote"                property="cdLote"/>
+		<result column="qtde_lote"              property="qtdeLote"/>                       
+	</resultMap>	
+	<resultMap id="selectCupomReceita" type="Map">
+		<result column="CD_EMP"       property="cdEmp"/> 
+		<result column="CD_FILIAL"    property="cdFilial" /> 
+		<result column="CD_VD"        property="cdVd"	/>
+		<result column="CD_IT"                    property="cdIt"/> 
+		<result column="COMPRADOR_NOME"             property="nmCompradorRec"/> 
+		<result column="PACIENTE_IDADE"                    property="idadeRec"/> 
+		<result column="PACIENTE_NOME"              property="nmPacienteRec"/> 
+		<result column="RECEITA_TIPO"             property="receitaTipoRec"/> 
+		<result column="PACIENTE_CID"          			property="cidRec"/> 
+		<result column="COMPRADOR_DOC_UF"                       property="ufRec"/> 
+		<result column="COMPRADOR_DOC_NUMERO"               property="nrDocCliRec"/> 
+		<result column="COMPRADOR_DOC_TIPO"           property="tipoDocumentoRec"/> 
+		<result column="PRESCRITOR_ID" 			property="cdMedicoRec"/> 
+		<result column="QT_PROD"                  property="qtProd"/> 
+		<result column="RECEITA_DATA"               property="dtReceita"/> 
+		<result column="TP_CAPT_RECEITA"          property="tipoCaptacaoReceita"/>   
+		<result column="PACIENTE_SEXO"          property="sexo"/>  
+		<result column="NR_RECEITA"          property="nrReceita"/>
+		<result column="TP_DOC_EXP"          property="tpDocExp"/>	
+		<result column="pacienteTipoIdade"          property="pacienteTipoIdade"/>	
+	</resultMap>	
+
+	<resultMap id="pagamentoCheque" type="Map">
+		<result property="cdEmp" column="CD_EMP"/>
+		<result property="cdFilial" column="CD_FILIAL"/>
+		<result property="cdVd" column="CD_VD"/>
+		<result property="cdBc" column="CD_BC_CHQ"/>	
+		<result property="nrOrd" column="NR_ORD"/>	
+		<result property="nrChq" column="NR_CHQ"/>	
+		<result property="anoChq" column="ANO_CHQ"/>	
+		<result property="vlrChq" column="VL_CHQ"/>	
+		<result property="dtEmi" column="DT_EMI"/>	
+		<result property="dtVencto" column="DT_VENCTO"/>	
+		<result property="agChq" column="AG_CHQ"/>	
+		<result property="cdEmi" column="CD_EMI"/>	
+		<result property="cgcEmi" column="CPF_CGC_EMI"/>	
+		<result property="nmEmi" column="NM_EMI"/>	
+		<result property="foneEmi" column="FONE_EMI"/>	
+		<result property="nrCntChq" column="NR_CNT_CHQ"/>	
+		<result property="autChq" column="AUT_CHQ"/>	
+		<result property="compChq" column="COMP_CHQ"/>	
+		<result property="c1Chq" column="C1_CHQ"/>	
+		<result property="c2Chq" column="C2_CHQ"/>	
+		<result property="c3Chq" column="SR_CHQ"/>	
+		<result property="cmc7Chq" column="CMC7_CHQ"/>	
+		<result property="mesAnoCntChq" column="MES_ANO_CNT_CHQ"/>	
+	</resultMap>
+
+	<resultMap id="pagamentoCrediario" type="Map">
+		<result property="cdEmp" column="CD_EMP"/>
+		<result property="cdFilial" column="CD_FILIAL"/>
+		<result property="cdVd" column="CD_VD"/>
+		<result property="cdAdmCartao" column="CD_ADM_CARTAO"/>	 
+		<result property="nmUsual" column="NM_USUAL"/>	 
+		<result property="vlrCartao" column="VL_CARTAO"/>	
+		<result property="vlrSaque" column="VL_SAQUE_CARTAO"/>	 
+		<result property="qtParc" column="PARC"/>	 
+		<result property="codRede" column="COD_REDE"/>	 
+		<result property="codBandeira" column="COD_BANDEIRA"/>	
+		<result property="codModalidade" column="COD_MODALIDADE"/>	
+		<result property="nsuTef" column="NSU_TEF"/>
+		<result property="nrAutorizacao" column="NR_AUTORIZACAO"/>			
+		<result property="tefGateway" column="TEF_GATEWAY"/>	
+		<result property="cdParc" column="CD_PARC"/>	
+		<result property="dtParc" column="DT_PARC"/>	
+		<result property="vlrParc" column="VL_PARC"/>	
+		<result property="parcMntPdvErro" column="PARC_MNT_PDV_ERRO"/>	
+		<result property="cgcCpf" column="CGC_CPF"/>	
+		<result property="nrFatura" column="NR_FATURA"/>
+	</resultMap>
+
+	<resultMap id="pagamentoCartao" type="Map">
+		<result property="cdEmp" column="CD_EMP"/>
+		<result property="cdFilial" column="CD_FILIAL"/>
+		<result property="cdVd" column="CD_VD"/>
+		<result property="cdAdmCartao" column="CD_ADM_CARTAO"/>	 
+		<result property="nmUsual" column="NM_USUAL"/>	 
+		<result property="vlrCartao" column="VL_CARTAO"/>	
+		<result property="vlrSaque" column="VL_SAQUE_CARTAO"/>	 
+		<result property="qtParc" column="PARC"/>	 
+		<result property="codRede" column="COD_REDE"/>	 
+		<result property="codBandeira" column="COD_BANDEIRA"/>	
+		<result property="codModalidade" column="COD_MODALIDADE"/>	
+		<result property="nsuTef" column="NSU_TEF"/>
+		<result property="nrAutorizacao" column="NR_AUTORIZACAO"/>			
+		<result property="tefGateway" column="TEF_GATEWAY"/>	
+		<result property="cdParc" column="CD_PARC"/>	
+		<result property="dtParc" column="DT_PARC"/>	
+		<result property="vlrParc" column="VL_PARC"/>	
+		<result property="parcMntPdvErro" column="PARC_MNT_PDV_ERRO"/>	
+		<result property="cgcCpf" column="CGC_CPF"/>	
+		<result property="nrFatura" column="NR_FATURA"/>
+		<result property="tpAdministradora" column="TP_ADM"/>
+		<result property="nrTransacao" column="NR_TRANSACAO"/>
+		<result property="bandeira" column="BANDEIRA"/>
+		<result property="nrEstabelecimento" column="NR_ESTABELECIMENTO"/>
+		<result property="nrComprovante" column="NR_COMPROVANTE"/>
+	</resultMap>		
+
+	<resultMap id="pagamentoPbm" type="Map">
+		<result property="cdEmp" column="CD_EMP"/>
+		<result property="cdFilial" column="CD_FILIAL"/>
+		<result property="cdVd" column="CD_VD"/>
+		<result property="cdConv" column="CD_CONV"/>	 
+		<result property="cdCliConv" column="CD_CLI_CONV"/>	 
+		<result property="cgcConv" column="CGC"/>	 
+		<result property="tipoPbm" column="TIPO_PBM"/>	
+		<result property="nmConv" column="NM_CONV"/>	
+		<result property="vlrConv" column="VLR_CONV_PBM"/>	
+		<result property="cdAutorizacao" column="CD_AUTORIZACAO"/>	
+		<result property="cdIt" column="CD_IT"/>	
+		<result property="cdProd" column="CD_PROD"/>	
+		<result property="vlrProdCli" column="VLR_AVISTA_PBM"/>	
+		<result property="vlrProdReembolso" column="VLR_REEMBOL"/>	                       
+		<result property="vlrProdConv" column="VLR_PROD_CONV"/>
+	</resultMap>	
+	<resultMap id="pagamentoValeCp" type="Map">
+		<result property="cdEmp" column="CD_EMP"/>
+		<result property="cdFilial" column="CD_FILIAL"/>
+		<result property="cdVd" column="CD_VD"/>
+		<result property="vlrTickets" column="VLR_TICKETS"/>
+		<result property="cdCtrValeCp" column="CD_CTR_VALE_CP"/>
+		<result property="VLR_VALE_CP" column="vlrValeCp"/>
+	</resultMap>
+	<resultMap id="pagamentoNcc" type="Map">
+		<result property="cdEmp" column="CD_EMP"/>
+		<result property="cdFilial" column="CD_FILIAL"/>
+		<result property="cdVd" column="CD_VD"/>
+		<result property="cdCtrNcc" column="CD_CTR_NCC"/>
+		<result property="vlrNcc" column="VLR_NCC"/>
+	</resultMap>
+	<resultMap id="selectMapaResumo" type="Map">	
+		<result property="tipoRegistro" column="tipoRegistro"/>	
+		<result property="cdEmp" column="cd_emp"/>	
+		<result property="cdFilial" column="cd_filial"/>	
+		<result property="dtEcf" column="dt_ecf"/>	
+		<result property="cdCx" column="cd_cx"/>	
+		<result property="stVd" column="stVd"/>	
+		<result property="dtCad" column="dt_cad"/>	
+		<result property="hrCad" column="hrCad"/>	
+		<result property="contRedZ" column="cont_red_z"/>	
+		<result property="contOrdOpIni" column="cont_ord_op_ini"/>	
+		<result property="contOrdOpFin" column="cont_ord_op_fin"/>	
+		<result property="contReinicioOp" column="cont_reinicio_op"/>	
+		<result property="gtIni" column="vlr_gt_ini"/>	
+		<result property="gtFin" column="vlr_gt_fin"/>	
+		<result property="vlrVendaBruta" column="vlr_vend_bruta"/>	 
+		<result property="vlrDesc" column="vlr_desc"/>	 
+		<result property="vlrCanc" column="vlr_canc"/>	 
+		<result property="vlrContab" column="vlr_contab"/>	 
+		<result property="vlrIcms" column="vlr_icms"/>	 
+		<result property="vlrIsentas" column="vlr_isentas"/>	 
+		<result property="vlrNaoTrib" column="vlr_n_trib"/>	 
+		<result property="vlrBaseIcmsSubs" column="vlr_base_icms_subs"/>	 
+		<result property="vlrIssqn" column="vlr_issqn"/>	 
+		<result property="vlrDescIssqn" column="vlr_desc_issqn"/>	 
+		<result property="vlrCancelIssqn" column="vlr_cancel_issqn"/>	 
+		<result property="txIcms" column="tx_icms"/>	 
+		<result property="baseCalc" column="base_calc"/>	 
+		<result property="tipoImposto" column="tipo_imposto"/>	
+		<result property="vlrTxIcms" column="vlrTxIcms"/>
+	</resultMap>
+	<resultMap id="selectConsoldVd" type="Map">	
+		<result property="tipoRegistro" column="tipoRegistro"/>	
+		<result property="cdEmp" column="cd_emp"/>	
+		<result property="cdFilial" column="cd_filial"/>	
+		<result property="cdCx" column="cd_cx"/>	
+		<result property="dtMov" column="dt_mov"/>	
+		<result property="nrCupomIni" column="nr_cupom_ini"/>	
+		<result property="nrCupomFim" column="nr_cupom_fim"/>	
+		<result property="vlrVdLiq" column="vlr_vd_liq"/>	
+		<result property="cdUsu" column="cd_usu"/>	
+		<result property="dtCad" column="dt_cad"/>	
+		<result property="vlReceb" column="vl_receb"/>	
+		<result property="vlServ" column="vl_serv"/>
+	</resultMap>
+	<resultMap id="selectConciliacaoPdvVd" type="Map">	
+		<result property="tipoRegistro" column="tipoRegistro"/>
+		<collection property="cupons" column="" javaType="ArrayList" ofType="map" select="selectConciliacaoPdvVdCupons" />		
+	</resultMap>
+	<resultMap id="selectConciliacaoPdvVdCupons" type="Map">	
+		<result property="cdEmp" column="cd_emp"/>	
+		<result property="cdFilial" column="cd_filial"/>	
+		<result property="cdCx" column="cd_cx"/>	
+		<result property="nrEcf" column="nr_ecf"/>	
+		<result property="dtVd" column="dt_vd"/>	
+		<result property="stVd" column="st_Vd"/>	   
+	</resultMap>
 </mapper>

@@ -55,7 +55,7 @@
 				 vd.cd_emp          = orc.cd_emp
 				 and vd.cd_filial   = orc.cd_filial
 				 and vd.nr_orc      = orc.cd_orc
-                 where orc.flag_consolidado = 0 
+                 where orc.flag_consolidado = #{flagConsolid}::numeric
 				 AND hr_emi < (now() - interval '90 minutes') 
 				 AND VD.CD_EMP IS NULL 
 				 LIMIT 1
@@ -303,7 +303,7 @@
 				COALESCE(nm_concorrente,' '::CHARACTER VARYING) as nm_concorrente,
 				COALESCE(vlr_preco_concorrente::money::numeric::float8,0.0::money::numeric::float8) as vlr_preco_concorrente
 			FROM est_orc_cpl_falta 
-			where flag_consolidado = 0 LIMIT 1
+			where flag_consolidado = #{flagConsolid}::numeric LIMIT 1
 		]]>
   </select>
   

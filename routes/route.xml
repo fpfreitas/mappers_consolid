@@ -54,9 +54,9 @@
 			</onException>            
         </route>
 		
-		<!-- 
+		
 		<route>
-            <from uri="dbmapper:selectCupomErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=10000&amp;consumer.onConsume=consumePdv" />
+            <from uri="dbmapper:selectCupomErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=10000&amp;consumer.onConsume=consumePdv&amp;parameters=flagConsolid=2" />
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -69,10 +69,10 @@
 				<to uri="dbmapper:consumePdvErro?dataSource=dataSourcePdv&amp;statementType=Update" />
 			</onException>            
         </route>
-		-->
+		
 		
 		<route>
-            <from uri="dbmapper:selectCupomNaoFiscal?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvNaoFiscal" />
+            <from uri="dbmapper:selectCupomNaoFiscal?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvNaoFiscal&amp;parameters=flagConsolid=0" />
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -87,7 +87,7 @@
         </route>
 		
 		<route>
-            <from uri="dbmapper:selectCupomNaoFiscalErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=10000&amp;consumer.onConsume=consumePdvNaoFiscal" />
+            <from uri="dbmapper:selectCupomNaoFiscalErro?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=10000&amp;consumer.onConsume=consumePdvNaoFiscal&amp;parameters=flagConsolid=2" />
             <to uri="log:br.com.itec?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -102,7 +102,7 @@
         </route>
 				
 		<route>
-            <from uri="dbmapper:selectOrcamento?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeOrcamento" />
+            <from uri="dbmapper:selectOrcamento?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeOrcamento&amp;parameters=flagConsolid=0" />
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -116,9 +116,9 @@
 				<to uri="dbmapper:consumeOrcamentoReprocessar?dataSource=dataSourcePdv&amp;statementType=Update" />
 			</onException>  
         </route> 
-		<!--
+		
 		<route>
-            <from uri="dbmapper:selectOrcamentoReprocessar?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeOrcamento" />
+            <from uri="dbmapper:selectOrcamentoReprocessar?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeOrcamento&amp;parameters=flagConsolid=2" />
             <to uri="log:com.mycompany.order?level=INFO"/>
             <process ref="mapProcessor"/>
             <process ref="pgObjectProcessor"/>
@@ -131,7 +131,7 @@
 				<to uri="dbmapper:consumeOrcamentoErro?dataSource=dataSourcePdv&amp;statementType=Update" />
 			</onException>  
         </route> 
-		-->
+		
 		<route>
             <from uri="dbmapper:selectMapaResumo?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeMapaResumo" />
             <to uri="log:com.mycompany.order?level=INFO"/>

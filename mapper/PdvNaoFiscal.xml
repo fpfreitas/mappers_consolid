@@ -4,46 +4,38 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="CupomNaoFiscalJsonResult">
-  <resultMap id="CupomNaoFiscalJsonResult" type="Map">
-    <result property="json" column="row_to_json"/>
-  </resultMap>
-
-  <select id="selectCupomNaoFiscal" resultMap="CupomNaoFiscalJsonResult">
-  
-<![CDATA[SELECT ROW_TO_JSON(ROW), 
-       "cdEmp", 
-       "cdFilial", 
-       "cdCtr" 
-FROM   ( 
-                 SELECT    filial.cgc						             AS "cnpjFilial",
-			   cupom.cd_emp                                                      AS "cdEmp",
-                           cupom.cd_filial                                                   AS "cdFilial",
-                           cupom.cd_cx                                                       AS "cdCx",
-                           cupom.dt_cupom                                                    AS "dtCupom",
-                           cupom.dt_cad                                                      AS "dtCad",
-                           cupom.hr_cupom                                                    AS "hrCupom",
-                           cupom.tp_cupom_nao_fiscal                                         AS "tpCupom",
-                           cupom.cd_mov                                                      AS "cdMov",
-                           cupom.cd_ctr                                                      AS "cdCtr",
-                           cupom.nr_coo                                                      AS "nrCoo",
-                           cupom.st_cupom                                                    AS "stCupom",
-                           cupom.cont_cupom_fisc                                             AS "contadorCupomFiscal",
-                           cupom.cd_mov                                                      AS "codigoMovimento",
-                           filial.cgc                                                        AS "cgcFilial",
-                           filial.nm_fant                                                    AS "nmFilial",
-                           cupom.vlr_to_cupom                                                AS "vlrTotCupom",
-                           cupom.vlr_dinh                                                    AS "vlrDinh",
-                           cupom.vlr_cartao                                                  AS "vlrCartao",
+	<select id="selectCupomNaoFiscal" resultMap="CupomNaoFiscalJsonResult">
+		<![CDATA[
+                 SELECT    filial.cgc						             AS "CNPJ_FILIAL",
+						   cupom.cd_emp                                                      ,
+                           cupom.cd_filial                                                   ,
+						   cupom.cd_ctr                                                      ,
+                           cupom.cd_cx                                                       ,
+                           cupom.dt_cupom                                                    ,
+                           cupom.dt_cad                                                      ,
+                           cupom.hr_cupom                                                    ,
+                           cupom.tp_cupom_nao_fiscal                                         ,
+                           cupom.cd_mov                                                      ,
+                           cupom.cd_ctr                                                      ,
+                           cupom.nr_coo                                                      ,
+                           cupom.st_cupom                                                    ,
+                           cupom.cont_cupom_fisc                                             ,
+                           cupom.cd_mov                                                      ,
+                           filial.cgc                                                        ,
+                           filial.nm_fant                                                    ,
+                           cupom.vlr_to_cupom                                                ,
+                           cupom.vlr_dinh                                                    ,
+                           cupom.vlr_cartao                                                  ,
                            cupom.vlr_chqs_a_vista + cupom.vlr_chqs_a_prz                     AS "vlrChqs",
-                           cupom.cd_oper_cel                                                 AS "cdOperCel",
-                           cupom.nr_cel_recarga                                              AS "nrCelRecarga",
-                           cupom.vlr_recarga_cel                                             AS "vlrRecargaCel",
-                           cupom.nm_oper_cel                                                 AS "nmOperCel",
-                           cupom.nr_serie_imp                                                AS "nrSerieEcf",
-                           cupom.vs_pdv                                                      AS "versaoPdv",
-                           cupom.vs_pdv_rc                                                   AS "versaoPdvRc",
-                           operador.cd_usu                                                   AS "cdOperador",
-                           operador.nm_usu                                                   AS "nmOperador",
+                           cupom.cd_oper_cel                                                 ,
+                           cupom.nr_cel_recarga                                              ,
+                           cupom.vlr_recarga_cel                                             ,
+                           cupom.nm_oper_cel                                                 ,
+                           cupom.nr_serie_imp                                                ,
+                           cupom.vs_pdv                                                      ,
+                           cupom.vs_pdv_rc                                                   ,
+                           operador.cd_usu                                                   ,
+                           operador.nm_usu                                                   ,
                            NULLIF(COALESCE(cupom.vlr_dinh, 0::       NUMERIC) <> 0::NUMERIC, FALSE) AS "contemDinheiro",
                            NULLIF(COALESCE(cupom.vlr_recarga_cel, 0::NUMERIC) <> 0::NUMERIC, FALSE) AS "contemRecargaCel",
                            NULLIF(cupom.st_cupom <> 0::NUMERIC, FALSE)                              AS "isCancelado",
@@ -51,103 +43,133 @@ FROM   (
                            cupom.tp_cupom_nao_fiscal = 1::NUMERIC                                   AS "isDoacao",
                            cupom.tp_cupom_nao_fiscal = 2::NUMERIC                                   AS "isDiversos",
                            cupom.tp_cupom_nao_fiscal = 3::NUMERIC                                   AS "isRecarga",
-                           cupom.cd_ctr                                                             AS "doacaoId",
-                           entidade.cd_entid                                                        AS "doacaoFavorId",
-                           entidade.nm_entid                                                        AS "doacaoFavorNome",
+                           cupom.cd_ctr                                                             ,
+                           entidade.cd_entid                                                        ,
+                           entidade.nm_entid                                                        ,
 						   coalesce(cupom.obs_cupom, ''::CHARACTER varying) 						AS "obsCupom", 
                            coalesce(cupom.cd_mt_sangria, 0::NUMERIC)        						AS "cdMtSangria", 
-                           cupom.cd_cli                                     						AS "cdCli", 
-						   diversos.dt_vencto                                                       AS "diversosVenc",
+                           cupom.cd_cli                                     						, 
+						   diversos.dt_vencto                                                       ,
                            CASE 
                                      WHEN diversos.cd_recb_pdv <> 0 THEN diversos.cd_recb_pdv 
                                      ELSE 0::bigint 
                            END                                              AS "diversosId", 
-                           diversos.ident_recb_pdv                          AS "diversosCodigo",
+                           diversos.ident_recb_pdv                          ,
                            0                                                AS "stVd", 
-						   cupom.st_pend_estorno                            AS "stPendEstorno", 
-						    ( 
-                                  SELECT row_to_json(BAIXAFATURA) 
-                                  FROM   ( 
-                                                SELECT 
-                                                        
-							cupom.cd_emp				AS "cdEmp",
-							cupom.cd_filial             AS "cdFilial",
-						   cupom.hash_protocolo                             AS "hashProtocolo",
-						   (
-                                                              SELECT array_to_json(array_agg(row_to_json(FATURA)))
-                                                              FROM   (
-						   
-                           SELECT fatura.cd_ctr_pgto                        AS "faturaRecId",
-                           fatura.cd_rc_deb                                 AS "faturaId",
-		           fatura.dt_vencto				    AS "dtVencto",
-                           fatura.vlr_sld_dp                                AS "faturaVlr",
-                           fatura.vlr_sld_dp                                AS "faturaVlrSld",
-                           fatura.vlr_min_pgto                              AS "faturaVlrMin",
-                           fatura.vlr_pago                                  AS "faturaVlrCred",                          
-                           fatura.st_paga                                   AS "faturaStPaga", 
-                           fatura.tp_pgto_offline                           AS "faturaOffline", 
-                           fatura.vlrjuros                                  AS "faturavlrJuro", 
-                           fatura.vlrdesconto                               AS "faturaVlrDesc", 
-                           fatura.nrfatura                                  AS "faturaNrFatura",
-                           fatura.dt_vencto                                 AS "dtVencto"                                            						   
+						   cupom.st_pend_estorno                            
+						    
+                 FROM      pdv_cupom_nao_fiscal cupom 
+                 left join prc_filial filial 
+                 ON        cupom.cd_emp = filial.cd_emp 
+                 AND       cupom.cd_filial = filial.cd_filial 
+                 left join pdv_cupom_nao_fiscal_est_recb_pdv diversos 
+                 ON        cupom.cd_emp = diversos.cd_emp 
+                 AND       cupom.cd_filial = diversos.cd_filial 
+                 AND       cupom.cd_cx = diversos.cd_cx 
+                 AND       cupom.cd_ctr = diversos.cd_ctr 
+                 left join pdv_cupom_nao_fiscal_est_entid_doacao doacao 
+                 ON        cupom.cd_emp = doacao.cd_emp 
+                 AND       cupom.cd_filial = doacao.cd_filial 
+                 AND       cupom.cd_cx = doacao.cd_cx 
+                 AND       cupom.cd_ctr = doacao.cd_ctr 
+                 left join est_entidade_doacao entidade 
+                 ON        doacao.cd_emp = entidade.cd_emp::NUMERIC 
+                 AND       doacao.cd_entid = entidade.cd_entid 
+                 left join glb_usu operador 
+                 ON        cupom.cd_usu = operador.cd_usu 
+                 WHERE     cupom.st_cupom >= 0::NUMERIC 
+                 AND       cupom.flag_consolidado = 0 limit 1
+]]>
+	</select>
+
+	<select id="selectCupomNaoFiscalBaixa" resultMap="selectCupomNaoFiscalBaixa">
+	SELECT 
+
+							cupom.cd_emp				,
+							cupom.cd_filial             ,
+						   cupom.hash_protocolo         ,
+						   cupom.cd_cx					,
+						   cupom.cd_ctr					,
+						   from pdv_cupom_nao_fiscal cupom
+						   where cupom.cd_emp = #{cdEmp}
+						   AND   cupom.cd_filial = #{cdFilial}
+						   AND   cupom.cd_cx = #{cdCx}
+						   AND   cupom.cd_ctr = #{cdCtr} 
+	</select>
+	<select id="selectCupomNaoFiscalBaixaFatura" resultMap="selectCupomNaoFiscalBaixaFatura">
+
+                           SELECT fatura.cd_emp,
+						   fatura.cd_filial,
+						   fatura.cd_cx,
+						   fatura.cd_ctr,
+						   fatura.cd_ctr_pgto                        ,
+                           fatura.cd_rc_deb                                 ,
+						   fatura.dt_vencto				    				,
+                           fatura.vlr_sld_dp                                ,
+                           fatura.vlr_sld_dp                                ,
+                           fatura.vlr_min_pgto                              ,
+                           fatura.vlr_pago                                  ,                         
+                           fatura.st_paga                                   ,
+                           fatura.tp_pgto_offline                           ,
+                           fatura.vlrjuros                                  ,
+                           fatura.vlrdesconto                               ,
+                           fatura.nrfatura                                  ,                                       						   
 						   FROM pdv_cupom_nao_fiscal_rec_fatura fatura 
-						   WHERE        cupom.cd_emp = fatura.cd_emp 
-						   AND       cupom.cd_filial = fatura.cd_filial 
-						   AND       cupom.cd_cx = fatura.cd_cx 
-						   AND       cupom.cd_ctr = fatura.cd_ctr 
+						   WHERE        #{cdEmp} = fatura.cd_emp 
+						   AND       	#{cdFilial} = fatura.cd_filial 
+						   AND       	#{cdCx} = fatura.cd_cx 
+						   AND       	#{cdCtr} = fatura.cd_ctr 
 						   AND       fatura.st_paga = 1::NUMERIC 
-						   ) FATURA) AS "faturas",
-						   ( 
-                                                              SELECT array_to_json(array_agg(row_to_json(PARCELA)))
-                                                              FROM   (
-						   SELECT parcela.cd_ctr_pgto						AS "parcelaRecId",
-                           parcela.cd_ctr_parc                              AS "parcelaId",
-                           parcela.vlr_parc                                 AS "parcelaVlr",
-                           parcela.vlr_pago                                 AS "parcelaVlrCred",
-						   parcela.st_paga                                  AS "parcelaStPaga", 
-                           parcela.tp_pgto_offline                          AS "parcelaOffline"
-						   FROM pdv_cupom_nao_fiscal_rec_parc_cred parcela 
-						   WHERE        cupom.cd_emp = parcela.cd_emp 
-						   AND       cupom.cd_filial = parcela.cd_filial 
-						   AND       cupom.cd_cx = parcela.cd_cx 
-						   AND       cupom.cd_ctr = parcela.cd_ctr 
-						   ) PARCELA) AS "parcelas" ) BAIXAFATURA) AS "baixaDeFatura",
-                           ( 
-                                  SELECT row_to_json(pagamento) 
-                                  FROM   ( 
-                                                SELECT 
-                                                       ( 
-                                                              SELECT array_to_json(array_agg(row_to_json(cheque)))
-                                                              FROM   ( 
-                                                                            SELECT chq.cd_bc_chq       AS "cdBc",
-                                                                                   chq.nr_ord          AS "nrOrd",
-                                                                                   chq.nr_chq          AS "nrChq",
-                                                                                   chq.ano_chq         AS "anoChq",
-                                                                                   chq.vlr_chq         AS "vlrChq",
-                                                                                   cupom.dt_cupom      AS "dtEmi",
-                                                                                   chq.dt_vencto       AS "dtVencto",
-                                                                                   chq.ag_chq          AS "agChq",
-                                                                                   chq.cpf_cgc_emi     AS "cgcEmi",
-                                                                                   chq.nm_emi          AS "nmEmi",
-                                                                                   chq.fone_emi        AS "foneEmi",
-                                                                                   chq.nr_cnt_chq      AS "nrCntChq",
-                                                                                   chq.aut_chq         AS "autChq",
-                                                                                   chq.comp_chq        AS "compChq",
-                                                                                   chq.c1_chq          AS "c1Chq",
-                                                                                   chq.c2_chq          AS "c2Chq",
-                                                                                   chq.sr_chq          AS "c3Chq",
-                                                                                   chq.cmc7_chq        AS "cmc7Chq",
-                                                                                   chq.mes_ano_cnt_chq AS "mesAnoCntChq"
-                                                                            FROM   pdv_cupom_nao_fiscal_chqs chq                                                                                
-                                                                            WHERE  cupom.cd_emp 	= chq.cd_emp
-                                                                            AND    cupom.cd_filial 	= chq.cd_filial
-                                                                            AND    cupom.cd_ctr 	= chq.cd_ctr
-                                                                            AND    cupom.cd_cx 		= chq.cd_cx
-                                                                                           ) cheque) AS "cheque",
-                                                       ( 
-                                                              SELECT array_to_json(array_agg(row_to_json(cartao)))
-                                                              FROM   ( 
-                                                                               SELECT    cupomtef.cd_trn_tef AS "cdRectoTef",
+	</select>
+	<select id="selectCupomNaoFiscalBaixaParcela" resultMap="selectCupomNaoFiscalBaixaParcela">
+			SELECT parcela.cd_emp,
+						   parcela.cd_filial,
+						   parcela.cd_cx,
+						   parcela.cd_ctr,
+			parcela.cd_ctr_pgto						        ,
+            parcela.cd_ctr_parc                             ,
+            parcela.vlr_parc                                ,
+            parcela.vlr_pago                                ,
+			parcela.st_paga                                 ,
+            parcela.tp_pgto_offline                         
+			FROM pdv_cupom_nao_fiscal_rec_parc_cred parcela 
+			WHERE     #{cdEmp} = parcela.cd_emp 
+			AND       #{cdFilial} = parcela.cd_filial 
+			AND       #{cdCx} = parcela.cd_cx 
+			AND       #{cdCtr} = parcela.cd_ctr 
+	</select>
+	<select id="selectCupomNaoFiscalCheque" resultMap="selectCupomNaoFiscalCheque">
+		SELECT chq.cd_emp    ,
+		       chq.cd_filial ,
+		       chq.cd_ctr    ,
+		       chq.cd_cx     ,
+			   chq.cd_bc_chq       ,
+			   chq.nr_ord          ,
+			   chq.nr_chq          ,
+			   chq.ano_chq         ,
+			   chq.vlr_chq         ,
+			   #{dtEmi}     AS "dtEmi",
+			   chq.dt_vencto       ,
+			   chq.ag_chq          ,
+			   chq.cpf_cgc_emi     ,
+			   chq.nm_emi          ,
+			   chq.fone_emi        ,
+			   chq.nr_cnt_chq      ,
+			   chq.aut_chq         ,
+			   chq.comp_chq        ,
+			   chq.c1_chq          ,
+			   chq.c2_chq          ,
+			   chq.sr_chq          ,
+			   chq.cmc7_chq        ,
+			   chq.mes_ano_cnt_chq 
+		FROM   pdv_cupom_nao_fiscal_chqs chq                                                                                
+		WHERE  #{cdEmp} = chq.cd_emp
+		AND    #{cdFilial} = chq.cd_filial
+		AND    #{cdCtr} = chq.cd_ctr
+		AND    #{cdCx} = chq.cd_cx
+	</select>
+	<select id="selectCupomNaoFiscalCartao" resultMap="selectCupomNaoFiscalCartao">	
+		<![CDATA[ SELECT    cupomtef.cd_emp , cupomtef.cd_filial, cupomtef.cd_cx, cupomtef.cd_ctr, cupomtef.cd_trn_tef AS "cdRectoTef",
                                                                                          CASE 
                                                                                                    WHEN cupomtef.vl_cartao > 0::NUMERIC THEN
                                                                                                              CASE
@@ -330,7 +352,7 @@ FROM   (
                                                                                                    WHEN cupomtef.trn_pos = 1 THEN 'POS'::text
                                                                                                    ELSE 'SITEF'::text
                                                                                          END                                 AS "tefGateway",
-                                                                                         coalesce(cupom.flag_consolidado, 0) AS flag_consolidado,
+                                                                                         
                                                                                          CASE 
                                                                                                    WHEN cupomtef.vl_cartao > 0::NUMERIC THEN
                                                                                                              CASE
@@ -367,449 +389,187 @@ FROM   (
 																			   
                                                                                WHERE     (cupomtef.vl_cartao > 0::NUMERIC OR pdvtef.vl_cartao > 0::  NUMERIC)
 																			   AND (pdvtef.cod_modalidade::text <> '9800'::text OR cupomtef.cod_modalidade::text <> '9800'::text)
-                                                                               AND       cupom.cd_emp = cupomtef.cd_emp
-                                                                               AND       cupom.cd_filial = cupomtef.cd_filial
-                                                                               AND       cupom.cd_cx = cupomtef.cd_cx
-                                                                               AND       cupom.cd_ctr = cupomtef.cd_ctr) cartao) AS "cartao" ) pagamento) AS "pagamento"
-                 FROM      pdv_cupom_nao_fiscal cupom 
-                 left join prc_filial filial 
-                 ON        cupom.cd_emp = filial.cd_emp 
-                 AND       cupom.cd_filial = filial.cd_filial 
-                 left join pdv_cupom_nao_fiscal_est_recb_pdv diversos 
-                 ON        cupom.cd_emp = diversos.cd_emp 
-                 AND       cupom.cd_filial = diversos.cd_filial 
-                 AND       cupom.cd_cx = diversos.cd_cx 
-                 AND       cupom.cd_ctr = diversos.cd_ctr 
-                 left join pdv_cupom_nao_fiscal_est_entid_doacao doacao 
-                 ON        cupom.cd_emp = doacao.cd_emp 
-                 AND       cupom.cd_filial = doacao.cd_filial 
-                 AND       cupom.cd_cx = doacao.cd_cx 
-                 AND       cupom.cd_ctr = doacao.cd_ctr 
-                 left join est_entidade_doacao entidade 
-                 ON        doacao.cd_emp = entidade.cd_emp::NUMERIC 
-                 AND       doacao.cd_entid = entidade.cd_entid 
-                 left join glb_usu operador 
-                 ON        cupom.cd_usu = operador.cd_usu 
-                 WHERE     cupom.st_cupom >= 0::NUMERIC 
-                 AND       cupom.flag_consolidado = 0 limit 1) ROW;
-
-
-]]>
-  </select>
-  
-<select id="selectCupomNaoFiscalErro" resultMap="CupomNaoFiscalJsonResult">
-<![CDATA[SELECT ROW_TO_JSON(ROW), 
-       "cdEmp", 
-       "cdFilial", 
-       "cdCtr" 
-FROM   ( 
-                 SELECT    filial.cgc						             AS "cnpjFilial",
-			   cupom.cd_emp                                                      AS "cdEmp",
-                           cupom.cd_filial                                                   AS "cdFilial",
-                           cupom.cd_cx                                                       AS "cdCx",
-                           cupom.dt_cupom                                                    AS "dtCupom",
-                           cupom.dt_cad                                                      AS "dtCad",
-                           cupom.hr_cupom                                                    AS "hrCupom",
-                           cupom.tp_cupom_nao_fiscal                                         AS "tpCupom",
-                           cupom.cd_mov                                                      AS "cdMov",
-                           cupom.cd_ctr                                                      AS "cdCtr",
-                           cupom.nr_coo                                                      AS "nrCoo",
-                           cupom.st_cupom                                                    AS "stCupom",
-                           cupom.cont_cupom_fisc                                             AS "contadorCupomFiscal",
-                           cupom.cd_mov                                                      AS "codigoMovimento",
-                           filial.cgc                                                        AS "cgcFilial",
-                           filial.nm_fant                                                    AS "nmFilial",
-                           cupom.vlr_to_cupom                                                AS "vlrTotCupom",
-                           cupom.vlr_dinh                                                    AS "vlrDinh",
-                           cupom.vlr_cartao                                                  AS "vlrCartao",
-                           cupom.vlr_chqs_a_vista + cupom.vlr_chqs_a_prz                     AS "vlrChqs",
-                           cupom.cd_oper_cel                                                 AS "cdOperCel",
-                           cupom.nr_cel_recarga                                              AS "nrCelRecarga",
-                           cupom.vlr_recarga_cel                                             AS "vlrRecargaCel",
-                           cupom.nm_oper_cel                                                 AS "nmOperCel",
-                           cupom.nr_serie_imp                                                AS "nrSerieEcf",
-                           cupom.vs_pdv                                                      AS "versaoPdv",
-                           cupom.vs_pdv_rc                                                   AS "versaoPdvRc",
-                           operador.cd_usu                                                   AS "cdOperador",
-                           operador.nm_usu                                                   AS "nmOperador",
-                           NULLIF(COALESCE(cupom.vlr_dinh, 0::       NUMERIC) <> 0::NUMERIC, FALSE) AS "contemDinheiro",
-                           NULLIF(COALESCE(cupom.vlr_recarga_cel, 0::NUMERIC) <> 0::NUMERIC, FALSE) AS "contemRecargaCel",
-                           NULLIF(cupom.st_cupom <> 0::NUMERIC, FALSE)                              AS "isCancelado",
-                           cupom.tp_cupom_nao_fiscal = 0::NUMERIC                                   AS "isFatura",
-                           cupom.tp_cupom_nao_fiscal = 1::NUMERIC                                   AS "isDoacao",
-                           cupom.tp_cupom_nao_fiscal = 2::NUMERIC                                   AS "isDiversos",
-                           cupom.tp_cupom_nao_fiscal = 3::NUMERIC                                   AS "isRecarga",
-                           cupom.cd_ctr                                                             AS "doacaoId",
-                           entidade.cd_entid                                                        AS "doacaoFavorId",
-                           entidade.nm_entid                                                        AS "doacaoFavorNome",
-						   coalesce(cupom.obs_cupom, ''::CHARACTER varying) 						AS "obsCupom", 
-                           coalesce(cupom.cd_mt_sangria, 0::NUMERIC)        						AS "cdMtSangria", 
-                           cupom.cd_cli                                     						AS "cdCli", 
-						   diversos.dt_vencto                                                       AS "diversosVenc",
-                           CASE 
-                                     WHEN diversos.cd_recb_pdv <> 0 THEN diversos.cd_recb_pdv 
-                                     ELSE 0::bigint 
-                           END                                              AS "diversosId", 
-                           diversos.ident_recb_pdv                          AS "diversosCodigo",
-                           0                                                AS "stVd", 
-						   cupom.st_pend_estorno                            AS "stPendEstorno", 
-						    ( 
-                                  SELECT row_to_json(BAIXAFATURA) 
-                                  FROM   ( 
-                                                SELECT 
-                                                        
-							cupom.cd_emp				AS "cdEmp",
-							cupom.cd_filial             AS "cdFilial",
-						   cupom.hash_protocolo                             AS "hashProtocolo",
-						   (
-                                                              SELECT array_to_json(array_agg(row_to_json(FATURA)))
-                                                              FROM   (
-						   
-                           SELECT fatura.cd_ctr_pgto                        AS "faturaRecId",
-                           fatura.cd_rc_deb                                 AS "faturaId",
-		           fatura.dt_vencto				    AS "dtVencto",
-                           fatura.vlr_sld_dp                                AS "faturaVlr",
-                           fatura.vlr_sld_dp                                AS "faturaVlrSld",
-                           fatura.vlr_min_pgto                              AS "faturaVlrMin",
-                           fatura.vlr_pago                                  AS "faturaVlrCred",                          
-                           fatura.st_paga                                   AS "faturaStPaga", 
-                           fatura.tp_pgto_offline                           AS "faturaOffline", 
-                           fatura.vlrjuros                                  AS "faturavlrJuro", 
-                           fatura.vlrdesconto                               AS "faturaVlrDesc", 
-                           fatura.nrfatura                                  AS "faturaNrFatura",
-                           fatura.dt_vencto                                 AS "dtVencto"                                            						   
-						   FROM pdv_cupom_nao_fiscal_rec_fatura fatura 
-						   WHERE        cupom.cd_emp = fatura.cd_emp 
-						   AND       cupom.cd_filial = fatura.cd_filial 
-						   AND       cupom.cd_cx = fatura.cd_cx 
-						   AND       cupom.cd_ctr = fatura.cd_ctr 
-						   AND       fatura.st_paga = 1::NUMERIC 
-						   ) FATURA) AS "faturas",
-						   ( 
-                                                              SELECT array_to_json(array_agg(row_to_json(PARCELA)))
-                                                              FROM   (
-						   SELECT parcela.cd_ctr_pgto						AS "parcelaRecId",
-                           parcela.cd_ctr_parc                              AS "parcelaId",
-                           parcela.vlr_parc                                 AS "parcelaVlr",
-                           parcela.vlr_pago                                 AS "parcelaVlrCred",
-						   parcela.st_paga                                  AS "parcelaStPaga", 
-                           parcela.tp_pgto_offline                          AS "parcelaOffline"
-						   FROM pdv_cupom_nao_fiscal_rec_parc_cred parcela 
-						   WHERE        cupom.cd_emp = parcela.cd_emp 
-						   AND       cupom.cd_filial = parcela.cd_filial 
-						   AND       cupom.cd_cx = parcela.cd_cx 
-						   AND       cupom.cd_ctr = parcela.cd_ctr 
-						   ) PARCELA) AS "parcelas" ) BAIXAFATURA) AS "baixaDeFatura",
-                           ( 
-                                  SELECT row_to_json(pagamento) 
-                                  FROM   ( 
-                                                SELECT 
-                                                       ( 
-                                                              SELECT array_to_json(array_agg(row_to_json(cheque)))
-                                                              FROM   ( 
-                                                                            SELECT chq.cd_bc_chq       AS "cdBc",
-                                                                                   chq.nr_ord          AS "nrOrd",
-                                                                                   chq.nr_chq          AS "nrChq",
-                                                                                   chq.ano_chq         AS "anoChq",
-                                                                                   chq.vlr_chq         AS "vlrChq",
-                                                                                   cupom.dt_cupom      AS "dtEmi",
-                                                                                   chq.dt_vencto       AS "dtVencto",
-                                                                                   chq.ag_chq          AS "agChq",
-                                                                                   chq.cpf_cgc_emi     AS "cgcEmi",
-                                                                                   chq.nm_emi          AS "nmEmi",
-                                                                                   chq.fone_emi        AS "foneEmi",
-                                                                                   chq.nr_cnt_chq      AS "nrCntChq",
-                                                                                   chq.aut_chq         AS "autChq",
-                                                                                   chq.comp_chq        AS "compChq",
-                                                                                   chq.c1_chq          AS "c1Chq",
-                                                                                   chq.c2_chq          AS "c2Chq",
-                                                                                   chq.sr_chq          AS "c3Chq",
-                                                                                   chq.cmc7_chq        AS "cmc7Chq",
-                                                                                   chq.mes_ano_cnt_chq AS "mesAnoCntChq"
-                                                                            FROM   pdv_cupom_nao_fiscal_chqs chq                                                                                
-                                                                            WHERE  cupom.cd_emp 	= chq.cd_emp
-                                                                            AND    cupom.cd_filial 	= chq.cd_filial
-                                                                            AND    cupom.cd_ctr 	= chq.cd_ctr
-                                                                            AND    cupom.cd_cx 		= chq.cd_cx
-                                                                                           ) cheque) AS "cheque",
-                                                       ( 
-                                                              SELECT array_to_json(array_agg(row_to_json(cartao)))
-                                                              FROM   ( 
-                                                                               SELECT    cupomtef.cd_trn_tef AS "cdRectoTef",
-                                                                                         CASE 
-                                                                                                   WHEN cupomtef.vl_cartao > 0::NUMERIC THEN
-                                                                                                             CASE
-                                                                                                                       WHEN coalesce(cupomtef.cd_adm_cartao, 0::NUMERIC) > 0::NUMERIC THEN cupomtef.cd_adm_cartao
-                                                                                                                       WHEN cupomtef.cd_adm_cartao = 0::NUMERIC
-                                                                                                                       AND       cupomtef.tp_adm = 6 THEN
-                                                                                                                                 (
-                                                                                                                                        SELECT rc_adm_cartao.cd_adm_cartao
-                                                                                                                                        FROM   rc_adm_cartao
-                                                                                                                                        WHERE  rc_adm_cartao.cd_emp = cupomtef.cd_emp
-                                                                                                                                        AND    rc_adm_cartao.tp_adm = cupomtef.tp_adm::NUMERIC
-                                                                                                                                        AND    rc_adm_cartao.parc = cupomtef.qt_parc:: NUMERIC
-                                                                                                                                        AND    rc_adm_cartao.sts_adm = 0 limit 1)
-                                                                                                                       WHEN cupomtef.cd_adm_cartao = 0::NUMERIC THEN 0::NUMERIC
-                                                                                                                       ELSE NULL::                      NUMERIC
-                                                                                                             END
-                                                                                                   ELSE
-                                                                                                             CASE
-                                                                                                                       WHEN coalesce(pdvtef.cd_adm_cartao, 0::NUMERIC) > 0::NUMERIC THEN
-                                                                                                                                 CASE
-                                                                                                                                           WHEN coalesce(pdvtef.ds_bandeira, ''::CHARACTER varying)::text = ''::text
-                                                                                                                                           AND       pdvtef.cd_adm_cartao = 0::NUMERIC THEN
-                                                                                                                                                     (
-                                                                                                                                                            SELECT rc_adm_cartao.cd_adm_cartao
-                                                                                                                                                            FROM   rc_adm_cartao
-                                                                                                                                                            WHERE  rc_adm_cartao.nm_usual::text ~~* '%OPERADORA NAO CLASSIFICADA%'::text limit 1)
-                                                                                                                                           ELSE pdvtef.cd_adm_cartao
-                                                                                                                                 END
-                                                                                                                       WHEN pdvtef.cd_adm_cartao = 0::NUMERIC
-                                                                                                                       AND       cupomtef.tp_adm = 6 THEN
-                                                                                                                                 (
-                                                                                                                                        SELECT rc_adm_cartao.cd_adm_cartao
-                                                                                                                                        FROM   rc_adm_cartao
-                                                                                                                                        WHERE  rc_adm_cartao.cd_emp = cupomtef.cd_emp
-                                                                                                                                        AND    rc_adm_cartao.tp_adm = cupomtef.tp_adm::NUMERIC
-                                                                                                                                        AND    rc_adm_cartao.parc = cupomtef.qt_parc:: NUMERIC
-                                                                                                                                        AND    rc_adm_cartao.sts_adm = 0 limit 1)
-                                                                                                                       WHEN pdvtef.cd_adm_cartao = 0::NUMERIC THEN 0::NUMERIC
-                                                                                                                       ELSE NULL::                    NUMERIC
-                                                                                                             END
-                                                                                         END AS "cdConv",
-                                                                                         CASE 
-                                                                                                   WHEN cupomtef.vl_cartao > 0::NUMERIC THEN
-                                                                                                             CASE
-                                                                                                                       WHEN coalesce(cupomtef.cd_adm_cartao, 0::NUMERIC) > 0::NUMERIC THEN adm.nm_usual
-                                                                                                                       WHEN coalesce(cupomtef.cd_adm_cartao, 0::NUMERIC) = 0::NUMERIC
-                                                                                                                       AND       cupomtef.tp_adm <> 6 THEN cupomtef.ds_bandeira
-                                                                                                                       WHEN cupomtef.cd_adm_cartao = 0::NUMERIC
-                                                                                                                       AND       cupomtef.tp_adm = 6 THEN
-                                                                                                                                 (
-                                                                                                                                        SELECT rc_adm_cartao.nm_usual
-                                                                                                                                        FROM   rc_adm_cartao
-                                                                                                                                        WHERE  rc_adm_cartao.cd_emp = cupomtef.cd_emp
-                                                                                                                                        AND    rc_adm_cartao.tp_adm = cupomtef.tp_adm::NUMERIC
-                                                                                                                                        AND    rc_adm_cartao.parc = cupomtef.qt_parc:: NUMERIC
-                                                                                                                                        AND    rc_adm_cartao.sts_adm = 0 limit 1)
-                                                                                                                       ELSE NULL::CHARACTER varying
-                                                                                                             END
-                                                                                                   ELSE
-                                                                                                             CASE
-                                                                                                                       WHEN coalesce(pdvtef.cd_adm_cartao, 0::NUMERIC) > 0::NUMERIC THEN
-                                                                                                                                 CASE
-                                                                                                                                           WHEN coalesce(pdvtef.ds_bandeira, ''::CHARACTER varying)::text = ''::text
-                                                                                                                                           AND       pdvtef.cd_adm_cartao = 0::NUMERIC THEN
-                                                                                                                                                     (
-                                                                                                                                                            SELECT rc_adm_cartao.nm_usual
-                                                                                                                                                            FROM   rc_adm_cartao
-                                                                                                                                                            WHERE  rc_adm_cartao.nm_usual::text ~~* '%OPERADORA NAO CLASSIFICADA%'::text limit 1)
-                                                                                                                                           ELSE
-                                                                                                                                                 (
-                                                                                                                                                 SELECT rc_adm_cartao.nm_usual
-                                                                                                                                                 FROM   rc_adm_cartao
-                                                                                                                                                 WHERE  rc_adm_cartao.cd_emp = pdvtef.cd_emp
-                                                                                                                                                 AND    rc_adm_cartao.cd_adm_cartao = pdvtef.cd_adm_cartao)
-                                                                                                                                 END
-                                                                                                                       WHEN pdvtef.cd_adm_cartao = 0::NUMERIC
-                                                                                                                       AND       cupomtef.tp_adm = 6 THEN
-                                                                                                                                 (
-                                                                                                                                        SELECT rc_adm_cartao.nm_usual
-                                                                                                                                        FROM   rc_adm_cartao
-                                                                                                                                        WHERE  rc_adm_cartao.cd_emp = cupomtef.cd_emp
-                                                                                                                                        AND    rc_adm_cartao.tp_adm = cupomtef.tp_adm::NUMERIC
-                                                                                                                                        AND    rc_adm_cartao.parc = cupomtef.qt_parc:: NUMERIC
-                                                                                                                                        AND    rc_adm_cartao.sts_adm = 0 limit 1)
-                                                                                                                       WHEN pdvtef.cd_adm_cartao = 0::NUMERIC THEN coalesce(pdvtef.ds_bandeira, 'OPERADORA NAO CLASSIFICADA'::CHARACTER varying)
-                                                                                                                       ELSE NULL::CHARACTER varying
-                                                                                                             END
-                                                                                         END AS "nmConv",
-                                                                                         CASE 
-                                                                                                   WHEN cupomtef.vl_cartao > 0::NUMERIC THEN
-                                                                                                             CASE
-                                                                                                                       WHEN coalesce(cupomtef.cd_adm_cartao, 0::NUMERIC) > 0::NUMERIC THEN adm.nm_usual
-                                                                                                                       WHEN coalesce(cupomtef.cd_adm_cartao, 0::NUMERIC) = 0::NUMERIC
-                                                                                                                       AND       cupomtef.tp_adm <> 6 THEN cupomtef.ds_bandeira
-                                                                                                                       WHEN cupomtef.cd_adm_cartao = 0::NUMERIC
-                                                                                                                       AND       cupomtef.tp_adm = 6 THEN
-                                                                                                                                 (
-                                                                                                                                        SELECT rc_adm_cartao.nm_usual
-                                                                                                                                        FROM   rc_adm_cartao
-                                                                                                                                        WHERE  rc_adm_cartao.cd_emp = cupomtef.cd_emp
-                                                                                                                                        AND    rc_adm_cartao.tp_adm = cupomtef.tp_adm::NUMERIC
-                                                                                                                                        AND    rc_adm_cartao.parc = cupomtef.qt_parc:: NUMERIC
-                                                                                                                                        AND    rc_adm_cartao.sts_adm = 0 limit 1)
-                                                                                                                       ELSE NULL::CHARACTER varying
-                                                                                                             END
-                                                                                                   ELSE
-                                                                                                             CASE
-                                                                                                                       WHEN coalesce(pdvtef.cd_adm_cartao, 0::NUMERIC) > 0::NUMERIC THEN
-                                                                                                                                 CASE
-                                                                                                                                           WHEN coalesce(pdvtef.ds_bandeira, ''::CHARACTER varying)::text = ''::text
-                                                                                                                                           AND       pdvtef.cd_adm_cartao = 0::NUMERIC THEN
-                                                                                                                                                     (
-                                                                                                                                                            SELECT rc_adm_cartao.nm_usual
-                                                                                                                                                            FROM   rc_adm_cartao
-                                                                                                                                                            WHERE  rc_adm_cartao.nm_usual::text ~~* '%OPERADORA NAO CLASSIFICADA%'::text limit 1)
-                                                                                                                                           ELSE
-                                                                                                                                                 (
-                                                                                                                                                 SELECT rc_adm_cartao.nm_usual
-                                                                                                                                                 FROM   rc_adm_cartao
-                                                                                                                                                 WHERE  rc_adm_cartao.cd_emp = pdvtef.cd_emp
-                                                                                                                                                 AND    rc_adm_cartao.cd_adm_cartao = pdvtef.cd_adm_cartao)
-                                                                                                                                 END
-                                                                                                                       WHEN pdvtef.cd_adm_cartao = 0::NUMERIC
-                                                                                                                       AND       cupomtef.tp_adm = 6 THEN
-                                                                                                                                 (
-                                                                                                                                        SELECT rc_adm_cartao.nm_usual
-                                                                                                                                        FROM   rc_adm_cartao
-                                                                                                                                        WHERE  rc_adm_cartao.cd_emp = cupomtef.cd_emp
-                                                                                                                                        AND    rc_adm_cartao.tp_adm = cupomtef.tp_adm::NUMERIC
-                                                                                                                                        AND    rc_adm_cartao.parc = cupomtef.qt_parc:: NUMERIC
-                                                                                                                                        AND    rc_adm_cartao.sts_adm = 0 limit 1)
-                                                                                                                       WHEN pdvtef.cd_adm_cartao = 0::NUMERIC THEN coalesce(pdvtef.ds_bandeira, 'OPERADORA NAO CLASSIFICADA'::CHARACTER varying)
-                                                                                                                       ELSE NULL::CHARACTER varying
-                                                                                                             END
-                                                                                         END AS "bandeira",
-                                                                                         CASE 
-                                                                                                   WHEN cupomtef.vl_cartao > 0::NUMERIC THEN cupomtef.vl_saque_cartao
-                                                                                                   ELSE pdvtef.vl_saque_cartao
-                                                                                         END AS "vlrSaque",
-                                                                                         CASE 
-                                                                                                   WHEN cupomtef.vl_cartao > 0::NUMERIC THEN coalesce(cupomtef.qt_parc, 1)
-                                                                                                   ELSE
-                                                                                                             CASE
-                                                                                                                       WHEN pdvtef.qt_parc > 0 THEN pdvtef.qt_parc
-                                                                                                                       ELSE 1
-                                                                                                             END
-                                                                                         END AS "qtParc",
-                                                                                         CASE 
-                                                                                                   WHEN cupomtef.vl_cartao > 0::NUMERIC THEN cupomtef.cod_rede
-                                                                                                   ELSE pdvtef.cod_rede
-                                                                                         END AS "codRede",
-                                                                                         CASE 
-                                                                                                   WHEN cupomtef.vl_cartao > 0::NUMERIC THEN cupomtef.cod_bandeira
-                                                                                                   ELSE pdvtef.cod_bandeira
-                                                                                         END AS "codBandeira",
-                                                                                         CASE 
-                                                                                                   WHEN cupomtef.vl_cartao > 0::NUMERIC THEN
-                                                                                                             CASE
-                                                                                                                       WHEN coalesce(cupomtef.cod_modalidade, '0'::CHARACTER varying)::text = '0'::text
-                                                                                                                       OR        cupomtef.cod_modalidade::text = 0::text THEN '9800'::CHARACTER varying
-                                                                                                                       ELSE cupomtef.cod_modalidade
-                                                                                                             END
-                                                                                                   ELSE
-                                                                                                             CASE
-                                                                                                                       WHEN coalesce(pdvtef.cod_modalidade, '0'::CHARACTER varying)::text = '0'::text
-                                                                                                                       OR        pdvtef.cod_modalidade::text = 0::text THEN '9800'::CHARACTER varying
-                                                                                                                       ELSE pdvtef.cod_modalidade
-                                                                                                             END
-                                                                                         END AS "codModalidade",
-                                                                                         CASE 
-                                                                                                   WHEN cupomtef.vl_cartao > 0::                   NUMERIC THEN "substring"(cupomtef.nsu_tef::text, 0, 9)::NUMERIC 
-                                                                                                   ELSE "substring"(pdvtef.nsu_sitef::text, 0, 9)::NUMERIC 
-                                                                                         END AS "nrTransacao",
-                                                                                         CASE 
-                                                                                                   WHEN cupomtef.vl_cartao > 0::NUMERIC THEN "substring"(cupomtef.nr_autorizacao::text, 0, 16) 
-                                                                                                   ELSE "substring"(pdvtef.nr_autorizacao::text, 0, 16) 
-                                                                                         END AS "nrAutorizacao",
-                                                                                         CASE 
-                                                                                                   WHEN cupomtef.gerenciador_tef = 1 THEN 'SCOPE'::text
-                                                                                                   WHEN cupomtef.trn_pos = 1 THEN 'POS'::text
-                                                                                                   ELSE 'SITEF'::text
-                                                                                         END                                 AS "tefGateway",
-                                                                                         coalesce(cupom.flag_consolidado, 0) AS flag_consolidado,
-                                                                                         CASE 
-                                                                                                   WHEN cupomtef.vl_cartao > 0::NUMERIC THEN
-                                                                                                             CASE
-                                                                                                                       WHEN pdvtef.cd_adm_cartao > 0::   NUMERIC
-                                                                                                                       AND       cupomtef.vl_cartao > 0::NUMERIC THEN cupomtef.vl_cartao
-                                                                                                                       ELSE
-                                                                                                                                 CASE
-                                                                                                                                           WHEN coalesce(cupomtef.cod_modalidade, '9800'::CHARACTER varying)::text = '9800'::text
-                                                                                                                                           OR        cupomtef.cod_modalidade::text = 0::text THEN 0.00
-                                                                                                                                           ELSE cupomtef.vl_cartao
-                                                                                                                                 END
-                                                                                                             END
-                                                                                                   ELSE
-                                                                                                             CASE
-                                                                                                                       WHEN pdvtef.cd_adm_cartao > 0:: NUMERIC
-                                                                                                                       AND       pdvtef.vl_cartao > 0::NUMERIC THEN pdvtef.vl_cartao
-                                                                                                                       ELSE
-                                                                                                                                 CASE
-                                                                                                                                           WHEN coalesce(pdvtef.cod_modalidade, '9800'::CHARACTER varying)::text = '9800'::text
-                                                                                                                                           OR        pdvtef.cod_modalidade::text = 0::text THEN 0.00
-                                                                                                                                           ELSE pdvtef.vl_cartao
-                                                                                                                                 END
-                                                                                                             END
-                                                                                         END AS "vlrCartao"
-                                                                               FROM      pdv_cupom_nao_fiscal_tef cupomtef                                                                              
-                                                                               left join rc_adm_cartao adm
-                                                                               ON        cupomtef.cd_emp = adm.cd_emp
-                                                                               AND       cupomtef.cd_adm_cartao = adm.cd_adm_cartao
-                                                                               left join pdv_recbto_tef pdvtef
-                                                                               ON        cupomtef.cd_emp = pdvtef.cd_emp
-                                                                               AND       cupomtef.cd_filial = pdvtef.cd_filial
-                                                                               AND       cupomtef.cd_cx = pdvtef.cd_cx
-                                                                               AND       cupomtef.cd_recto_tef = pdvtef.cd_recto_tef
-																			   
-                                                                               WHERE     (cupomtef.vl_cartao > 0::NUMERIC OR pdvtef.vl_cartao > 0::  NUMERIC)
-																			   AND (pdvtef.cod_modalidade::text <> '9800'::text OR cupomtef.cod_modalidade::text <> '9800'::text)
-                                                                               AND       cupom.cd_emp = cupomtef.cd_emp
-                                                                               AND       cupom.cd_filial = cupomtef.cd_filial
-                                                                               AND       cupom.cd_cx = cupomtef.cd_cx
-                                                                               AND       cupom.cd_ctr = cupomtef.cd_ctr) cartao) AS "cartao" ) pagamento) AS "pagamento"
-                 FROM      pdv_cupom_nao_fiscal cupom 
-                 left join prc_filial filial 
-                 ON        cupom.cd_emp = filial.cd_emp 
-                 AND       cupom.cd_filial = filial.cd_filial 
-                 left join pdv_cupom_nao_fiscal_est_recb_pdv diversos 
-                 ON        cupom.cd_emp = diversos.cd_emp 
-                 AND       cupom.cd_filial = diversos.cd_filial 
-                 AND       cupom.cd_cx = diversos.cd_cx 
-                 AND       cupom.cd_ctr = diversos.cd_ctr 
-                 left join pdv_cupom_nao_fiscal_est_entid_doacao doacao 
-                 ON        cupom.cd_emp = doacao.cd_emp 
-                 AND       cupom.cd_filial = doacao.cd_filial 
-                 AND       cupom.cd_cx = doacao.cd_cx 
-                 AND       cupom.cd_ctr = doacao.cd_ctr 
-                 left join est_entidade_doacao entidade 
-                 ON        doacao.cd_emp = entidade.cd_emp::NUMERIC 
-                 AND       doacao.cd_entid = entidade.cd_entid 
-                 left join glb_usu operador 
-                 ON        cupom.cd_usu = operador.cd_usu 
-                 WHERE     cupom.st_cupom >= 0::NUMERIC 
-                 AND       cupom.flag_consolidado = 2 limit 1) ROW;
-
-
-]]>
-  </select>
-
-  <update id="consumePdvNaoFiscal" parameterType="Map">
+                                                                               AND       #{cdEmp} = cupomtef.cd_emp
+                                                                               AND       #{cdFilial} = cupomtef.cd_filial
+                                                                               AND       #{cdCx} = cupomtef.cd_cx
+                                                                               AND       #{cdCtr} = cupomtef.cd_ctr) cartao) AS "cartao" ) pagamento) AS "pagamento" ]]>
+	</select>
+	<update id="consumePdvNaoFiscal" parameterType="Map">
     update pdv_cupom_nao_fiscal set flag_consolidado = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
-  </update>
-  
-  <update id="consumePdvNaoFiscalReprocessar" parameterType="Map">
-    update pdv_cupom_nao_fiscal set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
-  </update>
-  <update id="consumePdvNaoFiscalErro" parameterType="Map">
-    update pdv_cupom_nao_fiscal set flag_consolidado = 3 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
-  </update>
+	</update>
 
-    <select id="selectConciliacaoPdvCupomNaoFiscal" resultMap="CupomNaoFiscalJsonResult">
-  <![CDATA[
-	SELECT row_to_json(row) from (
+	<update id="consumePdvNaoFiscalReprocessar" parameterType="Map">
+    update pdv_cupom_nao_fiscal set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
+	</update>
+	<update id="consumePdvNaoFiscalErro" parameterType="Map">
+    update pdv_cupom_nao_fiscal set flag_consolidado = 3 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
+	</update>
+
+	<select id="selectConciliacaoPdvCupomNaoFiscal" resultMap="selectConciliacaoPdvCupomNaoFiscal">
 		select 'pdvCupomNaoFiscalConciliacao' as "tipoRegistro",
-		( SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(CUPOM))) 
-                                  FROM   ( 
-		select  cd_emp as "cdEmp",
-		  cd_filial as "cdFilial",
-		  cd_cx as "cdCx",
-		  nr_coo as "nrCoo",
-		  dt_cupom as "dtCupom",
-		  st_cupom as "stCupom"
-		from pdv_cupom_nao_fiscal where cd_emp = 1 and cd_filial = (select cd_filial from prc_filial) and dt_cupom = current_date and st_cupom = 0 and vlr_to_cupom > 0 ) CUPOM ) AS "cupons" 
-  ) ROW;
-	 ]]>
-	 </select>
+	</select>
+	<select id="selectConciliacaoPdvCupomNaoFiscalCupons" resultMap="selectConciliacaoPdvCupomNaoFiscalCupons">
+	<![CDATA[	select  cd_emp 	,
+		  cd_filial 	,
+		  cd_cx 		,
+		  nr_coo 		,
+		  dt_cupom 		,
+		  st_cupom 		
+		from pdv_cupom_nao_fiscal where cd_emp = 1 and cd_filial = (select cd_filial from prc_filial) and dt_cupom = current_date and st_cupom = 0 and vlr_to_cupom > 0 ]]>
+	</select>
+
+	<resultMap id="selectCupom" type="Map"> 	
+		<result property="cnpjFilial" column="CNPJ_FILIAL"/>
+		<result property="cdEmp" column="CD_EMP"/> 
+		<result property="cdFilial" column="CD_FILIAL"/> 
+		<result property="cdCx" column="CD_CX"/> 
+		<result property="cdCtr" column="CD_CTR"/> 
+		<result property="dtCupom" column="dt_cupom"/>	
+		<result property="dtCad" column="dt_cad"/>	
+		<result property="hrCupom" column="hr_cupom"/>	
+		<result property="tpCupom" column="tp_cupom_nao_fiscal"/>	
+		<result property="cdMov" column="cd_mov"/>	
+		<result property="cdCtr" column="cd_ctr"/>	
+		<result property="nrCoo" column="nr_coo"/>	
+		<result property="stCupom" column="st_cupom"/>	
+		<result property="contadorCupomFiscal" column="cont_cupom_fisc"/>	
+		<result property="codigoMovimento" column="cd_mov"/>	
+		<result property="cgcFilial" column="cgc"/>	
+		<result property="nmFilial" column="nm_fant"/>	
+		<result property="vlrTotCupom" column="vlr_to_cupom"/>	
+		<result property="vlrDinh" column="vlr_dinh"/>	
+		<result property="vlrCartao" column="vlr_cartao"/>	
+		<result property="vlrChqs" column="vlrChqs"/>	
+		<result property="cdOperCel" column="cd_oper_cel"/>	
+		<result property="nrCelRecarga" column="nr_cel_recarga"/>	
+		<result property="vlrRecargaCel" column="vlr_recarga_cel"/>	
+		<result property="nmOperCel" column="nm_oper_cel"/>	
+		<result property="nrSerieEcf" column="nr_serie_imp"/>	
+		<result property="versaoPdv" column="vs_pdv"/>	
+		<result property="versaoPdvRc" column="vs_pdv_rc"/>	
+		<result property="cdOperador" column="cd_usu"/>	
+		<result property="nmOperador" column="nm_usu"/>	
+		<result property="contemDinheiro" column="contemDinheiro"/>	
+		<result property="contemRecargaCel" column="contemRecargaCel"/>	
+		<result property="isCancelado" column="isCancelado"/>	
+		<result property="isFatura" column="isFatura"/>	
+		<result property="isDoacao" column="isDoacao"/>	
+		<result property="isDiversos" column="isDiversos"/>	
+		<result property="isRecarga" column="isRecarga"/>	
+		<result property="doacaoId" column="cd_ctr"/>	
+		<result property="doacaoFavorId" column="cd_entid"/>	
+		<result property="doacaoFavorNome" column="nm_entid"/>	
+		<result property="obsCupom" column="obsCupom"/>	 
+		<result property="cdMtSangria" column="cdMtSangria"/>	 
+		<result property="cdCli" column="cd_cli"/>	 
+		<result property="diversosVenc" column="dt_vencto"/>
+		<result property="diversosId" column="diversosId"/>	 
+		<result property="diversosCodigo" column="ident_recb_pdv"/>	
+		<result property="stVd" column="stVd"/>	 
+		<result property="stPendEstorno" column="st_pend_estorno"/>	
+		<association property="pagamento" javaType="Map">			
+			<collection property="cheque" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalCheque" />	
+			<collection property="cartao" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalCartao" />		
+		</association>
+		<association property="baixaDeFatura" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" ofType="map" select="selectCupomNaoFiscalBaixa"	> 		
+			<collection property="faturas" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalBaixaFatura" />	
+			<collection property="parcelas" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalBaixaParcela" />		
+		</association>
+	</resultMap>
+
+	<resultMap id="selectCupomNaoFiscalBaixa" type="Map"> 
+		<result property="cdEmp" column="CD_EMP"/> 
+		<result property="cdFilial" column="CD_FILIAL"/> 
+		<result property="cdCx" column="CD_CX"/> 
+		<result property="cdCtr" column="CD_CTR"/>
+		<result property="hashProtocolo" column="hash_protocolo"/>	
+	</resultMap>
+
+
+	<resultMap id="selectCupomNaoFiscalBaixaFatura" type="Map"> 
+		<result property="cdEmp" column="CD_EMP"/> 
+		<result property="cdFilial" column="CD_FILIAL"/> 
+		<result property="cdCx" column="CD_CX"/> 
+		<result property="cdCtr" column="CD_CTR"/>	
+		<result property="faturaRecId" column="cd_ctr_pgto"/>	
+		<result property="faturaId" column="cd_rc_deb"/>	
+		<result property="dtVencto" column="dt_vencto"/>	
+		<result property="faturaVlr" column="vlr_sld_dp"/>	
+		<result property="faturaVlrSld" column="vlr_sld_dp"/>	
+		<result property="faturaVlrMin" column="vlr_min_pgto"/>	
+		<result property="faturaVlrCred" column="vlr_pago"/>	                         
+		<result property="faturaStPaga" column="st_paga"/>	
+		<result property="faturaOffline" column="tp_pgto_offline"/>	
+		<result property="faturavlrJuro" column="vlrjuros"/>	
+		<result property="faturaVlrDesc" column="vlrdesconto"/>	
+		<result property="faturaNrFatura" column="nrfatura"/>	
+	</resultMap>	
+	<resultMap id="selectCupomNaoFiscalBaixaParcela" type="Map">
+		<result property="cdEmp" column="CD_EMP"/> 
+		<result property="cdFilial" column="CD_FILIAL"/> 
+		<result property="cdCx" column="CD_CX"/> 
+		<result property="cdCtr" column="CD_CTR"/>	
+		<result property="parcelaRecId" column="cd_ctr_pgto"/>	
+		<result property="parcelaId" column="cd_ctr_parc"/>	
+		<result property="parcelaVlr" column="vlr_parc"/>	
+		<result property="parcelaVlrCred" column="vlr_pago"/>	
+		<result property="parcelaStPaga" column="st_paga"/>	 
+		<result property="parcelaOffline" column="tp_pgto_offline"/>
+	</resultMap>
+	<resultMap id="selectCupomNaoFiscalCheque" type="Map">
+		<result property="cdEmp" column="CD_EMP"/> 
+		<result property="cdFilial" column="CD_FILIAL"/> 
+		<result property="cdCx" column="CD_CX"/> 
+		<result property="cdCtr" column="CD_CTR"/>
+		<result property="cdBc" column="cd_bc_chq"/>	
+		<result property="nrOrd" column="nr_ord"/>	
+		<result property="nrChq" column="nr_chq"/>	
+		<result property="anoChq" column="ano_chq"/>	
+		<result property="vlrChq" column="vlr_chq"/>	
+		<result property="dtEmi" column="dtEmi"/>	
+		<result property="dtVencto" column="dt_vencto"/>	
+		<result property="agChq" column="ag_chq"/>	
+		<result property="cgcEmi" column="cpf_cgc_emi"/>	
+		<result property="nmEmi" column="nm_emi"/>	
+		<result property="foneEmi" column="fone_emi"/>	
+		<result property="nrCntChq" column="nr_cnt_chq"/>	
+		<result property="autChq" column="aut_chq"/>	
+		<result property="compChq" column="comp_chq"/>	
+		<result property="c1Chq" column="c1_chq"/>	
+		<result property="c2Chq" column="c2_chq"/>	
+		<result property="c3Chq" column="sr_chq"/>	
+		<result property="cmc7Chq" column="cmc7_chq"/>	
+		<result property="mesAnoCntChq" column="mes_ano_cnt_chq"/>
+	</resultMap>
+	<resultMap id="selectCupomNaoFiscalCartao" type="Map">
+		<result property="cdEmp" column="CD_EMP"/> 
+		<result property="cdFilial" column="CD_FILIAL"/> 
+		<result property="cdCx" column="CD_CX"/> 
+		<result property="cdCtr" column="CD_CTR"/>
+		<result property="cdRectoTef" column="cdRectoTef"/> 
+		<result property="cdConv" column="cdConv"/> 
+		<result property="nmConv" column="nmConv"/> 
+		<result property="bandeira" column="bandeira"/> 
+		<result property="qtParc" column="qtParc"/> 
+		<result property="codRede" column="codRede"/> 
+		<result property="codBandeira" column="codBandeira"/> 
+		<result property="codModalidade" column="codModalidade"/> 
+		<result property="nrTransacao" column="nrTransacao"/> 
+		<result property="nrAutorizacao" column="nrAutorizacao"/> 
+		<result property="tefGateway" column="tefGateway"/> 
+		<result property="vlrCartao" column="vlrCartao"/> 
+	</resultMap>
+		<resultMap id="selectConciliacaoPdvCupomNaoFiscal" type="Map">	
+		<result property="tipoRegistro" column="tipoRegistro"/>
+		<collection property="cupons" column="" javaType="ArrayList" ofType="map" select="selectConciliacaoPdvVdCupons" />		
+	</resultMap>
+	<resultMap id="selectConciliacaoPdvCupomNaoFiscalCupons" type="Map">	
+		<result property="cdEmp" column="cd_emp"/>	
+		<result property="cdFilial" column="cd_filial"/>	
+		<result property="cdCx" column="cd_cx"/>	
+		<result property="nrCoo" column="nr_coo"/>	
+		<result property="dtCupom" column="dt_cupom"/>	
+		<result property="stCupom" column="st_cupom"/>		
+	</resultMap>
 </mapper>
+

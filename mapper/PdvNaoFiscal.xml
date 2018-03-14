@@ -4,7 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="CupomNaoFiscalJsonResult">
-	<select id="selectCupomNaoFiscal" resultMap="CupomNaoFiscalJsonResult">
+	<select id="selectCupomNaoFiscal" resultMap="cupomNaoFiscal">
 		<![CDATA[
                  SELECT    filial.cgc						             AS "CNPJ_FILIAL",
 						   cupom.cd_emp                                                      ,
@@ -89,7 +89,7 @@
 							cupom.cd_filial             ,
 						   cupom.hash_protocolo         ,
 						   cupom.cd_cx					,
-						   cupom.cd_ctr					,
+						   cupom.cd_ctr					
 						   from pdv_cupom_nao_fiscal cupom
 						   where cupom.cd_emp = #{cdEmp}
 						   AND   cupom.cd_filial = #{cdFilial}
@@ -113,7 +113,7 @@
                            fatura.tp_pgto_offline                           ,
                            fatura.vlrjuros                                  ,
                            fatura.vlrdesconto                               ,
-                           fatura.nrfatura                                  ,                                       						   
+                           fatura.nrfatura                                                                         						   
 						   FROM pdv_cupom_nao_fiscal_rec_fatura fatura 
 						   WHERE        #{cdEmp} = fatura.cd_emp 
 						   AND       	#{cdFilial} = fatura.cd_filial 
@@ -148,7 +148,7 @@
 			   chq.nr_chq          ,
 			   chq.ano_chq         ,
 			   chq.vlr_chq         ,
-			   #{dtEmi}     AS "dtEmi",
+			   #{dtEmi}::date     AS "dtEmi",
 			   chq.dt_vencto       ,
 			   chq.ag_chq          ,
 			   chq.cpf_cgc_emi     ,
@@ -392,7 +392,7 @@
                                                                                AND       #{cdEmp} = cupomtef.cd_emp
                                                                                AND       #{cdFilial} = cupomtef.cd_filial
                                                                                AND       #{cdCx} = cupomtef.cd_cx
-                                                                               AND       #{cdCtr} = cupomtef.cd_ctr) cartao) AS "cartao" ) pagamento) AS "pagamento" ]]>
+                                                                               AND       #{cdCtr} = cupomtef.cd_ctr]]>
 	</select>
 	<update id="consumePdvNaoFiscal" parameterType="Map">
     update pdv_cupom_nao_fiscal set flag_consolidado = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
@@ -406,7 +406,7 @@
 	</update>
 
 	<select id="selectConciliacaoPdvCupomNaoFiscal" resultMap="selectConciliacaoPdvCupomNaoFiscal">
-		select 'pdvCupomNaoFiscalConciliacao' as "tipoRegistro",
+		select 'pdvCupomNaoFiscalConciliacao' as "tipoRegistro"
 	</select>
 	<select id="selectConciliacaoPdvCupomNaoFiscalCupons" resultMap="selectConciliacaoPdvCupomNaoFiscalCupons">
 	<![CDATA[	select  cd_emp 	,
@@ -418,7 +418,7 @@
 		from pdv_cupom_nao_fiscal where cd_emp = 1 and cd_filial = (select cd_filial from prc_filial) and dt_cupom = current_date and st_cupom = 0 and vlr_to_cupom > 0 ]]>
 	</select>
 
-	<resultMap id="selectCupom" type="Map"> 	
+	<resultMap id="cupomNaoFiscal" type="Map"> 	
 		<result property="cnpjFilial" column="CNPJ_FILIAL"/>
 		<result property="cdEmp" column="CD_EMP"/> 
 		<result property="cdFilial" column="CD_FILIAL"/> 
@@ -468,10 +468,10 @@
 		<result property="stVd" column="stVd"/>	 
 		<result property="stPendEstorno" column="st_pend_estorno"/>	
 		<association property="pagamento" javaType="Map">			
-			<collection property="cheque" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalCheque" />	
+			<collection property="cheque" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR,dtEmi=DT_CAD}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalCheque" />	
 			<collection property="cartao" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalCartao" />		
 		</association>
-		<association property="baixaDeFatura" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" ofType="map" select="selectCupomNaoFiscalBaixa"	> 		
+		<association property="baixaDeFatura" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="Map" select="selectCupomNaoFiscalBaixa"	> 		
 			<collection property="faturas" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalBaixaFatura" />	
 			<collection property="parcelas" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalBaixaParcela" />		
 		</association>

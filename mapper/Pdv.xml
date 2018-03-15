@@ -70,7 +70,8 @@
                            COALESCE(VD.NR_CARTAO_MARKA, ''::CHARACTER VARYING)            AS NR_CARTAO_MARKA,
                            COALESCE(VD.QTDE_PONTOS_FIDEL_EXTERNO, 0::NUMERIC)             AS QTDE_PONTOS_FIDEL_EXTERNO,
                            COALESCE(VD.NR_TEL_CUPOM, ''::CHARACTER VARYING)               AS NR_TEL_CUPOM,
-						   COALESCE(VD.CHV_NFCE ,''::CHARACTER VARYING)                   AS CHV_NFCE								   
+						   COALESCE(VD.CHV_NFCE ,''::CHARACTER VARYING)                   AS CHV_NFCE	,
+							VD.CD_NF_SERIE
                  FROM      PDV_VD VD 
                  LEFT JOIN PDV_VD_EST_NF_SAI NF_SAI 
                  ON        VD.CD_EMP = NF_SAI.CD_EMP 
@@ -798,7 +799,8 @@
 		<result property="qtdePontosFidelExterno" column="QTDE_PONTOS_FIDEL_EXTERNO"/>
 		<result property="nrTelCupom" column="NR_TEL_CUPOM"/>
 		<result property="chvNfce"	column="CHV_NFCE"/>	
-		<association property="nfce" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdNf=NR_ECF}" select="selectCupomNfce"/>
+		<result property="cdNfSerie"	column="CD_NF_SERIE"/>	
+		<association property="nfce" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdNf=NR_ECF,cdNfSerie=CD_NF_SERIE}" select="selectCupomNfce"/>
 		<association property="nfceCancel" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" select="selectCupomNfceCancel"/>
 		<association property="orcamento" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,nrOrc=NR_ORC}" select="selectOrcamentoPdv"/>
 		<association property="pagamento" javaType="Map">

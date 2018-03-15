@@ -88,6 +88,8 @@
 
 							cupom.cd_emp				,
 							cupom.cd_filial             ,
+							cupom.cd_cx,
+							cupom.cd_ctr,
 						   cupom.hash_protocolo         			
 						   from pdv_cupom_nao_fiscal cupom
 						   where cupom.cd_emp = #{cdEmp}
@@ -459,10 +461,7 @@
 			<collection property="cheque" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR,dtEmi=DT_CAD}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalCheque" />	
 			<collection property="cartao" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalCartao" />		
 		</association>
-		<association property="baixaDeFatura" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR,isFatura=isFatura}" javaType="Map" select="selectCupomNaoFiscalBaixa"	> 		
-			<collection property="faturas" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalBaixaFatura" />	
-			<collection property="parcelas" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalBaixaParcela" />		
-		</association>
+		<association property="baixaDeFatura" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR,isFatura=isFatura}" javaType="Map" select="selectCupomNaoFiscalBaixa"	/> 		
 	</resultMap>
 	<resultMap id="selectCupomNaoFiscalBaixa" type="Map"> 
 		<result property="cdEmp" column="CD_EMP"/> 
@@ -470,6 +469,8 @@
 		<result property="cdCx" column="CD_CX"/> 
 		<result property="cdCtr" column="CD_CTR"/>
 		<result property="hashProtocolo" column="hash_protocolo"/>	
+		<collection property="faturas" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalBaixaFatura" />	
+		<collection property="parcelas" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalBaixaParcela" />	
 	</resultMap>
 	<resultMap id="selectCupomNaoFiscalBaixaFatura" type="Map"> 
 		<result property="faturaRecId" column="cd_ctr_pgto"/>	

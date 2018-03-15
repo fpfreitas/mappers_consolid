@@ -699,7 +699,7 @@
 		  dt_cad ,
 		  vl_receb ,
 		  vl_serv 
-		from pdv_consld_vd where flag_consolidado = #{flagConsolid}::numeric and cd_usu > 1 order by dt_mov desc LIMIT 1 
+		from pdv_consld_vd where flag_consolidado = #{flagConsolid}::numeric and cd_usu > 1 LIMIT 1 
 	 ]]>
 	</select>
 	<update id="consumeConsoldVd" parameterType="Map">
@@ -886,6 +886,7 @@
 		<result column="nm_comprador" property="nmComprador"/>
 		<result column="qtd_dias_prorrog" property="qtdDiasProrrog"/>
 		<result column="tipo_pbm" property="tipoPbm"/>
+		<result property="cdCli" column="CD_CLI"/>
 		<result column="cd_cli_dep" property="cdCliDep"/>
 		<result column="vlr_prod" property="vlrProd"/>
 		<result column="tp_orc_entg" property="tpOrcEntg"/>
@@ -898,7 +899,7 @@
 		<result column="vlr_tot" property="vlrTot"/>
 		<result column="vlr_desc" property="vlrDesc"/>
 		<result column="vlr_desc_geral" property="vlrDescGeral"/>
-		<result column="nr_carta" property="nrCartaoCli"/>
+		<result column="nr_cartao_fidelidade" property="nrCartaoCli"/>
 		<result column="fone_cli" property="foneCli"/>
 		<result column="tp_orc" property="tpOrc"/>
 		<result column="cd_frm_pgto" property="cdFrmPgto"/>
@@ -945,9 +946,9 @@
 		<result column="cd_vend_verba"           property="cdVendVerba"/>
 		<result column="vlr_custo_semaforo"      property="vlrCustoSemaforo"/>
 		<result column="qt_est"                  property="qtEst"/>
-		<result column="cd_grp"                  property="cdGrupoComissao"/>	
-		<collection property="concorrente" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC,cdProd=CD_PROD,cdIt=CD_IT}" javaType="ArrayList" ofType="map" select="selectOrcamentoPdvItemConcorrente" />
-		<collection property="lote" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC,cdProd=CD_PROD,cdIt=CD_IT}" javaType="ArrayList" ofType="map" select="selectOrcamentoPdvItemLote" />
+		<result column="cd_grp"                  property="cdGrupoComissao"/>			
+		<association property="lote" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC,cdProd=CD_PROD,cdIt=CD_IT}" javaType="Map" select="selectOrcamentoPdvItemLote" />
+		<association property="concorrente" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC,cdProd=CD_PROD,cdIt=CD_IT}" javaType="Map" select="selectOrcamentoPdvItemConcorrente" />
 	</resultMap>
 	<resultMap id="OrcamentoItemConcorrente" type="Map">
 		<result column="cd_prod"                property="cdProd"/>
@@ -983,24 +984,23 @@
 		<result column="CD_FILIAL"    property="cdFilial" /> 
 		<result column="CD_VD"        property="cdVd"	/>
 		<result column="CD_IT"                    property="cdIt"/> 
-		<result column="COMPRADOR_NOME"             property="nmCompradorRec"/> 
-		<result column="PACIENTE_IDADE"                    property="idadeRec"/> 
-		<result column="PACIENTE_NOME"              property="nmPacienteRec"/> 
+		<result column="COMPRADOR_NOME"             property="compradorNome"/> 
+		<result column="PACIENTE_IDADE"                    property="pacienteIdade"/> 
+		<result column="PACIENTE_NOME"              property="pacienteNome"/> 
 		<result column="RECEITA_TIPO"             property="receitaTipoRec"/> 
-		<result column="PACIENTE_CID"          			property="cidRec"/> 
-		<result column="COMPRADOR_DOC_UF"                       property="ufRec"/> 
-		<result column="COMPRADOR_DOC_NUMERO"               property="nrDocCliRec"/> 
-		<result column="COMPRADOR_DOC_TIPO"           property="tipoDocumentoRec"/> 
-		<result column="PRESCRITOR_ID" 			property="cdMedicoRec"/> 
+		<result column="PACIENTE_CID"          			property="pacienteCid"/> 
+		<result column="COMPRADOR_DOC_UF"                       property="compradorDocUf"/> 
+		<result column="COMPRADOR_DOC_NUMERO"               property="compradorDocNumero"/> 
+		<result column="COMPRADOR_DOC_TIPO"           property="compradorDocTipo"/> 
+		<result column="PRESCRITOR_ID" 			property="prescritorId"/> 
 		<result column="QT_PROD"                  property="qtProd"/> 
-		<result column="RECEITA_DATA"               property="dtReceita"/> 
+		<result column="RECEITA_DATA"               property="receitaData"/> 
 		<result column="TP_CAPT_RECEITA"          property="tipoCaptacaoReceita"/>   
-		<result column="PACIENTE_SEXO"          property="sexo"/>  
-		<result column="NR_RECEITA"          property="nrReceita"/>
-		<result column="TP_DOC_EXP"          property="tpDocExp"/>	
+		<result column="PACIENTE_SEXO"          property="pacienteSexo"/>  
+		<result column="NR_RECEITA"          property="receitaNumero"/>
+		<result column="TP_DOC_EXP"          property="tipoDocumentoRec"/>	
 		<result column="pacienteTipoIdade"          property="pacienteTipoIdade"/>	
 	</resultMap>	
-
 	<resultMap id="pagamentoCheque" type="Map">
 		<result property="cdEmp" column="CD_EMP"/>
 		<result property="cdFilial" column="CD_FILIAL"/>
@@ -1026,7 +1026,6 @@
 		<result property="cmc7Chq" column="CMC7_CHQ"/>	
 		<result property="mesAnoCntChq" column="MES_ANO_CNT_CHQ"/>	
 	</resultMap>
-
 	<resultMap id="pagamentoCrediario" type="Map">
 		<result property="cdEmp" column="CD_EMP"/>
 		<result property="cdFilial" column="CD_FILIAL"/>
@@ -1049,7 +1048,6 @@
 		<result property="cgcCpf" column="CGC_CPF"/>	
 		<result property="nrFatura" column="NR_FATURA"/>
 	</resultMap>
-
 	<resultMap id="pagamentoCartao" type="Map">
 		<result property="cdEmp" column="CD_EMP"/>
 		<result property="cdFilial" column="CD_FILIAL"/>
@@ -1077,7 +1075,6 @@
 		<result property="nrEstabelecimento" column="NR_ESTABELECIMENTO"/>
 		<result property="nrComprovante" column="NR_COMPROVANTE"/>
 	</resultMap>		
-
 	<resultMap id="pagamentoPbm" type="Map">
 		<result property="cdEmp" column="CD_EMP"/>
 		<result property="cdFilial" column="CD_FILIAL"/>

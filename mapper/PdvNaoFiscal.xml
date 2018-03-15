@@ -98,10 +98,7 @@
 	</select>
 	<select id="selectCupomNaoFiscalBaixaFatura" resultMap="selectCupomNaoFiscalBaixaFatura">
 
-                           SELECT fatura.cd_emp,
-						   fatura.cd_filial,
-						   fatura.cd_cx,
-						   fatura.cd_ctr,
+                           SELECT 
 						   fatura.cd_ctr_pgto                        ,
                            fatura.cd_rc_deb                                 ,
 						   fatura.dt_vencto				    				,
@@ -122,10 +119,7 @@
 						   AND       fatura.st_paga = 1::NUMERIC 
 	</select>
 	<select id="selectCupomNaoFiscalBaixaParcela" resultMap="selectCupomNaoFiscalBaixaParcela">
-			SELECT parcela.cd_emp,
-						   parcela.cd_filial,
-						   parcela.cd_cx,
-						   parcela.cd_ctr,
+			SELECT 
 			parcela.cd_ctr_pgto						        ,
             parcela.cd_ctr_parc                             ,
             parcela.vlr_parc                                ,
@@ -139,11 +133,7 @@
 			AND       #{cdCtr} = parcela.cd_ctr 
 	</select>
 	<select id="selectCupomNaoFiscalCheque" resultMap="selectCupomNaoFiscalCheque">
-		SELECT chq.cd_emp    ,
-		       chq.cd_filial ,
-		       chq.cd_ctr    ,
-		       chq.cd_cx     ,
-			   chq.cd_bc_chq       ,
+		SELECT chq.cd_bc_chq       ,
 			   chq.nr_ord          ,
 			   chq.nr_chq          ,
 			   chq.ano_chq         ,
@@ -169,7 +159,7 @@
 		AND    #{cdCx} = chq.cd_cx
 	</select>
 	<select id="selectCupomNaoFiscalCartao" resultMap="selectCupomNaoFiscalCartao">	
-		<![CDATA[ SELECT    cupomtef.cd_emp , cupomtef.cd_filial, cupomtef.cd_cx, cupomtef.cd_ctr, cupomtef.cd_trn_tef AS "cdRectoTef",
+		<![CDATA[ SELECT     cupomtef.cd_trn_tef AS "cdRectoTef",
                                                                                          CASE 
                                                                                                    WHEN cupomtef.vl_cartao > 0::NUMERIC THEN
                                                                                                              CASE
@@ -487,10 +477,6 @@
 
 
 	<resultMap id="selectCupomNaoFiscalBaixaFatura" type="Map"> 
-		<result property="cdEmp" column="CD_EMP"/> 
-		<result property="cdFilial" column="CD_FILIAL"/> 
-		<result property="cdCx" column="CD_CX"/> 
-		<result property="cdCtr" column="CD_CTR"/>	
 		<result property="faturaRecId" column="cd_ctr_pgto"/>	
 		<result property="faturaId" column="cd_rc_deb"/>	
 		<result property="dtVencto" column="dt_vencto"/>	
@@ -505,10 +491,6 @@
 		<result property="faturaNrFatura" column="nrfatura"/>	
 	</resultMap>	
 	<resultMap id="selectCupomNaoFiscalBaixaParcela" type="Map">
-		<result property="cdEmp" column="CD_EMP"/> 
-		<result property="cdFilial" column="CD_FILIAL"/> 
-		<result property="cdCx" column="CD_CX"/> 
-		<result property="cdCtr" column="CD_CTR"/>	
 		<result property="parcelaRecId" column="cd_ctr_pgto"/>	
 		<result property="parcelaId" column="cd_ctr_parc"/>	
 		<result property="parcelaVlr" column="vlr_parc"/>	
@@ -517,10 +499,6 @@
 		<result property="parcelaOffline" column="tp_pgto_offline"/>
 	</resultMap>
 	<resultMap id="selectCupomNaoFiscalCheque" type="Map">
-		<result property="cdEmp" column="CD_EMP"/> 
-		<result property="cdFilial" column="CD_FILIAL"/> 
-		<result property="cdCx" column="CD_CX"/> 
-		<result property="cdCtr" column="CD_CTR"/>
 		<result property="cdBc" column="cd_bc_chq"/>	
 		<result property="nrOrd" column="nr_ord"/>	
 		<result property="nrChq" column="nr_chq"/>	
@@ -542,10 +520,6 @@
 		<result property="mesAnoCntChq" column="mes_ano_cnt_chq"/>
 	</resultMap>
 	<resultMap id="selectCupomNaoFiscalCartao" type="Map">
-		<result property="cdEmp" column="CD_EMP"/> 
-		<result property="cdFilial" column="CD_FILIAL"/> 
-		<result property="cdCx" column="CD_CX"/> 
-		<result property="cdCtr" column="CD_CTR"/>
 		<result property="cdRectoTef" column="cdRectoTef"/> 
 		<result property="cdConv" column="cdConv"/> 
 		<result property="nmConv" column="nmConv"/> 

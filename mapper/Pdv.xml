@@ -835,9 +835,8 @@
 		<result property="cdTblDesc"	column="CD_TBL_DESC"/>	
 		<result property="tpNivel"	column="TP_NIVEL"/>	
 		<result property="tpTblDesc" column="TP_TBL_DESC"/>	
-		<!-- 
 		<collection property="lote" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD,cdIt=CD_IT}" javaType="ArrayList" ofType="map" select="selectCupomItensLote" />
-		 -->
+		 
 	</resultMap>
 	<resultMap id="selectCupomItensLote" type="Map"> 
 		<result property="cdEmp" column="CD_EMP"/> 
@@ -889,7 +888,7 @@
 		<result column="tipo_pbm" property="tipoPbm"/>
 		<result column="cd_cli_dep" property="cdCliDep"/>
 		<result column="vlr_prod" property="vlrProd"/>
-		<result column="cd_cli" property="tpOrcEntg"/>
+		<result column="tp_orc_entg" property="tpOrcEntg"/>
 		<result column="sts_orc" property="stsOrc"/>
 		<result column="nm_cli" property="nmCli"/>
 		<result column="nr_autr_pbm" property="nrAutrPbm"/>

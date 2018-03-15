@@ -83,18 +83,18 @@
 	</select>
 
 	<select id="selectCupomNaoFiscalBaixa" resultMap="selectCupomNaoFiscalBaixa">
-	SELECT 
+		<if test="isFatura == 1">
+		SELECT 
 
 							cupom.cd_emp				,
 							cupom.cd_filial             ,
-						   cupom.hash_protocolo         ,
-						   cupom.cd_cx					,
-						   cupom.cd_ctr					
+						   cupom.hash_protocolo         			
 						   from pdv_cupom_nao_fiscal cupom
 						   where cupom.cd_emp = #{cdEmp}
 						   AND   cupom.cd_filial = #{cdFilial}
 						   AND   cupom.cd_cx = #{cdCx}
 						   AND   cupom.cd_ctr = #{cdCtr} 
+		</if>
 	</select>
 	<select id="selectCupomNaoFiscalBaixaFatura" resultMap="selectCupomNaoFiscalBaixaFatura">
 
@@ -387,14 +387,12 @@
 	<update id="consumePdvNaoFiscal" parameterType="Map">
     update pdv_cupom_nao_fiscal set flag_consolidado = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
 	</update>
-
 	<update id="consumePdvNaoFiscalReprocessar" parameterType="Map">
     update pdv_cupom_nao_fiscal set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
 	</update>
 	<update id="consumePdvNaoFiscalErro" parameterType="Map">
     update pdv_cupom_nao_fiscal set flag_consolidado = 3 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
 	</update>
-
 	<select id="selectConciliacaoPdvCupomNaoFiscal" resultMap="selectConciliacaoPdvCupomNaoFiscal">
 		select 'pdvCupomNaoFiscalConciliacao' as "tipoRegistro"
 	</select>
@@ -461,12 +459,11 @@
 			<collection property="cheque" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR,dtEmi=DT_CAD}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalCheque" />	
 			<collection property="cartao" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalCartao" />		
 		</association>
-		<association property="baixaDeFatura" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="Map" select="selectCupomNaoFiscalBaixa"	> 		
+		<association property="baixaDeFatura" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR,isFatura=isFatura}" javaType="Map" select="selectCupomNaoFiscalBaixa"	> 		
 			<collection property="faturas" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalBaixaFatura" />	
 			<collection property="parcelas" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx=CD_CX,cdCtr=CD_CTR}" javaType="ArrayList" ofType="map" select="selectCupomNaoFiscalBaixaParcela" />		
 		</association>
 	</resultMap>
-
 	<resultMap id="selectCupomNaoFiscalBaixa" type="Map"> 
 		<result property="cdEmp" column="CD_EMP"/> 
 		<result property="cdFilial" column="CD_FILIAL"/> 
@@ -474,8 +471,6 @@
 		<result property="cdCtr" column="CD_CTR"/>
 		<result property="hashProtocolo" column="hash_protocolo"/>	
 	</resultMap>
-
-
 	<resultMap id="selectCupomNaoFiscalBaixaFatura" type="Map"> 
 		<result property="faturaRecId" column="cd_ctr_pgto"/>	
 		<result property="faturaId" column="cd_rc_deb"/>	

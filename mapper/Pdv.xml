@@ -301,7 +301,8 @@
 	</select>  	
 	<select id="selectOrcamentoPdvItemLote" resultMap="OrcamentoItemLote">     
 
-	 SELECT lote.cd_lote   ,
+	 SELECT 
+			lote.cd_lote   ,
             lote.qtde_lote 
      FROM   est_orc_cpl_lote lote
      WHERE  #{cdEmp}   = lote.cd_emp::      NUMERIC
@@ -814,8 +815,6 @@
 		<collection property="itens" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" javaType="ArrayList" ofType="map" select="selectCupomItens" />		
 		<collection property="receita" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,nrOrc=NR_ORC,cdVd=CD_VD}" javaType="ArrayList" ofType="map" select="selectCupomReceita" />
 	</resultMap>
-
-
 	<resultMap id="selectCupomItens" type="Map"> 
 		<result property="cdEmp" column="CD_EMP"/> 
 		<result property="cdFilial" column="CD_FILIAL"/> 
@@ -916,13 +915,13 @@
 		<result column="vlr_desc" property="vlrDesc"/>
 		<result column="vlr_desc_geral" property="vlrDescGeral"/>
 		<result column="nr_carta" property="nrCartaoCli"/>
-		<result column="cd_cli" property="foneCli"/>
-		<result column="cd_cli" property="tpOrc"/>
-		<result column="cd_cli" property="cdFrmPgto"/>
-		<result column="cd_cli" property="origOrc"/>
+		<result column="fone_cli" property="foneCli"/>
+		<result column="tp_orc" property="tpOrc"/>
+		<result column="cd_frm_pgto" property="cdFrmPgto"/>
+		<result column="orig_orc" property="origOrc"/>
 		<result column="obs" property="obs"/>
 		<result column="cd_mt_cancel_orc" property="cdMtCancelOrc"/>
-		<result column="cd_cli" property="descMtCancel"/>	
+		<result column="desc_mt_cancel" property="descMtCancel"/>	
 		<collection property="itens" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC}" javaType="ArrayList" ofType="map" select="selectOrcamentoPdvItem" />
 		<collection property="receita" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC}" javaType="ArrayList" ofType="map" select="selectOrcamentoPdvReceita" />
 	</resultMap>	

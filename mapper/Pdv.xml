@@ -100,7 +100,7 @@
 				CD_NF_SERIE ,
 				CHV_NFCE ,
 				AUT_NFCE ,
-				cast(XML_NFCE as xml) AS "XML_NFCE",
+				XML_NFCE     AS "XML_NFCE",
 				DS_MOTIVO ,
 				COALESCE(STS_PEND, 0::   NUMERIC) AS "STS_VALID"
         FROM EST_NFCE_ENV WHERE
@@ -113,7 +113,7 @@
 	SELECT 	CD_EMP,
 			CD_FILIAL,
 			CD_VD,
-			cast(NFCE_CANCEL.XML_CANC as xml)             AS XML_CANC,
+			NFCE_CANCEL.XML_CANC                                                   AS XML_CANC,
 			COALESCE(NFCE_CANCEL.TP_CANC, 0)                                        AS TP_CANC,
 			COALESCE(NFCE_CANCEL.CHV_NFCE, ''::CHARACTER VARYING)                   AS CHV_NFCE,
 			NFCE_CANCEL.DT_EMIS                                                     AS DT_EMIS,
@@ -800,9 +800,9 @@
 		<result property="nrTelCupom" column="NR_TEL_CUPOM"/>
 		<result property="chvNfce"	column="CHV_NFCE"/>	
 		<result property="cdNfSerie"	column="CD_NF_SERIE"/>	
-		<association property="nfce" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdNf=NR_ECF,cdNfSerie=CD_NF_SERIE}" select="selectCupomNfce"/>
-		<association property="nfceCancel" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" select="selectCupomNfceCancel"/>
-		<association property="orcamento" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,nrOrc=NR_ORC}" select="selectOrcamentoPdv"/>
+		<association property="nfce" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdNf=NR_ECF,cdNfSerie=CD_NF_SERIE}" javaType="Map" select="selectCupomNfce"/>
+		<association property="nfceCancel" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" javaType="Map" select="selectCupomNfceCancel"/>
+		<association property="orcamento" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,nrOrc=NR_ORC}" javaType="Map" select="selectOrcamentoPdv"/>
 		<association property="pagamento" javaType="Map">
 			<association property="ncc" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" javaType="Map" select="pagamentoNcc"/>
 			<collection property="cheque" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" javaType="ArrayList" ofType="map" select="pagamentoCheque" />	

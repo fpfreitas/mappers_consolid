@@ -41,9 +41,8 @@
 
         <route>
             <from uri="dbmapper:selectCupom?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100&amp;consumer.onConsume=consumePdv&amp;parameters=flagConsolid=0" />
-            <to uri="log:br.com.itec?level=INFO"/>
-            <process ref="mapProcessor"/>
-            <process ref="pgObjectProcessor"/>
+			<marshal ref="json" />
+			<to uri="log:br.com.itec.selectCupom_0?level=INFO"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
             <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=fiscal-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
 			<onException>
@@ -57,9 +56,8 @@
 		
 		<route>
             <from uri="dbmapper:selectCupom?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=10000&amp;consumer.onConsume=consumePdv&amp;parameters=flagConsolid=2" />
-            <to uri="log:br.com.itec?level=INFO"/>
-            <process ref="mapProcessor"/>
-            <process ref="pgObjectProcessor"/>
+            <marshal ref="json" />
+			<to uri="log:br.com.itec.selectCupom_2?level=INFO"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
             <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=fiscal-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
 			<onException>
@@ -73,9 +71,8 @@
 		
 		<route>
             <from uri="dbmapper:selectCupomNaoFiscal?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvNaoFiscal&amp;parameters=flagConsolid=0" />
-            <to uri="log:br.com.itec?level=INFO"/>
-            <process ref="mapProcessor"/>
-            <process ref="pgObjectProcessor"/>
+            <marshal ref="json" />
+			<to uri="log:br.com.itec.selectCupomNaoFiscal_0?level=INFO"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
             <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=naoFiscal-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
 			<onException>
@@ -88,9 +85,8 @@
 		
 		<route>
             <from uri="dbmapper:selectCupomNaoFiscal?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=10000&amp;consumer.onConsume=consumePdvNaoFiscal&amp;parameters=flagConsolid=2" />
-            <to uri="log:br.com.itec?level=INFO"/>
-            <process ref="mapProcessor"/>
-            <process ref="pgObjectProcessor"/>
+            <marshal ref="json" />
+			<to uri="log:br.com.itec.selectCupomNaoFiscal_2?level=INFO"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
             <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=naoFiscal-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
 			<onException>
@@ -103,10 +99,8 @@
 				
 		<route>
             <from uri="dbmapper:selectOrcamento?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeOrcamento&amp;parameters=flagConsolid=0" />
-            <to uri="log:com.mycompany.order?level=INFO"/>
-            <process ref="mapProcessor"/>
-            <process ref="pgObjectProcessor"/>
-			<marshal ref="json"/>
+            <marshal ref="json"/>
+			<to uri="log:br.com.itec.selectOrcamento_0?level=INFO"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
@@ -119,9 +113,8 @@
 		
 		<route>
             <from uri="dbmapper:selectOrcamento?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeOrcamento&amp;parameters=flagConsolid=2" />
-            <to uri="log:com.mycompany.order?level=INFO"/>
-            <process ref="mapProcessor"/>
-            <process ref="pgObjectProcessor"/>
+            <marshal ref="json" />
+			<to uri="log:br.com.itec.selectOrcamento_2?level=INFO"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
@@ -134,18 +127,16 @@
 		
 		<route>
             <from uri="dbmapper:selectMapaResumo?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeMapaResumo" />
-            <to uri="log:com.mycompany.order?level=INFO"/>
-            <process ref="mapProcessor"/>
-            <process ref="pgObjectProcessor"/>
+            <marshal ref="json" />
+			<to uri="log:br.com.itec.selectMapaResumo_0?level=INFO"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route>
 			
 		<route>
             <from uri="dbmapper:selectConsoldVd?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeConsoldVd&amp;parameters=flagConsolid=0" />
-            <to uri="log:com.mycompany.order?level=INFO"/>
-            <process ref="mapProcessor"/>
-            <process ref="pgObjectProcessor"/>
+            <marshal ref="json" />
+			<to uri="log:br.com.itec.selectConsoldVd_0?level=INFO"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
@@ -159,9 +150,8 @@
 		
 		<route>
             <from uri="dbmapper:selectConsoldVd?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeConsoldVd&amp;parameters=flagConsolid=2" />
-            <to uri="log:com.mycompany.order?level=INFO"/>
-            <process ref="mapProcessor"/>
-            <process ref="pgObjectProcessor"/>
+            <marshal ref="json" />
+			<to uri="log:br.com.itec.selectConsoldVd_2?level=INFO"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
 			<onException>
@@ -175,28 +165,24 @@
 		
 		<route>
             <from uri="dbmapper:selectOrcamentoCplFalta?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeOrcamentoCplFalta" />
-            <to uri="log:com.mycompany.order?level=INFO"/>
-            <process ref="mapProcessor"/>
-            <process ref="pgObjectProcessor"/>
-			<marshal ref="json"/>
+            <marshal ref="json" />
+			<to uri="log:br.com.itec.selectOrcamentoCplFalta_0?level=INFO"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route> 
 		
 		<route>
             <from uri="dbmapper:selectConciliacaoPdvVd?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1200000" />
-            <to uri="log:com.mycompany.order?level=INFO"/>
-            <process ref="mapProcessor"/>
-            <process ref="pgObjectProcessor"/>
+            <to uri="log:br.com.itec.selectConciliacaoPdvVd?level=INFO"/>
+            <marshal ref="json" />
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route> 
 		
 		<route>
             <from uri="dbmapper:selectConciliacaoPdvCupomNaoFiscal?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1200000" />
-            <to uri="log:com.mycompany.order?level=INFO"/>
-            <process ref="mapProcessor"/>
-            <process ref="pgObjectProcessor"/>
+            <marshal ref="json" />
+			<to uri="log:br.com.itec.selectConciliacaoPdvCupomNaoFiscal?level=INFO"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route> 
@@ -207,7 +193,7 @@
          <convertBodyTo type="java.lang.String"/>
          <unmarshal ref="json"/>
          <to uri="dbmapper:tentacle?dataSource=dataSourcePdv&amp;statementType=TentacleSync&amp;preValidadeSchema=false" />
-         <to uri="log:IPDV?level=INFO"/>
+         <to uri="log:CARGA?level=INFO"/>
 		 <setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
          <choice>
              <when>

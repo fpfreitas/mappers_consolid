@@ -301,7 +301,8 @@
 	</select>  	
 	<select id="selectOrcamentoPdvItemLote" resultMap="OrcamentoItemLote">     
 
-	 SELECT lote.cd_lote   ,
+	 SELECT 
+			lote.cd_lote   ,
             lote.qtde_lote 
      FROM   est_orc_cpl_lote lote
      WHERE  #{cdEmp}   = lote.cd_emp::      NUMERIC
@@ -403,10 +404,7 @@
 						         AND IT.CD_VD 		= #{cdVd} ]]>
 	</select>
 	<select id="pagamentoCheque" resultMap="pagamentoCheque"> 
-		SELECT    CHQ.CD_EMP,
-				  CHQ.CD_FILIAL,
-				  CHQ.CD_VD,
-                  CHQ.CD_BC_CHQ                    ,
+		SELECT    CHQ.CD_BC_CHQ                    ,
                   CHQ.NR_ORD                       ,
                   CHQ.NR_CHQ                       ,
                   CHQ.ANO_CHQ                      ,
@@ -434,10 +432,7 @@
 		AND CHQ.cd_vd = #{cdVd}
 	</select>
 	<select id="pagamentoCrediario" resultMap="pagamentoCrediario"> 
-		SELECT      TEF.CD_EMP , 
-                    TEF.CD_FILIAL,
-                    TEF.CD_VD,		
-					TEF.CD_ADM_CARTAO   ,
+		SELECT      TEF.CD_ADM_CARTAO   ,
 					ADM.NM_USUAL        ,
 					TEF.VL_CARTAO       ,
 					TEF.VL_SAQUE_CARTAO ,
@@ -479,9 +474,7 @@
 	</select>
 	<select id="pagamentoCartao" resultMap="pagamentoCartao"> 
 		<![CDATA[	
-	SELECT    TEF.CD_EMP , 
-                    TEF.CD_FILIAL,
-                    TEF.CD_VD,		
+	SELECT    	
                                                              CASE 
                                                                        WHEN COALESCE(TEF.CD_ADM_CARTAO, 0::NUMERIC) > 0::NUMERIC THEN TEF.CD_ADM_CARTAO
                                                                        WHEN TEF.CD_ADM_CARTAO = 0::NUMERIC
@@ -570,10 +563,7 @@
 	</select>
 	<select id="pagamentoPbm" resultMap="pagamentoPbm"> 
 		<![CDATA[
-	 SELECT  
-             VD.CD_EMP , 
-                    VD.CD_FILIAL,
-                    VD.CD_VD,                       
+	 SELECT                 
 					VD.CD_CONV   AS CD_CONV, 
                                                        CASE 
                                                               WHEN VD.TIPO_PBM::NUMERIC > 0::NUMERIC THEN
@@ -626,10 +616,7 @@
 															]]>
 	</select>
 	<select id="pagamentoNcc" resultMap="pagamentoNcc"> 
-	SELECT  NCC.CD_EMP ,
-			NCC.CD_FILIAL ,
-			NCC.CD_VD,
-            NCC.CD_CTR_NCC  ,
+	SELECT  NCC.CD_CTR_NCC  ,
 			NCC.VLR_NCC 	
     FROM 
 		PDV_VD_NCC NCC 
@@ -639,8 +626,7 @@
 		AND #{cdVd} = NCC.CD_VD LIMIT 1	
 	</select>
 	<select id="pagamentoValeCp" resultMap="pagamentoValeCp"> 
-	SELECT VD.CD_EMP, VD.CD_FILIAL, VD.CD_VD,
-                                                       VD.VLR_TICKETS                                  ,
+	SELECT                                             VD.VLR_TICKETS                                  ,
                                                        PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_CTR_VALE_CP ,
                                                        PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.VLR_VALE_CP    
                                                 FROM PDV_VD VD INNER JOIN PDV_VD_RC_CLI_FIDELI_VALE_COMPRA ON
@@ -814,8 +800,6 @@
 		<collection property="itens" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" javaType="ArrayList" ofType="map" select="selectCupomItens" />		
 		<collection property="receita" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,nrOrc=NR_ORC,cdVd=CD_VD}" javaType="ArrayList" ofType="map" select="selectCupomReceita" />
 	</resultMap>
-
-
 	<resultMap id="selectCupomItens" type="Map"> 
 		<result property="cdEmp" column="CD_EMP"/> 
 		<result property="cdFilial" column="CD_FILIAL"/> 
@@ -916,13 +900,13 @@
 		<result column="vlr_desc" property="vlrDesc"/>
 		<result column="vlr_desc_geral" property="vlrDescGeral"/>
 		<result column="nr_carta" property="nrCartaoCli"/>
-		<result column="cd_cli" property="foneCli"/>
-		<result column="cd_cli" property="tpOrc"/>
-		<result column="cd_cli" property="cdFrmPgto"/>
-		<result column="cd_cli" property="origOrc"/>
+		<result column="fone_cli" property="foneCli"/>
+		<result column="tp_orc" property="tpOrc"/>
+		<result column="cd_frm_pgto" property="cdFrmPgto"/>
+		<result column="orig_orc" property="origOrc"/>
 		<result column="obs" property="obs"/>
 		<result column="cd_mt_cancel_orc" property="cdMtCancelOrc"/>
-		<result column="cd_cli" property="descMtCancel"/>	
+		<result column="desc_mt_cancel" property="descMtCancel"/>	
 		<collection property="itens" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC}" javaType="ArrayList" ofType="map" select="selectOrcamentoPdvItem" />
 		<collection property="receita" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC}" javaType="ArrayList" ofType="map" select="selectOrcamentoPdvReceita" />
 	</resultMap>	

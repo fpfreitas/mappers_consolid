@@ -51,23 +51,7 @@
 				<unmarshal ref="json" />
 				<to uri="dbmapper:consumePdvReprocessar?dataSource=dataSourcePdv&amp;statementType=Update" />
 			</onException>            
-        </route>
-		
-		
-		<route>
-            <from uri="dbmapper:selectCupom?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=10000&amp;consumer.onConsume=consumePdv&amp;parameters=flagConsolid=2" />
-            <marshal ref="json" />
-			<to uri="log:br.com.itec.selectCupom_2?level=INFO"/>
-			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
-            <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=fiscal-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
-			<onException>
-				<exception>java.lang.Exception</exception>
-				<process ref="rollback"/>
-				<unmarshal ref="json" />
-				<to uri="dbmapper:consumePdvErro?dataSource=dataSourcePdv&amp;statementType=Update" />
-			</onException>            
-        </route>
-		
+        </route>	
 		
 		<route>
             <from uri="dbmapper:selectCupomNaoFiscal?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1000&amp;consumer.onConsume=consumePdvNaoFiscal&amp;parameters=flagConsolid=0" />
@@ -82,21 +66,7 @@
 				<to uri="dbmapper:consumePdvNaoFiscalReprocessar?dataSource=dataSourcePdv&amp;statementType=Update" />
 			</onException>            
         </route>
-		
-		<route>
-            <from uri="dbmapper:selectCupomNaoFiscal?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=10000&amp;consumer.onConsume=consumePdvNaoFiscal&amp;parameters=flagConsolid=2" />
-            <marshal ref="json" />
-			<to uri="log:br.com.itec.selectCupomNaoFiscal_2?level=INFO"/>
-			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
-            <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=naoFiscal-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.naoFiscal.{{ipdv.queueName}}" />
-			<onException>
-				<exception>java.lang.Exception</exception>
-				<process ref="rollback"/>
-				<unmarshal ref="json" />
-				<to uri="dbmapper:consumePdvNaoFiscalErro?dataSource=dataSourcePdv&amp;statementType=Update" />
-			</onException>            
-        </route>
-				
+					
 		<route>
             <from uri="dbmapper:selectOrcamento?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeOrcamento&amp;parameters=flagConsolid=0" />
             <marshal ref="json"/>
@@ -110,21 +80,7 @@
 				<to uri="dbmapper:consumeOrcamentoReprocessar?dataSource=dataSourcePdv&amp;statementType=Update" />
 			</onException>  
         </route> 
-		
-		<route>
-            <from uri="dbmapper:selectOrcamento?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeOrcamento&amp;parameters=flagConsolid=2" />
-            <marshal ref="json" />
-			<to uri="log:br.com.itec.selectOrcamento_2?level=INFO"/>
-			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
-			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
-			<onException>
-				<exception>java.lang.Exception</exception>
-				<process ref="rollback"/>
-				<unmarshal ref="json" />
-				<to uri="dbmapper:consumeOrcamentoErro?dataSource=dataSourcePdv&amp;statementType=Update" />
-			</onException>  
-        </route> 
-		
+			
 		<route>
             <from uri="dbmapper:selectMapaResumo?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeMapaResumo" />
             <marshal ref="json" />

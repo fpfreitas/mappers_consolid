@@ -635,13 +635,10 @@
                                                 AND    VD.CD_VD     = #{cdVd}
 	</select>
 	<update id="consumePdv" parameterType="Map">
-    update pdv_vd set flag_consolidado = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_VD = #{cdVd}
-	</update>
-	<update id="consumePdvReprocessar" parameterType="Map">
     update pdv_vd set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_VD = #{cdVd}
 	</update>
-	<update id="consumePdvErro" parameterType="Map">
-    update pdv_vd set flag_consolidado = 3 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_VD = #{cdVd}
+	<update id="consumePdvReprocessar" parameterType="Map">
+    update pdv_vd set flag_consolidado = 0 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_VD = #{cdVd}
 	</update>
 	<select id="selectMapaResumo" resultMap="selectMapaResumo">
 

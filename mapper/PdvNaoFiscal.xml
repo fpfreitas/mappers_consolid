@@ -387,13 +387,10 @@
                                                                                AND       #{cdCtr} = cupomtef.cd_ctr]]>
 	</select>
 	<update id="consumePdvNaoFiscal" parameterType="Map">
-    update pdv_cupom_nao_fiscal set flag_consolidado = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
-	</update>
-	<update id="consumePdvNaoFiscalReprocessar" parameterType="Map">
     update pdv_cupom_nao_fiscal set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
 	</update>
-	<update id="consumePdvNaoFiscalErro" parameterType="Map">
-    update pdv_cupom_nao_fiscal set flag_consolidado = 3 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
+	<update id="consumePdvNaoFiscalReprocessar" parameterType="Map">
+    update pdv_cupom_nao_fiscal set flag_consolidado = 0 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
 	</update>
 	<select id="selectConciliacaoPdvCupomNaoFiscal" resultMap="selectConciliacaoPdvCupomNaoFiscal">
 		select 'pdvCupomNaoFiscalConciliacao' as "tipoRegistro"

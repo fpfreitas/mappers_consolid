@@ -56,8 +56,9 @@
 				 and vd.cd_filial   = orc.cd_filial
 				 and vd.nr_orc      = orc.cd_orc
                  where orc.flag_consolidado = #{flagConsolid}::numeric
-				 AND hr_emi < (now() - interval '90 minutes') 
+				 AND hr_emi < (now() - interval '180 minutes') 
 				 AND VD.CD_EMP IS NULL 
+				 AND COALESCE(ORC.nr_ped_televd,0) = 0
 				 LIMIT 1
 				 
 				 	]]>

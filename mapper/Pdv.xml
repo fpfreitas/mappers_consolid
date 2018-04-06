@@ -110,10 +110,7 @@
         AND CD_NF_SERIE = #{cdNfSerie}
 	</select>
 	<select id="selectCupomNfceCancel" resultMap="selectCupomNfceCancel">
-	SELECT 	CD_EMP,
-			CD_FILIAL,
-			CD_VD,
-			NFCE_CANCEL.XML_CANC                                                   AS XML_CANC,
+	SELECT 	NFCE_CANCEL.XML_CANC                                                   AS XML_CANC,
 			COALESCE(NFCE_CANCEL.TP_CANC, 0)                                        AS TP_CANC,
 			COALESCE(NFCE_CANCEL.CHV_NFCE, ''::CHARACTER VARYING)                   AS CHV_NFCE,
 			NFCE_CANCEL.DT_EMIS                                                     AS DT_EMIS,
@@ -725,7 +722,7 @@
 		where cd_emp = 1 
 				and cd_filial = (select cd_filial from prc_filial) 
 				and dt_vd = current_date and st_vd >= 0 
-				AND HR_VD >= (now() - interval '3 hours' ]]>
+				AND HR_VD >= (now() - interval '3 hours' ) ]]>
 	</select>
 	<resultMap id="selectCupom" type="Map"> 	
 		<result property="cnpjFilial" column="CGC"/>
@@ -1098,7 +1095,7 @@
 		<result property="cdVd" column="CD_VD"/>
 		<result property="vlrTickets" column="VLR_TICKETS"/>
 		<result property="cdCtrValeCp" column="CD_CTR_VALE_CP"/>
-		<result property="VLR_VALE_CP" column="vlrValeCp"/>
+		<result property="vlrValeCp" column="VLR_VALE_CP"/>
 	</resultMap>
 	<resultMap id="pagamentoNcc" type="Map">
 		<result property="cdEmp" column="CD_EMP"/>

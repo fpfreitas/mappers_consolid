@@ -64,6 +64,7 @@
                            VD.VD_TROCA_FIDEL                                              ,
                            COALESCE(VD.VLR_IMPOSTO, 0::   NUMERIC)                        AS VLR_IMPOSTO,
                            COALESCE(VD.TX_MED_IMPOSTO, 0::NUMERIC)                        AS TX_MED_IMPOSTO,
+						   COALESCE(VD.VLR_TICKETS, 0::NUMERIC)                           AS VLR_TICKETS,
                            VD.VLR_CONV_PBM                                                ,
                            VD.FLAG_NFCE                                                   ,
                            COALESCE(NF_SAI.CD_NF, 0::   NUMERIC)                          AS CD_NF,
@@ -623,16 +624,13 @@
 		AND #{cdVd} = NCC.CD_VD LIMIT 1	
 	</select>
 	<select id="pagamentoValeCp" resultMap="pagamentoValeCp"> 
-	SELECT                                             VD.VLR_TICKETS                                  ,
+	SELECT  
                                                        PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_CTR_VALE_CP ,
                                                        PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.VLR_VALE_CP    
-                                                FROM PDV_VD VD INNER JOIN PDV_VD_RC_CLI_FIDELI_VALE_COMPRA ON
-                                                VD.CD_EMP = PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_EMP
-                                                AND    VD.CD_FILIAL = PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_FILIAL
-                                                AND    VD.CD_VD = PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_VD 
-												WHERE  VD.CD_EMP    = #{cdEmp}
-                                                AND    VD.CD_FILIAL = #{cdFilial}
-                                                AND    VD.CD_VD     = #{cdVd}
+                                                FROM   PDV_VD_RC_CLI_FIDELI_VALE_COMPRA 
+												WHERE  PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_EMP    = #{cdEmp}
+                                                AND    PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_FILIAL = #{cdFilial}
+                                                AND    PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_VD     = #{cdVd}
 	</select>
 	<update id="consumePdv" parameterType="Map">
     update pdv_vd set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_VD = #{cdVd}
@@ -780,6 +778,7 @@
 		<result property="nrTelCupom" column="NR_TEL_CUPOM"/>
 		<result property="chvNfce"	column="CHV_NFCE"/>	
 		<result property="cdNfSerie"	column="CD_NF_SERIE"/>	
+		<result property="vlrTickets" column="VLR_TICKETS"/>
 		<association property="nfce" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdNf=NR_ECF,cdNfSerie=CD_NF_SERIE}" javaType="Map" select="selectCupomNfce"/>
 		<association property="nfceCancel" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" javaType="Map" select="selectCupomNfceCancel"/>
 		<association property="orcamento" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,nrOrc=NR_ORC}" javaType="Map" select="selectOrcamentoPdv"/>

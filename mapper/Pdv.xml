@@ -716,7 +716,8 @@
 		where cd_emp = 1 
 				and cd_filial = (select cd_filial from prc_filial) 
 				and dt_vd = current_date and st_vd >= 0 
-				AND HR_VD >= (now() - interval '3 hours' ) ]]>
+				--AND HR_VD >= (now() - interval '3 hours' )
+				]]>
 	</select>
 	<resultMap id="selectCupom" type="Map"> 	
 		<result property="cnpjFilial" column="CGC"/>

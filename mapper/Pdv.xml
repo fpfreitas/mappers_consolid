@@ -26,7 +26,7 @@
                            CASE 
 							WHEN VD.CD_CLI = 0
 							THEN 1 
-							ELSE VD.CD_CLI AS CD_CLI,
+							ELSE VD.CD_CLI  END AS CD_CLI,
                            VD.CGC_CPF                       ,
                            VD.NR_CARTAO_MARKA               ,                   
                            COALESCE(VD.QTD_DIAS_PRORROG, 0) AS QTD_DIAS_PRORROG,

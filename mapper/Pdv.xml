@@ -23,7 +23,10 @@
                            VD.ST_VD                         ,
                            VD.CONT_CUPOM_FISC               ,
                            VD.CD_MOV                        ,
-                           VD.CD_CLI                        ,
+                           CASE 
+							WHEN VD.CD_CLI = 0
+							THEN 1 
+							ELSE VD.CD_CLI AS CD_CLI,
                            VD.CGC_CPF                       ,
                            VD.NR_CARTAO_MARKA               ,                   
                            COALESCE(VD.QTD_DIAS_PRORROG, 0) AS QTD_DIAS_PRORROG,
@@ -166,11 +169,7 @@
         AND       IT.CD_VD = #{cdVd} 
 	</select>
 	<select id="selectCupomItensLote" resultMap="selectCupomItensLote">
-		SELECT  CD_EMP,
-				CD_FILIAL,
-				CD_VD,
-				CD_IT,
-				CD_LOTE, 
+		SELECT  CD_LOTE, 
 				NR_LOTE, 
 				QTDE_LOTE 
 		FROM PDV_VD_IT_LOTE LOTE
@@ -832,10 +831,6 @@
 		 
 	</resultMap>
 	<resultMap id="selectCupomItensLote" type="Map"> 
-		<result property="cdEmp" column="CD_EMP"/> 
-		<result property="cdFilial" column="CD_FILIAL"/> 
-		<result property="cdVd" column="CD_VD"/> 
-		<result property="cdIt"	column="CD_IT"/>
 		<result property="cdLote"	column="CD_LOTE"/>
 		<result property="nrLote"	column="NR_LOTE"/>
 		<result property="qtdeLote"	column="QTDE_LOTE"/>

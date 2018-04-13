@@ -120,7 +120,7 @@
 		 
 		
 		<route>
-            <from uri="dbmapper:selectOrcamentoCplFalta?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeOrcamentoCplFalta" />
+            <from uri="dbmapper:selectOrcamentoCplFalta?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100000&amp;consumer.onConsume=consumeOrcamentoCplFalta&amp;parameters=flagConsolid=0" />
             <marshal ref="json" />
 			<to uri="log:br.com.itec.selectOrcamentoCplFalta_0?level=INFO"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>

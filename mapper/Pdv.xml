@@ -714,9 +714,9 @@
 		  st_Vd 
 		from pdv_vd 
 		where cd_emp = 1 
-				and cd_filial = (select cd_filial from prc_filial) 
+				and cd_filial in ((select cd_filial from prc_filial) )
 				and st_vd >= 0 
-				AND HR_VD >= (now() - interval '6 hours' )
+				AND HR_VD >= (now() - interval '3 hours' )
 				]]>
 	</select>
 	<resultMap id="selectCupom" type="Map"> 	

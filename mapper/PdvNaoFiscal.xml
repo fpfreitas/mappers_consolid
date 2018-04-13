@@ -528,7 +528,7 @@
 	</resultMap>
 		<resultMap id="selectConciliacaoPdvCupomNaoFiscal" type="Map">	
 		<result property="tipoRegistro" column="tipoRegistro"/>
-		<collection property="cupons" column="" javaType="ArrayList" ofType="map" select="selectConciliacaoPdvVdCupons" />		
+		<collection property="cupons" column="tipoRegistro=tipoRegistro" javaType="ArrayList" ofType="map" select="selectConciliacaoPdvVdCupons" />		
 	</resultMap>
 	<resultMap id="selectConciliacaoPdvCupomNaoFiscalCupons" type="Map">	
 		<result property="cdEmp" column="cd_emp"/>	

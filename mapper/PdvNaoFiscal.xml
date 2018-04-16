@@ -401,7 +401,13 @@
 		  nr_coo 		,
 		  dt_cupom 		,
 		  st_cupom 		
-		from pdv_cupom_nao_fiscal where cd_emp = 1 and cd_filial in ( (select cd_filial from prc_filial) ) and dt_cupom = current_date and st_cupom = 0 and vlr_to_cupom > 0 ]]>
+		from pdv_cupom_nao_fiscal 
+		where 
+			cd_emp = 1 
+			and cd_filial in ( (select cd_filial from prc_filial) ) 
+			and hr_cupom  >= (now() - interval '6 hours' ) 
+			and st_cupom = 0 
+			and vlr_to_cupom > 0 ]]>
 	</select>
 	<resultMap id="cupomNaoFiscal" type="Map"> 	
 		<result property="cnpjFilial" column="CNPJ_FILIAL"/>

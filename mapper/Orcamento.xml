@@ -6,66 +6,65 @@
 <mapper namespace="Orcamento">
   
 
-  <select id="selectOrcamento" resultMap="OrcaJsonResult">
-  	<![CDATA[
+	<select id="selectOrcamento" resultMap="OrcaJsonResult">
+		<![CDATA[
+		
+		SELECT  orc.cd_emp              ,
+				orc.cd_filial           ,
+				orc.cd_orc              ,
+				orc.vd_troca_fidel      ,
+				orc.cd_cli              ,
+				orc.cd_conv             ,
+				orc.qt_parc_conv        ,
+				orc.nr_ped_televd       ,
+				orc.tipo_prazo_pgto     ,
+				orc.nr_cartao_pbm       ,
+				orc.cd_projeto_pbm      ,
+				orc.tp_perc_rec_conv    ,
+				orc.perc_rec_conv       ,
+				orc.dados_adicionais    ,
+				orc.nm_comprador        ,
+				orc.qtd_dias_prorrog    ,
+				orc.tipo_pbm            ,
+				orc.cd_cli_dep          ,
+				orc.vlr_prod            ,
+				orc.tp_orc_entg         ,
+				2		      AS sts_orc, 
+				orc.nm_cli              ,
+				orc.nr_autr_pbm         ,
+				orc.cpf_cli_pbm         ,
+				orc.dt_emi              ,
+				orc.hr_emi              ,
+				orc.vlr_tot             ,
+				orc.vlr_desc			,
+				orc.vlr_desc_geral		,
+				orc.nr_cartao_fidelidade,
+				orc.fone_cli            ,
+				orc.tp_orc              ,
+				orc.cd_frm_pgto         ,
+				orc.orig_orc            ,
+				orc.obs                 ,
+				COALESCE(est_cancel.cd_mt_cancel_orc, 0) AS cd_mt_cancel_orc,
+				est_cancel.desc_mt_cancel             			
+				FROM      est_orc orc 
+					left join est_orc_mt_cancel est_cancel 
+					ON        est_cancel.cd_emp::   NUMERIC = orc.cd_emp::NUMERIC 
+					AND       est_cancel.cd_filial::NUMERIC = orc.cd_filial::NUMERIC 
+					AND       est_cancel.cd_orc::   NUMERIC = orc.cd_orc::NUMERIC 
+					left join pdv_vd vd on
+					vd.cd_emp          = orc.cd_emp
+					and vd.cd_filial   = orc.cd_filial
+					and vd.nr_orc      = orc.cd_orc
+					where orc.flag_consolidado = #{flagConsolid}::numeric
+					AND hr_emi < (now() - interval '180 minutes') 
+					AND VD.CD_EMP IS NULL 
+					AND COALESCE(ORC.nr_ped_televd,0) = 0
+					LIMIT 1
+					
+						]]>
 	
-	 SELECT  orc.cd_emp              ,
-			orc.cd_filial           ,
-            orc.cd_orc              ,
-            orc.vd_troca_fidel      ,
-            orc.cd_cli              ,
-            orc.cd_conv             ,
-            orc.qt_parc_conv        ,
-            orc.nr_ped_televd       ,
-            orc.tipo_prazo_pgto     ,
-            orc.nr_cartao_pbm       ,
-            orc.cd_projeto_pbm      ,
-            orc.tp_perc_rec_conv    ,
-            orc.perc_rec_conv       ,
-            orc.dados_adicionais    ,
-            orc.nm_comprador        ,
-            orc.qtd_dias_prorrog    ,
-            orc.tipo_pbm            ,
-            orc.cd_cli_dep          ,
-            orc.vlr_prod            ,
-            orc.tp_orc_entg         ,
-            2		      AS sts_orc, 
-            orc.nm_cli              ,
-            orc.nr_autr_pbm         ,
-            orc.cpf_cli_pbm         ,
-            orc.dt_emi              ,
-            orc.hr_emi              ,
-            orc.vlr_tot             ,
-			orc.vlr_desc			,
-			orc.vlr_desc_geral		,
-            orc.nr_cartao_fidelidade,
-            orc.fone_cli            ,
-            orc.tp_orc              ,
-            orc.cd_frm_pgto         ,
-            orc.orig_orc            ,
-            orc.obs                 ,
-            COALESCE(est_cancel.cd_mt_cancel_orc, 0) AS cd_mt_cancel_orc,
-            est_cancel.desc_mt_cancel             			
-			FROM      est_orc orc 
-                 left join est_orc_mt_cancel est_cancel 
-                 ON        est_cancel.cd_emp::   NUMERIC = orc.cd_emp::NUMERIC 
-                 AND       est_cancel.cd_filial::NUMERIC = orc.cd_filial::NUMERIC 
-                 AND       est_cancel.cd_orc::   NUMERIC = orc.cd_orc::NUMERIC 
-				 left join pdv_vd vd on
-				 vd.cd_emp          = orc.cd_emp
-				 and vd.cd_filial   = orc.cd_filial
-				 and vd.nr_orc      = orc.cd_orc
-                 where orc.flag_consolidado = #{flagConsolid}::numeric
-				 AND hr_emi < (now() - interval '180 minutes') 
-				 AND VD.CD_EMP IS NULL 
-				 AND COALESCE(ORC.nr_ped_televd,0) = 0
-				 LIMIT 1
-				 
-				 	]]>
-
 	</select>	
-	
-	<select id="selectOrcamentoItem" resultMap="OrcamentoItem">                    
+	<select id="selectOrcamentoItem" resultMap="OrcamentoItem">                  
     SELECT    est_orc_cpl.cd_prod                 ,
               est_orc_cpl.cd_barra                ,
               est_orc_cpl.cd_emp                  ,
@@ -116,7 +115,6 @@
 	   AND       est_orc_cpl.cd_orc = #{cdOrc}
 	
 		</select>
-	
 	<select id="selectOrcamentoItemConcorrente" resultMap="OrcamentoItemConcorrente"> 
 		SELECT desconto_concorrente.cd_prod                ,
                desconto_concorrente.nr_orc                 ,
@@ -132,8 +130,7 @@
                AND       #{cdIt} = desconto_concorrente.cd_it::        NUMERIC
                AND       #{cdProd} = desconto_concorrente.cd_prod::    NUMERIC
 	</select>  
-		
-     <select id="selectOrcamentoItemLote" resultMap="OrcamentoItemLote">     
+	<select id="selectOrcamentoItemLote" resultMap="OrcamentoItemLote">     
 
 	 SELECT lote.cd_lote   ,
             lote.qtde_lote 
@@ -145,8 +142,6 @@
      AND    #{cdIt}    = lote.cd_it::        NUMERIC 
 	 
 	 </select>
-	
-	
 	<select id="selectOrcamentoReceita" resultMap="OrcamentoReceita">     
 
 	 SELECT receita.cd_prod                   ,
@@ -169,7 +164,6 @@
      AND    receita.nr_orc = #{cdOrc}
 	 
 	 </select>
-	
 	<resultMap id="OrcaJsonResult" type="Map">
     <result column="cd_emp" property="cdEmp"/>
 	<result column="cd_filial" property="cdFilial"/>
@@ -210,7 +204,6 @@
 	<collection property="itens" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC}" javaType="ArrayList" ofType="map" select="selectOrcamentoItem" />
 	<collection property="receita" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC}" javaType="ArrayList" ofType="map" select="selectOrcamentoReceita" />
   </resultMap>	
-		
 	<resultMap id="OrcamentoItem" type="Map">
 		<result column="cd_emp"                  property="cdEmp"/>
 		<result column="cd_prod"                 property="cdProd"/>
@@ -251,7 +244,6 @@
 		<collection property="concorrente" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC,cdProd=CD_PROD,cdIt=CD_IT}" javaType="ArrayList" ofType="map" select="selectOrcamentoItemConcorrente" />
 		<collection property="lote" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC,cdProd=CD_PROD,cdIt=CD_IT}" javaType="ArrayList" ofType="map" select="selectOrcamentoItemLote" />
 	</resultMap>
-	
 	<resultMap id="OrcamentoItemConcorrente" type="Map">
 		<result column="cd_prod"                property="cdProd"/>
         <result column="nr_orc"                 property="nrOrc"/>
@@ -261,7 +253,6 @@
         <result column="perc_desc"              property="percDesc"/>
         <result column="cd_it"                  property="cdIt"/>
 	</resultMap>
-	
     <resultMap id="OrcamentoReceita" type="Map">
 			<result column="cd_prod"                  property="cdProd"/> 
             <result column="cd_it"                    property="cdIt"/> 
@@ -277,41 +268,36 @@
             <result column="qt_prod"                  property="qtProd"/> 
             <result column="dt_receita"               property="dtReceita"/> 
             <result column="tp_capt_receita"          property="tipoCaptacaoReceita"/>                     
-	</resultMap>	
-              
+	</resultMap>	     
 	<resultMap id="OrcamentoItemLote" type="Map">
 		<result column="cd_lote"                property="cdLote"/>
         <result column="qtde_lote"              property="qtdeLote"/>                       
 	</resultMap>	
+	<update id="consumeOrcamento" parameterType="Map">
+		update est_orc set flag_consolidado = 1 , sts_orc = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_ORC = #{cdOrc}
+	</update>
+	<select id="selectOrcamentoCplFalta" resultMap="selectOrcamentoCplFalta">
+		<![CDATA[
 	
-  <update id="consumeOrcamento" parameterType="Map">
-    update est_orc set flag_consolidado = 1 , sts_orc = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_ORC = #{cdOrc}
-  </update>
-  
-  <select id="selectOrcamentoCplFalta" resultMap="selectOrcamentoCplFalta">
-	<![CDATA[
-
-			select 
-				'estOrcFalta' as "tipoRegistro",
-				cd_falta  ,
-				cd_prod   ,
-				cd_filial ,
-				qtde ,
-				dt_falta ,
-				cd_vend ,
-				qtde_estoque ,
-				COALESCE(tp_falta,0::NUMERIC) as tp_falta,
-				COALESCE(nm_concorrente,' '::CHARACTER VARYING) as nm_concorrente,
-				COALESCE(vlr_preco_concorrente::money::numeric::float8,0.0::money::numeric::float8) as vlr_preco_concorrente
-			FROM est_orc_cpl_falta 
-			where flag_consolidado = #{flagConsolid}::numeric LIMIT 1
-		]]>
-  </select>
-  
-  <update id="consumeOrcamentoCplFalta" parameterType="Map">
-    update est_orc_cpl_falta set flag_consolidado = 1  where cd_falta = #{cdFalta}
-  </update>
-	
+				select 
+					'estOrcFalta' as "tipoRegistro",
+					cd_falta  ,
+					cd_prod   ,
+					cd_filial ,
+					qtde ,
+					dt_falta ,
+					cd_vend ,
+					qtde_estoque ,
+					COALESCE(tp_falta,0::NUMERIC) as tp_falta,
+					COALESCE(nm_concorrente,' '::CHARACTER VARYING) as nm_concorrente,
+					COALESCE(vlr_preco_concorrente::money::numeric::float8,0.0::money::numeric::float8) as vlr_preco_concorrente
+				FROM est_orc_cpl_falta 
+				where flag_consolidado = #{flagConsolid}::numeric LIMIT 1
+			]]>
+	</select>
+	<update id="consumeOrcamentoCplFalta" parameterType="Map">
+		update est_orc_cpl_falta set flag_consolidado = 1  where cd_falta = #{cdFalta}
+	</update>
 	<resultMap id="selectOrcamentoCplFalta" type="Map">
 				<result property="tipoRegistro" column="tipoRegistro"/>	
 				 <result property="cdFalta" column="cd_falta"/>	

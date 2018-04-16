@@ -3,7 +3,7 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="CupomNaoFiscalJsonResult">
+<mapper namespace="CupomNaoFiscal">
 	<select id="selectCupomNaoFiscal" resultMap="cupomNaoFiscal">
 		<![CDATA[
                  SELECT    filial.cgc						             AS "CNPJ_FILIAL",
@@ -526,7 +526,7 @@
 	</resultMap>
 	<resultMap id="selectConciliacaoPdvCupomNaoFiscal" type="Map">	
 		<result property="tipoRegistro" column="tipoRegistro"/>
-		<collection property="cupons" column="tipoRegistro=tipoRegistro" javaType="ArrayList" ofType="map" select="selectConciliacaoPdvVdCupons" />		
+		<collection property="cupons" column="tipoRegistro=tipoRegistro" javaType="ArrayList" ofType="map" select="selectConciliacaoPdvCupomNaoFiscalCupons" />		
 	</resultMap>
 	<resultMap id="selectConciliacaoPdvCupomNaoFiscalCupons" type="Map">	
 		<result property="cdEmp" column="cd_emp"/>	

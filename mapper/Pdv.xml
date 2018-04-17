@@ -719,7 +719,7 @@
 				AND (now() - interval '3 hours' ) <= case flag_nfce
 									when 1 then hr_vd
 									else dt_cad
-								end )
+								end 
 				]]>
 	</select>
 	<resultMap id="selectCupom" type="Map"> 	

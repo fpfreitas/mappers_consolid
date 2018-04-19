@@ -831,7 +831,7 @@
 		<result property="cdTblDesc"	column="CD_TBL_DESC"/>	
 		<result property="tpNivel"	column="TP_NIVEL"/>	
 		<result property="tpTblDesc" column="TP_TBL_DESC"/>	
-		<collection property="lote" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD,cdIt=CD_IT}" javaType="ArrayList" ofType="map" select="selectCupomItensLote" />
+		<!-- <collection property="lote" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD,cdIt=CD_IT}" javaType="ArrayList" ofType="map" select="selectCupomItensLote" /> -->
 		 
 	</resultMap>
 	<resultMap id="selectCupomItensLote" type="Map"> 
@@ -939,7 +939,7 @@
 		<result column="vlr_custo_semaforo"      property="vlrCustoSemaforo"/>
 		<result column="qt_est"                  property="qtEst"/>
 		<result column="cd_grp"                  property="cdGrupoComissao"/>			
-		<association property="lote" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC,cdProd=CD_PROD,cdIt=CD_IT}" javaType="Map" select="selectOrcamentoPdvItemLote" />
+		<!--<association property="lote" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC,cdProd=CD_PROD,cdIt=CD_IT}" javaType="Map" select="selectOrcamentoPdvItemLote" /> -->
 		<association property="concorrente" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdOrc=CD_ORC,cdProd=CD_PROD,cdIt=CD_IT}" javaType="Map" select="selectOrcamentoPdvItemConcorrente" />
 	</resultMap>
 	<resultMap id="OrcamentoItemConcorrente" type="Map">

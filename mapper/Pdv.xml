@@ -694,10 +694,10 @@
 	 ]]>
 	</select>
 	<update id="consumeConsoldVd" parameterType="Map">
-    update pdv_consld_vd set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_MOV =  #{dtMov}
+    update pdv_consld_vd set flag_consolidado = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_MOV =  #{dtMov}
 	</update>
 	<update id="consumeConsoldVdReprocessar" parameterType="Map">
-    update pdv_consld_vd set flag_consolidado = 0 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_MOV =  #{dtMov}
+    update pdv_consld_vd set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_MOV =  #{dtMov}
 	</update>
 	<update id="consumeConsoldVdErro" parameterType="Map">
    <![CDATA[  update pdv_vd set flag_consolidado = 0 where flag_consolidado = 2 and hr_vd < (now() - interval '30 minutes') ]]>

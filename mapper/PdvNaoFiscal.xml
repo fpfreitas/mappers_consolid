@@ -78,7 +78,9 @@
                  left join glb_usu operador 
                  ON        cupom.cd_usu = operador.cd_usu 
                  WHERE     cupom.st_cupom >= 0::NUMERIC 
+				 and 		cupom. vlr_to_cupom > 0
                  AND       cupom.flag_consolidado = #{flagConsolid}::numeric limit 1
+				 
 ]]>
 	</select>
 	<select id="selectCupomNaoFiscalBaixa" resultMap="selectCupomNaoFiscalBaixa">

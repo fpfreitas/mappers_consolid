@@ -119,7 +119,6 @@
 						   AND       	#{cdFilial} = fatura.cd_filial 
 						   AND       	#{cdCx} = fatura.cd_cx 
 						   AND       	#{cdCtr} = fatura.cd_ctr 
-						   AND       fatura.st_paga = 1::NUMERIC 
 	</select>
 	<select id="selectCupomNaoFiscalBaixaParcela" resultMap="selectCupomNaoFiscalBaixaParcela">
 			SELECT 

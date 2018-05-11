@@ -106,7 +106,7 @@
 				AUT_NFCE ,
 				XML_NFCE     AS "XML_NFCE",
 				DS_MOTIVO ,
-				COALESCE(STS_PEND, 0::   NUMERIC) AS "STS_VALID"
+				COALESCE(STS_PEND, 1::   NUMERIC) AS "STS_VALID"
         FROM EST_NFCE_ENV WHERE
         CD_EMP = #{cdEmp}
         AND CD_FILIAL = #{cdFilial}

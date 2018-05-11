@@ -676,7 +676,8 @@
 	<select id="selectMapaResumoCpl" resultMap="selectMapaResumoCpl">
 		select 	tx_icms,
 				base_calc,
-				tipo_imposto 
+				tipo_imposto ,
+				cd_totalizador_parcial
 		from 
 			pdv_mapa_resumo_cpl 
 		where 
@@ -1148,6 +1149,7 @@
 		<result property="txIcms" column="tx_icms"/>	 
 		<result property="baseCalc" column="base_calc"/>	 
 		<result property="tipoImposto" column="tipo_imposto"/>
+		<result property="cdTotalizadorParcial" column="cd_totalizador_parcial"/>
 	</resultMap>
 	<resultMap id="selectConsoldVd" type="Map">	
 		<result property="tipoRegistro" column="tipoRegistro"/>	

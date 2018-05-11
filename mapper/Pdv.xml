@@ -672,6 +672,19 @@
      LEFT JOIN pdv_mapa_resumo_cpl aliquotas ON resumo.cd_emp = aliquotas.cd_emp AND resumo.cd_filial = aliquotas.cd_filial AND resumo.dt_ecf = aliquotas.dt_ecf AND resumo.cd_cx = aliquotas.cd_cx
 	 WHERE resumo.flag_consolidado = 0 order by resumo.dt_ecf desc LIMIT 1 
 	</select>
+
+	<select id="selectMapaResumoCpl" resultMap="selectMapaResumoCpl">
+		select 	tx_icms,
+				base_calc,
+				tipo_imposto 
+		from 
+			pdv_mapa_resumo_cpl 
+		where 
+			cd_emp =  #{cdEmp}
+			and cd_filial = #{cdFilial} 
+			and cd_Cx = #{cdCx} 
+			and dt_ecf = #{dtEcf} 
+	</select>
 	<update id="consumeMapaResumo" parameterType="Map">
     update pdv_mapa_resumo set flag_consolidado = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_ECF =  #{dtEcf}
 	</update>
@@ -1129,6 +1142,12 @@
 		<result property="baseCalc" column="base_calc"/>	 
 		<result property="tipoImposto" column="tipo_imposto"/>	
 		<result property="vlrTxIcms" column="vlrTxIcms"/>
+		<collection property="aliquotas" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx = CD_CX, dtEcf = DT_ECF}" javaType="ArrayList" ofType="map" select="selectMapaResumoCpl" />
+	</resultMap>
+	<resultMap id="selectMapaResumoCpl" type="Map">
+		<result property="txIcms" column="tx_icms"/>	 
+		<result property="baseCalc" column="base_calc"/>	 
+		<result property="tipoImposto" column="tipo_imposto"/>
 	</resultMap>
 	<resultMap id="selectConsoldVd" type="Map">	
 		<result property="tipoRegistro" column="tipoRegistro"/>	

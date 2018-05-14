@@ -423,7 +423,8 @@
                   CHQ.MES_ANO_CNT_CHQ              
         FROM      PDV_VD_CHQS CHQ
         LEFT JOIN CHQ_EMI CH_EMI 
-        ON        CHQ.CPF_CGC_EMI::TEXT = CH_EMI.CGC_CPF::TEXT AND CH_EMI.STS_EMI = 0
+        ON        CHQ.CPF_CGC_EMI::TEXT = CH_EMI.CGC_CPF::TEXT 
+			AND CH_EMI.STS_EMI = 0
         WHERE     CHQ.CD_EMP = #{cdEmp}
 		AND CHQ.cd_filial =  #{cdFilial}
 		AND CHQ.cd_vd = #{cdVd}
@@ -736,6 +737,33 @@
 								end 
 				]]>
 	</select>
+	<select id="selectMovimentoOperador" resultMap="selectMovimentoOperador">
+	SELECT  'movDiarioOperador' as "tipoRegistro",
+			mov.cd_emp,
+			mov.cd_filial,
+			mov.cd_cx,
+			mov.cd_mov,
+			mov.dt_mov,
+			mov.cd_mov ,
+			mov.st_mov,
+			mov.vl_abert ,
+			mov.cd_oper
+	from pdv_mov_diario_operador mov where flag_consolidado = #{flagConsolid}::numeric limit 1;
+	</select>
+
+<select id="selectMovimentoOperadorFechamento" resultMap="selectMovimentoOperadorFechamento">
+	select 
+		fecha.tp_forma_pgto,
+		fecha.cd_it,
+		fecha.vlr_pgto,
+		fecha.vlr_digitado 
+		from pdv_mov_diario_operador_fechamento 
+		where   fecha.cd_emp = #{cdEmp} 
+			AND fecha.cd_filial = #{cdFilial}
+			AND fecha.cd_cx = #{cdCx}
+			AND fecha.cd_mov = #{cdMov}
+
+</select>
 	<resultMap id="selectCupom" type="Map"> 	
 		<result property="cnpjFilial" column="CGC"/>
 		<result property="cdEmp" column="CD_EMP"/> 
@@ -1176,5 +1204,22 @@
 		<result property="nrEcf" column="nr_ecf"/>	
 		<result property="dtVd" column="dt_vd"/>	
 		<result property="stVd" column="st_Vd"/>	   
+	</resultMap>
+	<resultMap id="selectMovimentoOperador" type="Map">	
+		<result property="cdEmp" column="cd_emp"/>	
+		<result property="cdFilial" column="cd_filial"/>	
+		<result property="cdCx" column="cd_cx"/>	
+		<result property="cdMov" column="cd_mov"/>	
+		<result property="dtMov" column="dt_mov"/>	
+		<result property="stMov" column="st_mov"/>	   
+		<result property="vlAbert" column="vl_abert"/>		
+		<result property="cdOper" column="cd_oper"/>	
+		<collection property="fechamentos" column="cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdCx = CD_CX,cdMov = CD_MOV" javaType="ArrayList" ofType="map" select="selectMovimentoOperadorFechamento" />		
+	</resultMap>
+	<resultMap id="selectMovimentoOperadorFechamento" type="Map">	
+		<result property="tpFormaPgto" column="tp_forma_pgto"/>
+		<result property="cdIt" column="cd_it"/>
+		<result property="vlrPgto" column="vlr_pgto"/>
+		<result property="vlrDigitado" column="vlr_digitado"/>
 	</resultMap>
 </mapper>

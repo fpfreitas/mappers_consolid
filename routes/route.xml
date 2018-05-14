@@ -143,6 +143,14 @@
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route> 
 		
+        <route>
+            <from uri="dbmapper:selectMovimentoOperador?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1200000" />
+            <marshal ref="json" />
+			<to uri="log:br.com.itec.selectMovimentoOperador?level=INFO"/>
+			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
+			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
+        </route> 
+
 	    <route>
          <from uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=sync.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;queue=sync.consolid.pdv.fiscal.{{ipdv.queueName}}"/>
          <process ref="gzipProcessor"/>

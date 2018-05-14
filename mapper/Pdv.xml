@@ -748,7 +748,7 @@
 			mov.st_mov,
 			mov.vl_abert ,
 			mov.cd_oper
-	from pdv_mov_diario_operador mov where flag_consolidado = #{flagConsolid}::numeric limit 1;
+	from pdv_mov_diario_operador mov where flag_consolidado = #{flagConsolid}::numeric and st_mov = 1 limit 1;
 	</select>
 
 <select id="selectMovimentoOperadorFechamento" resultMap="selectMovimentoOperadorFechamento">

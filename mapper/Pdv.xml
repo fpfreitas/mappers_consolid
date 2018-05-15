@@ -762,8 +762,12 @@
 			AND fecha.cd_filial = #{cdFilial}
 			AND fecha.cd_cx = #{cdCx}
 			AND fecha.cd_mov = #{cdMov}
-
 </select>
+<update id="consumeMovimentoOperador" parameterType="Map">
+    update pdv_mov_diario_operador set flag_consolidado = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and CD_MOV =  #{cdMov}
+</update>
+
+
 	<resultMap id="selectCupom" type="Map"> 	
 		<result property="cnpjFilial" column="CGC"/>
 		<result property="cdEmp" column="CD_EMP"/> 

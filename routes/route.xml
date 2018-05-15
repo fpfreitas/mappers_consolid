@@ -144,7 +144,7 @@
         </route> 
 		
         <route>
-            <from uri="dbmapper:selectMovimentoOperador?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1200000;parameters=flagConsolid=0" />
+            <from uri="dbmapper:selectMovimentoOperador?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=1200000&amp;consumer.onConsume=consumeMovimentoOperador&amp;parameters=flagConsolid=0" />
             <marshal ref="json" />
 			<to uri="log:br.com.itec.selectMovimentoOperador?level=INFO"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>

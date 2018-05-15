@@ -744,7 +744,6 @@
 			mov.cd_cx,
 			mov.cd_mov,
 			mov.dt_mov,
-			mov.cd_mov ,
 			mov.st_mov,
 			mov.vl_abert ,
 			mov.cd_oper
@@ -757,7 +756,7 @@
 		fecha.cd_it,
 		fecha.vlr_pgto,
 		fecha.vlr_digitado 
-		from pdv_mov_diario_operador_fechamento 
+		from pdv_mov_diario_operador_fechamento fecha
 		where   fecha.cd_emp = #{cdEmp} 
 			AND fecha.cd_filial = #{cdFilial}
 			AND fecha.cd_cx = #{cdCx}

@@ -80,7 +80,7 @@
                  WHERE     cupom.st_cupom >= 0::NUMERIC 
 				 and 		cupom. vlr_to_cupom > 0
                  AND       cupom.flag_consolidado = #{flagConsolid}::numeric
-                 AND        cupom.hr_cupom < (now() - interval '5 minutes')  limit 1
+                 AND        cupom.hr_cupom < (now() - interval '3 minutes')  limit 1
 				 
 ]]>
 	</select>

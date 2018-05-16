@@ -142,7 +142,7 @@
 			   chq.nr_chq          ,
 			   chq.ano_chq         ,
 			   chq.vlr_chq         ,
-			   (extract(epoch from '2018-05-11 11:29:20.370167'::timestamp)::bigint ) * 1000 AS "dtEmi",
+			   (extract(epoch from #{dtEmi}::timestamp)::bigint ) * 1000 AS "dtEmi",
 			   chq.dt_vencto       ,
 			   chq.ag_chq          ,
 			   chq.cpf_cgc_emi     ,

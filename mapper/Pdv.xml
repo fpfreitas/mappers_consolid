@@ -401,6 +401,7 @@
 						         AND IT.CD_VD 		= #{cdVd} ]]>
 	</select>
 	<select id="pagamentoCheque" resultMap="pagamentoCheque"> 
+		
 		SELECT    CHQ.CD_BC_CHQ                    ,
                   CHQ.NR_ORD                       ,
                   CHQ.NR_CHQ                       ,
@@ -422,9 +423,17 @@
                   CHQ.CMC7_CHQ                     ,
                   CHQ.MES_ANO_CNT_CHQ              
         FROM      PDV_VD_CHQS CHQ
-        LEFT JOIN  CHQ_EMI CH_EMI 
-        	ON CHQ.CPF_CGC_EMI::TEXT = CH_EMI.CGC_CPF::TEXT 
-			AND CH_EMI.STS_EMI = 0  
+		<!-- LEFT JOIN FEITO PELO RAMAM 16/05/18 -->
+        LEFT JOIN  (select CGC_CPF as CGC_CPF ,
+                          min (CD_EMI)  as CD_EMI
+                      from
+                          CHQ_EMI  
+                      where    
+                          STS_EMI = 0  
+                      group by  CGC_CPF
+                          ) as
+                          CH_EMI
+         ON CHQ.CPF_CGC_EMI::TEXT = CH_EMI.CGC_CPF::TEXT
         WHERE     CHQ.CD_EMP = #{cdEmp}
 		AND CHQ.cd_filial =  #{cdFilial}
 		AND CHQ.cd_vd = #{cdVd}

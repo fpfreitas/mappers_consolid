@@ -140,7 +140,7 @@
 			   chq.nr_chq          ,
 			   chq.ano_chq         ,
 			   chq.vlr_chq         ,
-			   #{dtEmi}::date     AS "dtEmi",
+			   extract(epoch from #{dtEmi}::timestamp)::integer AS "dtEmi",
 			   chq.dt_vencto       ,
 			   chq.ag_chq          ,
 			   chq.cpf_cgc_emi     ,

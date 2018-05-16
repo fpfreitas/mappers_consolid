@@ -422,9 +422,9 @@
                   CHQ.CMC7_CHQ                     ,
                   CHQ.MES_ANO_CNT_CHQ              
         FROM      PDV_VD_CHQS CHQ
-        LEFT JOIN CHQ_EMI CH_EMI 
-        ON        CHQ.CPF_CGC_EMI::TEXT = CH_EMI.CGC_CPF::TEXT 
-			AND CH_EMI.STS_EMI = 0
+        LEFT JOIN  CHQ_EMI CH_EMI 
+        	WHERE CHQ.CPF_CGC_EMI::TEXT = CH_EMI.CGC_CPF::TEXT 
+			AND CH_EMI.STS_EMI = 0  
         WHERE     CHQ.CD_EMP = #{cdEmp}
 		AND CHQ.cd_filial =  #{cdFilial}
 		AND CHQ.cd_vd = #{cdVd}

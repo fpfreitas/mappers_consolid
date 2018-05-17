@@ -648,7 +648,7 @@
     update pdv_vd set flag_consolidado = 0 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_VD = #{cdVd}
 	</update>
 	<select id="selectMapaResumo" resultMap="selectMapaResumo">
-
+<![CDATA[
 	SELECT 'mapaResumo' as "tipoRegistro",
     resumo.cd_emp ,
     resumo.cd_filial ,
@@ -680,7 +680,7 @@
     round(aliquotas.base_calc * aliquotas.tx_icms / 100::numeric, 2) AS "vlrTxIcms"
    FROM pdv_mapa_resumo resumo
      LEFT JOIN pdv_mapa_resumo_cpl aliquotas ON resumo.cd_emp = aliquotas.cd_emp AND resumo.cd_filial = aliquotas.cd_filial AND resumo.dt_ecf = aliquotas.dt_ecf AND resumo.cd_cx = aliquotas.cd_cx
-	 WHERE resumo.flag_consolidado = 0 order by resumo.dt_ecf desc LIMIT 1 
+	 WHERE resumo.flag_consolidado = 0 LIMIT 1  ]]>
 	</select>
 
 	<select id="selectMapaResumoCpl" resultMap="selectMapaResumoCpl">
@@ -694,7 +694,7 @@
 			cd_emp =  #{cdEmp}
 			and cd_filial = #{cdFilial} 
 			and cd_Cx = #{cdCx} 
-			and dt_ecf = #{dtEcf} 
+			and dt_ecf::date = #{dtEcf}::date
 	</select>
 	<update id="consumeMapaResumo" parameterType="Map">
     update pdv_mapa_resumo set flag_consolidado = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_ECF =  #{dtEcf}

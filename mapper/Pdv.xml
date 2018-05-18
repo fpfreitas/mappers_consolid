@@ -714,7 +714,7 @@
 		  dt_cad ,
 		  vl_receb ,
 		  vl_serv 
-		from pdv_consld_vd where flag_consolidado = #{flagConsolid}::numeric and cd_usu > 1 LIMIT 1 
+		from pdv_consld_vd where flag_consolidado = #{flagConsolid}::numeric and cd_usu <> 1 LIMIT 1 
 	 ]]>
 	</select>
 	<update id="consumeConsoldVd" parameterType="Map">

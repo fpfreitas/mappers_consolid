@@ -12,7 +12,7 @@
                            VD.CD_FILIAL                     ,
                            VD.NR_ORC                        ,
                            VD.CD_CX                         ,
-                           VD.DT_VD                         ,
+                           VD.DT_VD::date                   ,
                            COALESCE(VD.DT_CAD, VD.DT_VD)    AS DT_CAD,
                            COALESCE(VD.HR_VD, VD.DT_CAD)    AS HR_VD,
                            VD.NR_PED_TELEVD                 ,
@@ -95,7 +95,7 @@
                  WHERE VD.FLAG_CONSOLIDADO = #{flagConsolid}::numeric
                  AND VD.ST_VD >= 0  LIMIT 1
 
-]]>
+		]]>
 	</select>
 	<select id="selectCupomNfce" resultMap="selectCupomNfce">
 		SELECT 	CD_EMP,
@@ -114,18 +114,18 @@
         AND CD_NF_SERIE = #{cdNfSerie}
 	</select>
 	<select id="selectCupomNfceCancel" resultMap="selectCupomNfceCancel">
-	SELECT 	NFCE_CANCEL.XML_CANC                                                   AS XML_CANC,
-			COALESCE(NFCE_CANCEL.TP_CANC, 0)                                        AS TP_CANC,
-			COALESCE(NFCE_CANCEL.CHV_NFCE, ''::CHARACTER VARYING)                   AS CHV_NFCE,
-			NFCE_CANCEL.DT_EMIS                                                     AS DT_EMIS,
-			COALESCE(NFCE_CANCEL.AUT_CANC, ''::CHARACTER VARYING)                   AS AUT_CANC,
-			COALESCE(NFCE_CANCEL.DS_MOTIVO, ''::CHARACTER VARYING)                  AS DS_MOTIVO
-    FROM 
-		EST_NFCE_CANC NFCE_CANCEL 
-	WHERE
-		NFCE_CANCEL.CD_EMP = #{cdEmp}
-		AND NFCE_CANCEL.CD_FILIAL = #{cdFilial}
-		AND NFCE_CANCEL.CD_VD = #{cdVd}
+		SELECT 	NFCE_CANCEL.XML_CANC                                                   AS XML_CANC,
+				COALESCE(NFCE_CANCEL.TP_CANC, 0)                                        AS TP_CANC,
+				COALESCE(NFCE_CANCEL.CHV_NFCE, ''::CHARACTER VARYING)                   AS CHV_NFCE,
+				NFCE_CANCEL.DT_EMIS                                                     AS DT_EMIS,
+				COALESCE(NFCE_CANCEL.AUT_CANC, ''::CHARACTER VARYING)                   AS AUT_CANC,
+				COALESCE(NFCE_CANCEL.DS_MOTIVO, ''::CHARACTER VARYING)                  AS DS_MOTIVO
+    	FROM 
+			EST_NFCE_CANC NFCE_CANCEL 
+		WHERE
+			NFCE_CANCEL.CD_EMP = #{cdEmp}
+			AND NFCE_CANCEL.CD_FILIAL = #{cdFilial}
+			AND NFCE_CANCEL.CD_VD = #{cdVd}
 	</select>
 	<select id="selectCupomItens" resultMap="selectCupomItens">
 		SELECT    
@@ -162,7 +162,8 @@
         COALESCE(IT.PERC_DESC_MIN, 0:: NUMERIC)   AS PERC_DESC_MIN          ,
         COALESCE(IT.CD_TBL_DESC, 0::   NUMERIC)   AS CD_TBL_DESC            ,
         COALESCE(IT.TP_NIVEL, 0::      NUMERIC)   AS TP_NIVEL               ,
-		COALESCE(it.tp_tbl_desc::numeric, 0::numeric) AS TP_TBL_DESC        
+		COALESCE(it.tp_tbl_desc::numeric, 0::numeric) AS TP_TBL_DESC        ,
+		COALESCE(it.VLR_DESC_IT::numeric, 0::numeric) AS VLR_DESC_IT
         FROM      PDV_VD_IT IT 
         WHERE     IT.CD_EMP = #{cdEmp} 
         AND       IT.CD_FILIAL = #{cdFilial} 
@@ -231,7 +232,7 @@
 
 	</select>	
 	<select id="selectOrcamentoPdvItem" resultMap="OrcamentoItem">                    
-    SELECT    est_orc_cpl.cd_prod                 ,
+    	SELECT    est_orc_cpl.cd_prod                 ,
               est_orc_cpl.cd_barra                ,
               est_orc_cpl.cd_emp                  ,
               est_orc_cpl.cd_filial               ,
@@ -481,7 +482,7 @@
 	</select>
 	<select id="pagamentoCartao" resultMap="pagamentoCartao"> 
 		<![CDATA[	
-	SELECT    	
+					SELECT    	
                                                              CASE 
                                                                        WHEN COALESCE(TEF.CD_ADM_CARTAO, 0::NUMERIC) > 0::NUMERIC THEN TEF.CD_ADM_CARTAO
                                                                        WHEN TEF.CD_ADM_CARTAO = 0::NUMERIC
@@ -570,7 +571,7 @@
 	</select>
 	<select id="pagamentoPbm" resultMap="pagamentoPbm"> 
 		<![CDATA[
-	 SELECT                 
+	 			SELECT                 
 					VD.CD_CONV   AS CD_CONV, 
                                                        CASE 
                                                               WHEN VD.TIPO_PBM::NUMERIC > 0::NUMERIC THEN
@@ -623,66 +624,66 @@
 															]]>
 	</select>
 	<select id="pagamentoNcc" resultMap="pagamentoNcc"> 
-	SELECT  NCC.CD_CTR_NCC  ,
-			NCC.VLR_NCC 	
-    FROM 
-		PDV_VD_NCC NCC 
-	 WHERE
-		#{cdEmp} = NCC.CD_EMP 
-		AND #{cdFilial} = NCC.CD_FILIAL 
-		AND #{cdVd} = NCC.CD_VD LIMIT 1	
+		SELECT  NCC.CD_CTR_NCC  ,
+				NCC.VLR_NCC 	
+    	FROM 
+			PDV_VD_NCC NCC 
+		 WHERE
+			#{cdEmp} = NCC.CD_EMP 
+			AND #{cdFilial} = NCC.CD_FILIAL 
+			AND #{cdVd} = NCC.CD_VD LIMIT 1	
 	</select>
 	<select id="pagamentoValeCp" resultMap="pagamentoValeCp"> 
-	SELECT  
-                                                       PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_CTR_VALE_CP ,
-                                                       PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.VLR_VALE_CP    
-                                                FROM   PDV_VD_RC_CLI_FIDELI_VALE_COMPRA 
-												WHERE  PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_EMP    = #{cdEmp}
-                                                AND    PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_FILIAL = #{cdFilial}
-                                                AND    PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_VD     = #{cdVd}
+		SELECT  
+                 PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_CTR_VALE_CP ,
+                 PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.VLR_VALE_CP    
+          FROM   PDV_VD_RC_CLI_FIDELI_VALE_COMPRA 
+		WHERE  PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_EMP    = #{cdEmp}
+          AND    PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_FILIAL = #{cdFilial}
+          AND    PDV_VD_RC_CLI_FIDELI_VALE_COMPRA.CD_VD     = #{cdVd}
 	</select>
 	<update id="consumePdv" parameterType="Map">
-    update pdv_vd set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_VD = #{cdVd}
+    	update pdv_vd set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_VD = #{cdVd}
 	</update>
 	<update id="consumePdvReprocessar" parameterType="Map">
-    update pdv_vd set flag_consolidado = 0 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_VD = #{cdVd}
+    	update pdv_vd set flag_consolidado = 0 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_VD = #{cdVd}
 	</update>
 	<select id="selectMapaResumo" resultMap="selectMapaResumo">
-<![CDATA[
-	SELECT 'mapaResumo' as "tipoRegistro",
-    resumo.cd_emp ,
-    resumo.cd_filial ,
-    resumo.dt_ecf,
-    resumo.cd_cx ,
-    0 AS "stVd",
-    resumo.dt_cad ,
-    resumo.dt_cad::date + resumo.hr_cad::time without time zone AS "hrCad",
-    resumo.cont_red_z ,
-    resumo.cont_ord_op_ini ,
-    resumo.cont_ord_op_fin ,
-    resumo.cont_reinicio_op,
-    resumo.vlr_gt_ini ,
-    resumo.vlr_gt_fin ,
-    resumo.vlr_vend_bruta ,
-    resumo.vlr_desc ,
-    resumo.vlr_canc ,
-    resumo.vlr_contab  ,
-    resumo.vlr_icms    ,
-    resumo.vlr_isentas ,
-    resumo.vlr_n_trib  ,
-    resumo.vlr_base_icms_subs 	,
-    resumo.vlr_issqn 			,
-    resumo.vlr_desc_issqn 		,
-    resumo.vlr_cancel_issqn 	, 
-    aliquotas.tx_icms 			,
-    aliquotas.base_calc 		,
-    COALESCE(aliquotas.tipo_imposto, 0::numeric) AS tipo_imposto,
-    round(aliquotas.base_calc * aliquotas.tx_icms / 100::numeric, 2) AS "vlrTxIcms"
-   FROM pdv_mapa_resumo resumo
-     LEFT JOIN pdv_mapa_resumo_cpl aliquotas ON resumo.cd_emp = aliquotas.cd_emp AND resumo.cd_filial = aliquotas.cd_filial AND resumo.dt_ecf = aliquotas.dt_ecf AND resumo.cd_cx = aliquotas.cd_cx
-	 WHERE resumo.flag_consolidado = 0 LIMIT 1  ]]>
+		<![CDATA[
+			SELECT 'mapaResumo' as "tipoRegistro",
+		    resumo.cd_emp ,
+		    resumo.cd_filial ,
+		    resumo.dt_ecf,
+		    resumo.cd_cx ,
+		    0 AS "stVd",
+		    resumo.dt_cad ,
+		    resumo.dt_cad::date + resumo.hr_cad::time without time zone AS "hrCad",
+		    resumo.cont_red_z ,
+		    resumo.cont_ord_op_ini ,
+		    resumo.cont_ord_op_fin ,
+		    resumo.cont_reinicio_op,
+		    resumo.vlr_gt_ini ,
+		    resumo.vlr_gt_fin ,
+		    resumo.vlr_vend_bruta ,
+		    resumo.vlr_desc ,
+		    resumo.vlr_canc ,
+		    resumo.vlr_contab  ,
+		    resumo.vlr_icms    ,
+		    resumo.vlr_isentas ,
+		    resumo.vlr_n_trib  ,
+		    resumo.vlr_base_icms_subs 	,
+		    resumo.vlr_issqn 			,
+		    resumo.vlr_desc_issqn 		,
+		    resumo.vlr_cancel_issqn 	, 
+		    aliquotas.tx_icms 			,
+		    aliquotas.base_calc 		,
+		    COALESCE(aliquotas.tipo_imposto, 0::numeric) AS tipo_imposto,
+		    round(aliquotas.base_calc * aliquotas.tx_icms / 100::numeric, 2) AS "vlrTxIcms"
+		   FROM pdv_mapa_resumo resumo
+		     LEFT JOIN pdv_mapa_resumo_cpl aliquotas ON resumo.cd_emp = aliquotas.cd_emp AND resumo.cd_filial = aliquotas.cd_filial AND resumo.dt_ecf = aliquotas.dt_ecf AND resumo.cd_cx = aliquotas.cd_cx
+			 WHERE resumo.flag_consolidado = 0 LIMIT 1  
+		]]>
 	</select>
-
 	<select id="selectMapaResumoCpl" resultMap="selectMapaResumoCpl">
 		select 	tx_icms,
 				base_calc,
@@ -702,29 +703,29 @@
 	<select id="selectConsoldVd" resultMap="selectConsoldVd">
 		<![CDATA[
 	
-		select 'pdvConsoldVd' as "tipoRegistro",
-		  cd_emp ,
-		  cd_filial ,
-		  cd_cx ,
-		  dt_mov ,
-		  nr_cupom_ini ,
-		  nr_cupom_fim ,
-		  vlr_vd_liq ,
-		  cd_usu ,
-		  dt_cad ,
-		  vl_receb ,
-		  vl_serv 
-		from pdv_consld_vd where flag_consolidado = #{flagConsolid}::numeric and cd_usu <> 1 LIMIT 1 
-	 ]]>
+			select 'pdvConsoldVd' as "tipoRegistro",
+			  cd_emp ,
+			  cd_filial ,
+			  cd_cx ,
+			  dt_mov ,
+			  nr_cupom_ini ,
+			  nr_cupom_fim ,
+			  vlr_vd_liq ,
+			  cd_usu ,
+			  dt_cad ,
+			  vl_receb ,
+			  vl_serv 
+			from pdv_consld_vd where flag_consolidado = #{flagConsolid}::numeric and cd_usu <> 1 LIMIT 1 
+		]]>
 	</select>
 	<update id="consumeConsoldVd" parameterType="Map">
-    update pdv_consld_vd set flag_consolidado = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_MOV =  #{dtMov}
+   		 update pdv_consld_vd set flag_consolidado = 1 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_MOV =  #{dtMov}
 	</update>
 	<update id="consumeConsoldVdReprocessar" parameterType="Map">
-    update pdv_consld_vd set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_MOV =  #{dtMov}
+    	update pdv_consld_vd set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_CX = #{cdCx} and DT_MOV =  #{dtMov}
 	</update>
 	<update id="consumeConsoldVdErro" parameterType="Map">
-   <![CDATA[  update pdv_vd set flag_consolidado = 0 where flag_consolidado = 2 and hr_vd < (now() - interval '30 minutes') ]]>
+   		<![CDATA[  update pdv_vd set flag_consolidado = 0 where flag_consolidado = 2 and hr_vd < (now() - interval '30 minutes') ]]>
 	</update>
 	<select id="selectConciliacaoPdvVd" resultMap="selectConciliacaoPdvVd">
 		select 'pdvVdConciliacao' as "tipoRegistro"
@@ -885,6 +886,7 @@
 		<result property="cdTblDesc"	column="CD_TBL_DESC"/>	
 		<result property="tpNivel"	column="TP_NIVEL"/>	
 		<result property="tpTblDesc" column="TP_TBL_DESC"/>	
+		<result property="vlrDescIt" column="VLR_DESC_IT"/>	
 		<!-- <collection property="lote" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD,cdIt=CD_IT}" javaType="ArrayList" ofType="map" select="selectCupomItensLote" /> -->
 		 
 	</resultMap>

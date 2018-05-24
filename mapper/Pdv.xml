@@ -12,7 +12,7 @@
                            VD.CD_FILIAL                     ,
                            VD.NR_ORC                        ,
                            VD.CD_CX                         ,
-                           VD.DT_VD::timestamp::date                   ,
+                           VD.DT_VD                         ,
                            COALESCE(VD.DT_CAD, VD.DT_VD)    AS DT_CAD,
                            COALESCE(VD.HR_VD, VD.DT_CAD)    AS HR_VD,
                            VD.NR_PED_TELEVD                 ,

@@ -312,6 +312,7 @@
 	</select>	
 	<select id="selectOrcamentoPdvReceita" resultMap="OrcamentoReceita">    
 	 SELECT receita.cd_prod                   ,
+	    COALESCE(receita.nr_receita,0) AS nr_receita,
             receita.cd_it                     ,
             receita.nm_comprador              ,
             receita.idade                     ,
@@ -383,7 +384,7 @@
 							it.cd_filial,
 							it.cd_it,
 							COALESCE(orc.cd_medico_rec,0) AS prescritor_id,
-							COALESCE(orc.nr_receita,0) AS receita_numero,
+							COALESCE(orc.nr_receita,0) AS nr_receita,
 							COALESCE(orc.dt_receita,current_date) AS receita_data,
 							COALESCE(orc.nm_comprador,NULL::character varying) AS comprador_nome,
 							COALESCE(orc.nr_doc_cli,NULL::character varying) AS comprador_doc_numero,
@@ -1021,7 +1022,8 @@
 		<result column="cd_medico_rec" 			property="cdMedicoRec"/> 
 		<result column="qt_prod"                  property="qtProd"/> 
 		<result column="dt_receita"               property="dtReceita"/> 
-		<result column="tp_capt_receita"          property="tipoCaptacaoReceita"/>                     
+		<result column="tp_capt_receita"          property="tipoCaptacaoReceita"/> 
+		<result column="NR_RECEITA"          property="receitaNumero"/>
 	</resultMap>	
 	<resultMap id="OrcamentoItemLote" type="Map">
 		<result column="cd_lote"                property="cdLote"/>

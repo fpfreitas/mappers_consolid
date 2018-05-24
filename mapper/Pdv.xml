@@ -12,7 +12,7 @@
                            VD.CD_FILIAL                     ,
                            VD.NR_ORC                        ,
                            VD.CD_CX                         ,
-                           VD.DT_VD                         ,
+                           DATE(VD.DT_VD) as DT_VD          ,
                            COALESCE(VD.DT_CAD, VD.DT_VD)    AS DT_CAD,
                            COALESCE(VD.HR_VD, VD.DT_CAD)    AS HR_VD,
                            VD.NR_PED_TELEVD                 ,
@@ -783,7 +783,7 @@
 		<result property="cdEmp" column="CD_EMP"/> 
 		<result property="cdFilial" column="CD_FILIAL"/> 
 		<result property="cdCx" column="CD_CX"/> 
-		<result property="dtVd" column="DT_VD"/> 
+		<result property="dtVd" column="DT_VD" javaType="java.util.Date" jdbcType="DATE"/> 
 		<result property="dtCad" column="DT_CAD"/> 
 		<result property="hrVd" column="HR_VD"/>  
 		<result property="nrPedTelevd" column="NR_PED_TELEVD"/> 

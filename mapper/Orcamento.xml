@@ -51,10 +51,10 @@
 					ON        est_cancel.cd_emp::   NUMERIC = orc.cd_emp::NUMERIC 
 					AND       est_cancel.cd_filial::NUMERIC = orc.cd_filial::NUMERIC 
 					AND       est_cancel.cd_orc::   NUMERIC = orc.cd_orc::NUMERIC 
-					left join pdv_vd vd on
+					left join pdv_vd_orc vd on
 					vd.cd_emp          = orc.cd_emp
 					and vd.cd_filial   = orc.cd_filial
-					and vd.nr_orc      = orc.cd_orc
+					and vd.cd_orc      = orc.cd_orc
 					where orc.flag_consolidado = #{flagConsolid}::numeric
 					AND hr_emi < (now() - interval '180 minutes') 
 					AND VD.CD_EMP IS NULL 

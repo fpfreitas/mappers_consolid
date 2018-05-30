@@ -156,22 +156,12 @@
          <process ref="gzipProcessor"/>
          <convertBodyTo type="java.lang.String"/>
          <unmarshal ref="json"/>
-         <to uri="dbmapper:tentacle?dataSource=dataSourcePdv&amp;statementType=TentacleSync&amp;preValidadeSchema=false" />
+         <to uri="dbmapper:tentacle?dataSource=dataSourcePdv&amp;statementType=TentacleSync&amp;preValidadeSchema=false&amp;parameters=queueOrig={{ipdv.queueName}}" />
          <to uri="log:CARGA?level=INFO"/>
 		 <setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
-         <choice>
-             <when>
-             	 <simple>${in.body.get('result')} == 'failure'</simple>
-				 <marshal ref="json"/>
-                 <to uri="log:IPDV-failure?level=ERROR"/>
-                 <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;queue=sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/> 
-             </when>
-             <when>
-             	 <simple>${in.body.get('result')} == 'sql' || ${in.body.get('result')} == 'failure_sql'</simple>
-             	 <marshal ref="json"/>
-             	 <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;queue=sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/>
-             </when> 
-        </choice>         
+		 <marshal ref="json"/>
+         <to uri="log:IPDV-failure?level=ERROR"/>
+         <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;queue=sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/> 
        </route> 
     </camelContext>
 </beans>

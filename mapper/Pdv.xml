@@ -7,98 +7,102 @@
 
 	<select id="selectCupom" resultMap="selectCupom">
 		<![CDATA[
-                 SELECT    FILIAL.CGC					    ,
-						   VD.CD_EMP                        ,
-                           VD.CD_FILIAL                     ,
-                           VD.NR_ORC                        ,
-                           VD.CD_CX                         ,
-                           DATE(VD.DT_VD) as DT_VD          ,
-                           COALESCE(VD.DT_CAD, VD.DT_VD)    AS DT_CAD,
-                           COALESCE(VD.HR_VD, VD.DT_CAD)    AS HR_VD,
-                           VD.NR_PED_TELEVD                 ,
-                           VD.ORIG_ORC                      ,
-                           VD.VLR_CARTAO                    ,
-                           VD.CD_VD                         ,
-                           VD.NR_ECF                        ,
-                           VD.ST_VD                         ,
-                           VD.CONT_CUPOM_FISC               ,
-                           VD.CD_MOV                        ,
-                           CASE 
-							WHEN VD.CD_CLI = 0
-							THEN 1 
-							ELSE VD.CD_CLI  END AS CD_CLI,
-                           VD.CGC_CPF                       ,
-                           VD.NR_CARTAO_MARKA               ,                   
-                           COALESCE(VD.QTD_DIAS_PRORROG, 0) AS QTD_DIAS_PRORROG,
-                           VD.VLR_LIQ_VD                    ,
-                           VD.VLR_TOT_PROD                  ,
-                           VD.VLR_VD                        ,
-                           VD.VLR_DESC                      ,
-                           VD.VLR_DESC_ITENS                ,
-						   VD.VLR_DINH                      ,
-                           VD.VLR_TROCO                     ,
-                           CASE 
-                                     WHEN VD.TIPO_PBM > 0 
-                                     AND       COALESCE(VD.VLR_CONV_PBM, 0::NUMERIC) = 0::NUMERIC
-                                     AND       VD.VLR_CONV = 0::NUMERIC THEN 0::NUMERIC 
-                                     ELSE VD.VLR_CONV 
-                           END                                                            AS VLR_CONV,
-						   VD.CD_CONV													  ,
-                           VD.QT_PARC_CONV                  							  ,
-                           VD.VLR_DUP                                                     ,
-                           VD.VL_CHQS_A_VISTA                                             ,
-                           VD.VL_CHQS_A_PRZ                                               ,                    
-                           VD.NR_CEL_RECARGA                                              ,
-                           VD.VLR_RECARGA_CEL                                             ,
-                           VD.NM_OPER_CEL                                                 ,
-                           VD.NM_COMPRADOR                                                ,
-                           VD.DADOS_ADICIONAIS                                            ,
-                           VD.NR_SERIE_IMP                                                ,
-                           VD.VS_PDV                                                      ,
-                           VD.VS_PDV_RC                                                   ,
-                           VD.CD_USU                                                      ,
-                           VD.CD_USU_CANCEL                                               ,
-                           VD.CD_MT_CANCEL                                                ,
-                           COALESCE(VD.ST_CANC_PAF, 0)                                    AS ST_CANC_PAF,
-                           COALESCE(AUDIT.CD_OUTR_PROCD, 0::NUMERIC)                      AS CD_OUTR_PROCD,
-                           COALESCE(AUDIT.CD_USU, 0::       NUMERIC)                      AS CD_USU_PROCEDIMENTO,
-                           COALESCE(VD.CD_CLI_PBM      , 0::NUMERIC)                      AS CD_CLI_PBM,
-                           COALESCE(VD.REG_ALTERADO, 0)                                   AS REG_ALTERADO,
-                           VD.VD_TROCA_FIDEL                                              ,
-                           COALESCE(VD.VLR_IMPOSTO, 0::   NUMERIC)                        AS VLR_IMPOSTO,
-                           COALESCE(VD.TX_MED_IMPOSTO, 0::NUMERIC)                        AS TX_MED_IMPOSTO,
-						   COALESCE(VD.VLR_TICKETS, 0::NUMERIC)                           AS VLR_TICKETS,
-                           VD.VLR_CONV_PBM                                                ,
-                           VD.FLAG_NFCE                                                   ,
-                           COALESCE(NF_SAI.CD_NF, 0::   NUMERIC)                          AS CD_NF,
-                           COALESCE(VD.NR_CARTAO_MARKA, ''::CHARACTER VARYING)            AS NR_CARTAO_MARKA,
-                           COALESCE(VD.QTDE_PONTOS_FIDEL_EXTERNO, 0::NUMERIC)             AS QTDE_PONTOS_FIDEL_EXTERNO,
-                           COALESCE(VD.NR_TEL_CUPOM, ''::CHARACTER VARYING)               AS NR_TEL_CUPOM,
-						   COALESCE(VD.CHV_NFCE ,''::CHARACTER VARYING)                   AS CHV_NFCE	,
-							VD.CD_NF_SERIE
-                 FROM      PDV_VD VD 
-                 LEFT JOIN PDV_VD_EST_NF_SAI NF_SAI 
-                 ON        VD.CD_EMP = NF_SAI.CD_EMP 
-                 AND       VD.CD_FILIAL = NF_SAI.CD_FILIAL 
-                 AND       VD.CD_VD = NF_SAI.CD_VD 
-
-                 LEFT JOIN PDV_VD_GLB_PROCD_OUTR_LIB AUDIT 
-                 ON        VD.CD_EMP = AUDIT.CD_EMP 
-                 AND       VD.CD_FILIAL = AUDIT.CD_FILIAL 
-                 AND       VD.CD_VD = AUDIT.CD_VD 
-                 AND       ( 
-                                     AUDIT.CD_OUTR_PROCD = ANY (ARRAY[90::numeric, 91::numeric, 93::numeric, 94::numeric]))
-									 
-				INNER JOIN PRC_FILIAL FILIAL ON
-					VD.CD_EMP = FILIAL.CD_EMP
-					AND VD.CD_FILIAL = FILIAL.CD_FILIAL
-                 WHERE VD.FLAG_CONSOLIDADO = #{flagConsolid}::numeric
-                 AND VD.ST_VD >= 0  LIMIT 1
+            SELECT  FILIAL.CGC					     ,
+					VD.CD_EMP                        ,
+                    VD.CD_FILIAL                     ,
+                    VD.NR_ORC                        ,
+                    VD.CD_CX                         ,
+                    DATE(VD.DT_VD) as DT_VD          ,
+                    COALESCE(VD.DT_CAD, VD.DT_VD)    AS DT_CAD,
+                    COALESCE(VD.HR_VD, VD.DT_CAD)    AS HR_VD,
+                    VD.NR_PED_TELEVD                 ,
+                    VD.ORIG_ORC                      ,
+                    VD.VLR_CARTAO                    ,
+                    VD.CD_VD                         ,
+                    VD.NR_ECF                        ,
+                    VD.ST_VD                         ,
+                    VD.CONT_CUPOM_FISC               ,
+                    VD.CD_MOV                        ,
+                    CASE 
+						WHEN VD.CD_CLI = 0
+						THEN 1 
+						ELSE VD.CD_CLI  
+					END 					AS CD_CLI,
+                    VD.CGC_CPF                       ,
+                    VD.NR_CARTAO_MARKA               ,                   
+                    COALESCE(VD.QTD_DIAS_PRORROG, 0) AS QTD_DIAS_PRORROG,
+                    VD.VLR_LIQ_VD                    ,
+                    VD.VLR_TOT_PROD                  ,
+                    VD.VLR_VD                        ,
+                    VD.VLR_DESC                      ,
+                    VD.VLR_DESC_ITENS                ,
+					VD.VLR_DINH                      ,
+                    VD.VLR_TROCO                     ,
+                    CASE 
+                              WHEN VD.TIPO_PBM > 0 
+                              AND       COALESCE(VD.VLR_CONV_PBM, 0::NUMERIC) = 0::NUMERIC
+                              AND       VD.VLR_CONV = 0::NUMERIC THEN 0::NUMERIC 
+                              ELSE VD.VLR_CONV 
+                    END                                                            AS VLR_CONV,
+					VD.CD_CONV													  ,
+                    VD.QT_PARC_CONV                  							  ,
+                    VD.VLR_DUP                                                     ,
+                    VD.VL_CHQS_A_VISTA                                             ,
+                    VD.VL_CHQS_A_PRZ                                               ,                    
+                    VD.NR_CEL_RECARGA                                              ,
+                    VD.VLR_RECARGA_CEL                                             ,
+                    VD.NM_OPER_CEL                                                 ,
+                    VD.NM_COMPRADOR                                                ,
+                    VD.DADOS_ADICIONAIS                                            ,
+                    VD.NR_SERIE_IMP                                                ,
+                    VD.VS_PDV                                                      ,
+                    VD.VS_PDV_RC                                                   ,
+                    VD.CD_USU                                                      ,
+                    VD.CD_USU_CANCEL                                               ,
+                    VD.CD_MT_CANCEL                                                ,
+                    COALESCE(VD.ST_CANC_PAF, 0::NUMERIC)                                    AS ST_CANC_PAF,
+                    COALESCE(AUDIT.CD_OUTR_PROCD, 0::NUMERIC)                      AS CD_OUTR_PROCD,
+                    COALESCE(AUDIT.CD_USU, 0::NUMERIC)                      AS CD_USU_PROCEDIMENTO,
+                    COALESCE(VD.CD_CLI_PBM      , 0::NUMERIC)                      AS CD_CLI_PBM,
+                    COALESCE(VD.REG_ALTERADO, 0::NUMERIC)                                   AS REG_ALTERADO,
+                    VD.VD_TROCA_FIDEL                                              ,
+                    COALESCE(VD.VLR_IMPOSTO, 0::NUMERIC)                        AS VLR_IMPOSTO,
+                    COALESCE(VD.TX_MED_IMPOSTO, 0::NUMERIC)                        AS TX_MED_IMPOSTO,
+					COALESCE(VD.VLR_TICKETS, 0::NUMERIC)                           AS VLR_TICKETS,
+                    VD.VLR_CONV_PBM                                                ,
+                    VD.FLAG_NFCE                                                   ,
+                    COALESCE(NF_SAI.CD_NF, 0::   NUMERIC)                          AS CD_NF,
+                    COALESCE(VD.NR_CARTAO_MARKA, ''::CHARACTER VARYING)            AS NR_CARTAO_MARKA,
+                    COALESCE(VD.QTDE_PONTOS_FIDEL_EXTERNO, 0::NUMERIC)             AS QTDE_PONTOS_FIDEL_EXTERNO,
+                    COALESCE(VD.NR_TEL_CUPOM, ''::CHARACTER VARYING)               AS NR_TEL_CUPOM,
+					COALESCE(VD.CHV_NFCE ,''::CHARACTER VARYING)                   AS CHV_NFCE	,
+					VD.CD_NF_SERIE					   
+            FROM      
+				PDV_VD VD 
+            LEFT JOIN 
+				PDV_VD_EST_NF_SAI NF_SAI 
+					ON        VD.CD_EMP = NF_SAI.CD_EMP 
+					AND       VD.CD_FILIAL = NF_SAI.CD_FILIAL 
+					AND       VD.CD_VD = NF_SAI.CD_VD 
+            LEFT JOIN 
+				PDV_VD_GLB_PROCD_OUTR_LIB AUDIT 
+             ON        VD.CD_EMP = AUDIT.CD_EMP 
+             AND       VD.CD_FILIAL = AUDIT.CD_FILIAL 
+             AND       VD.CD_VD = AUDIT.CD_VD 
+             AND       ( 
+                                 AUDIT.CD_OUTR_PROCD = ANY (ARRAY[90::numeric, 91::numeric, 93::numeric, 94::numeric]))
+								 
+			INNER JOIN PRC_FILIAL FILIAL ON
+				VD.CD_EMP = FILIAL.CD_EMP
+				AND VD.CD_FILIAL = FILIAL.CD_FILIAL
+             WHERE VD.FLAG_CONSOLIDADO = #{flagConsolid}::numeric
+             AND VD.ST_VD >= 0  LIMIT 1
 
 		]]>
 	</select>
 	<select id="selectCupomNfce" resultMap="selectCupomNfce">
-		SELECT 	CD_EMP,
+		SELECT 	
+				CD_EMP,
 				CD_FILIAL,
 				CD_NF ,
 				CD_NF_SERIE ,
@@ -107,67 +111,72 @@
 				XML_NFCE     AS "XML_NFCE",
 				DS_MOTIVO ,
 				COALESCE(STS_PEND, 1::   NUMERIC) AS "STS_VALID"
-        FROM EST_NFCE_ENV WHERE
-        CD_EMP = #{cdEmp}
-        AND CD_FILIAL = #{cdFilial}
-        AND CD_NF = #{cdNf} 
-        AND CD_NF_SERIE = #{cdNfSerie}
+        FROM 
+			EST_NFCE_ENV 
+		WHERE
+			CD_EMP 			= #{cdEmp}
+			AND CD_FILIAL 	= #{cdFilial}
+			AND CD_NF 		= #{cdNf} 
+			AND CD_NF_SERIE = #{cdNfSerie}
 	</select>
 	<select id="selectCupomNfceCancel" resultMap="selectCupomNfceCancel">
-		SELECT 	NFCE_CANCEL.XML_CANC                                                   AS XML_CANC,
-				COALESCE(NFCE_CANCEL.TP_CANC, 0)                                        AS TP_CANC,
-				COALESCE(NFCE_CANCEL.CHV_NFCE, ''::CHARACTER VARYING)                   AS CHV_NFCE,
-				NFCE_CANCEL.DT_EMIS                                                     AS DT_EMIS,
-				COALESCE(NFCE_CANCEL.AUT_CANC, ''::CHARACTER VARYING)                   AS AUT_CANC,
-				COALESCE(NFCE_CANCEL.DS_MOTIVO, ''::CHARACTER VARYING)                  AS DS_MOTIVO
+		SELECT 	
+			NFCE_CANCEL.XML_CANC                                                    AS XML_CANC,
+			COALESCE(NFCE_CANCEL.TP_CANC, 0)                                        AS TP_CANC,
+			COALESCE(NFCE_CANCEL.CHV_NFCE, ''::CHARACTER VARYING)                   AS CHV_NFCE,
+			NFCE_CANCEL.DT_EMIS                                                     AS DT_EMIS,
+			COALESCE(NFCE_CANCEL.AUT_CANC, ''::CHARACTER VARYING)                   AS AUT_CANC,
+			COALESCE(NFCE_CANCEL.DS_MOTIVO, ''::CHARACTER VARYING)                  AS DS_MOTIVO
     	FROM 
 			EST_NFCE_CANC NFCE_CANCEL 
 		WHERE
-			NFCE_CANCEL.CD_EMP = #{cdEmp}
-			AND NFCE_CANCEL.CD_FILIAL = #{cdFilial}
-			AND NFCE_CANCEL.CD_VD = #{cdVd}
+			NFCE_CANCEL.CD_EMP 			= #{cdEmp}
+			AND NFCE_CANCEL.CD_FILIAL 	= #{cdFilial}
+			AND NFCE_CANCEL.CD_VD 		= #{cdVd}
 	</select>
 	<select id="selectCupomItens" resultMap="selectCupomItens">
 		SELECT    
-		IT.CD_EMP                                                           ,
-		IT.CD_FILIAL                                                        ,
-		IT.CD_VD                                                            ,
-		IT.CD_IT                                                            ,
-		IT.CD_BARRAS					                                    ,
-        IT.CD_PROD                                                          ,
-        IT.QT_IT                                                            ,
-        IT.VLR_IT                                                           ,
-        IT.VLR_LIQ_IT                                                       ,
-        IT.ST_IT                                                            ,
-        IT.TIPO_DESCONTO                                                    ,
-        COALESCE(IT.TX_DESC, 0::         NUMERIC)  AS TX_DESC               ,
-		COALESCE(IT.PERC_DESC_VERBA, 0::  NUMERIC) AS PERC_DESC_VERBA       ,
-        COALESCE(IT.VLR_DESC_VERBA, 0::  NUMERIC)  AS VLR_DESC_VERBA        ,
-        COALESCE(IT.VLR_DESC_TOT_RAT, 0::NUMERIC)  AS VLR_DESC_TOT_RAT      ,
-        IT.CD_TRIB_FC                                                       ,
-        IT.TX_ICMS_IT                                                       ,
-        IT.TX_RED_IT                                                        ,
-        IT.CD_VEND                                                          ,
-        IT.CD_VEND_VERBA                                                    ,
-        IT.CD_USU_CANCEL                                                    ,
-        IT.QTDE_PONTO_FIDEL                                                 ,
-        IT.CD_GRP_COMIS_PDV                                                 ,
-        COALESCE(IT.REG_ALTERADO, 0) = 1          AS REG_ALTERADO           ,
-        COALESCE(IT.TIPO_IMPOSTO, 0::NUMERIC)     AS TIPO_IMPOSTO           ,
-        IT.VLR_IMPOSTO_IT                                                   ,
-        IT.TX_IMPOSTO_IT                                                    ,
-        IT.NR_PROTOCOLO_MANIPULADO                                          ,
-        COALESCE(IT.PERC_DESC_DIFF, 0::NUMERIC)   AS PERC_DESC_DIFF         ,
-        COALESCE(IT.PERC_DESC_MAX, 0:: NUMERIC)   AS PERC_DESC_MAX          ,
-        COALESCE(IT.PERC_DESC_MIN, 0:: NUMERIC)   AS PERC_DESC_MIN          ,
-        COALESCE(IT.CD_TBL_DESC, 0::   NUMERIC)   AS CD_TBL_DESC            ,
-        COALESCE(IT.TP_NIVEL, 0::      NUMERIC)   AS TP_NIVEL               ,
-		COALESCE(it.tp_tbl_desc::numeric, 0::numeric) AS TP_TBL_DESC        ,
-		COALESCE(it.VLR_DESC_IT::numeric, 0::numeric) AS VLR_DESC_IT
-        FROM      PDV_VD_IT IT 
-        WHERE     IT.CD_EMP = #{cdEmp} 
-        AND       IT.CD_FILIAL = #{cdFilial} 
-        AND       IT.CD_VD = #{cdVd} 
+			IT.CD_EMP                                                           ,
+			IT.CD_FILIAL                                                        ,
+			IT.CD_VD                                                            ,
+			IT.CD_IT                                                            ,
+			IT.CD_BARRAS					                                    ,
+			IT.CD_PROD                                                          ,
+			IT.QT_IT                                                            ,
+			IT.VLR_IT                                                           ,
+			IT.VLR_LIQ_IT                                                       ,
+			IT.ST_IT                                                            ,
+			IT.TIPO_DESCONTO                                                    ,
+			COALESCE(IT.TX_DESC, 0::NUMERIC)  AS TX_DESC                        ,
+			COALESCE(IT.PERC_DESC_VERBA, 0::NUMERIC) AS PERC_DESC_VERBA         ,
+			COALESCE(IT.VLR_DESC_VERBA, 0::NUMERIC)  AS VLR_DESC_VERBA          ,
+			COALESCE(IT.VLR_DESC_TOT_RAT, 0::NUMERIC)  AS VLR_DESC_TOT_RAT      ,
+			IT.CD_TRIB_FC                                                       ,
+			IT.TX_ICMS_IT                                                       ,
+			IT.TX_RED_IT                                                        ,
+			IT.CD_VEND                                                          ,
+			IT.CD_VEND_VERBA                                                    ,
+			IT.CD_USU_CANCEL                                                    ,
+			IT.QTDE_PONTO_FIDEL                                                 ,
+			IT.CD_GRP_COMIS_PDV                                                 ,
+			COALESCE(IT.REG_ALTERADO, 0)              AS REG_ALTERADO           ,
+			COALESCE(IT.TIPO_IMPOSTO, 0::NUMERIC)     AS TIPO_IMPOSTO           ,
+			IT.VLR_IMPOSTO_IT                                                   ,
+			IT.TX_IMPOSTO_IT                                                    ,
+			IT.NR_PROTOCOLO_MANIPULADO                                          ,
+			COALESCE(IT.PERC_DESC_DIFF, 0::NUMERIC)   AS PERC_DESC_DIFF         ,
+			COALESCE(IT.PERC_DESC_MAX, 0::NUMERIC)   AS PERC_DESC_MAX           , 
+			COALESCE(IT.PERC_DESC_MIN, 0::NUMERIC)   AS PERC_DESC_MIN           ,
+			COALESCE(IT.CD_TBL_DESC, 0::NUMERIC)   AS CD_TBL_DESC               ,
+			COALESCE(IT.TP_NIVEL, 0::NUMERIC)   AS TP_NIVEL                     ,
+			COALESCE(IT.TP_TBL_DESC::NUMERIC, 0::NUMERIC) AS TP_TBL_DESC        ,
+			COALESCE(IT.VLR_DESC_IT::NUMERIC, 0::NUMERIC) AS VLR_DESC_IT
+        FROM      
+			PDV_VD_IT IT 			
+        WHERE     
+					  IT.CD_EMP    = #{cdEmp} 
+			AND       IT.CD_FILIAL = #{cdFilial} 
+			AND       IT.CD_VD     = #{cdVd} 
 	</select>
 	<select id="selectCupomItensLote" resultMap="selectCupomItensLote">
 		SELECT  CD_LOTE, 

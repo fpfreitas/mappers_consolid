@@ -151,8 +151,9 @@
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route> 
 
+		<!-- ROTAS DE CARGA -->
 	    <route>
-         <from uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=sync.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;queue=sync.consolid.pdv.fiscal.{{ipdv.queueName}}"/>
+         <from uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=sync.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;queue=sync.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;concurrentConsumers=4"/>
          <process ref="gzipProcessor"/>
          <convertBodyTo type="java.lang.String"/>
          <unmarshal ref="json"/>

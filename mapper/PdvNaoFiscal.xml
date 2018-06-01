@@ -403,7 +403,8 @@
 		  cd_cx 		,
 		  nr_coo 		,
 		  dt_cupom 		,
-		  st_cupom 		
+		  st_cupom 		,
+          cd_ctr
 		from pdv_cupom_nao_fiscal 
 		where 
 			cd_emp = 1 
@@ -543,7 +544,8 @@
 		<result property="cdCx" column="cd_cx"/>	
 		<result property="nrCoo" column="nr_coo"/>	
 		<result property="dtCupom" column="dt_cupom"/>	
-		<result property="stCupom" column="st_cupom"/>		
+		<result property="stCupom" column="st_cupom"/>	
+        <result property="cdCtrLoja" column="cd_ctr"/>		
 	</resultMap>
 </mapper>
 

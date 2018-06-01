@@ -746,7 +746,8 @@
 		  cd_cx ,
 		  nr_ecf ,
 		  dt_vd ,
-		  st_Vd 
+		  st_Vd ,
+		  cd_vd
 		from pdv_vd 
 		where cd_emp = 1 
 				and cd_filial in ((select cd_filial from prc_filial) )
@@ -1228,7 +1229,8 @@
 		<result property="cdCx" column="cd_cx"/>	
 		<result property="nrEcf" column="nr_ecf"/>	
 		<result property="dtVd" column="dt_vd"/>	
-		<result property="stVd" column="st_Vd"/>	   
+		<result property="stVd" column="st_Vd"/>	
+		<result property="cdVdLoja" column="cd_Vd"/>  
 	</resultMap>
 	<resultMap id="selectMovimentoOperador" type="Map">	
 		<result property="cdEmp" column="cd_emp"/>	

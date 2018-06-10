@@ -32,6 +32,7 @@
     <bean id="pgObjectProcessor" class="io.convergencia.tentacle.engine.processors.PgObjectProcessor"/>
     <bean id="gzipProcessor" class="io.convergencia.tentacle.engine.processors.GZIPDecompress"></bean>
     <bean id="rollback" class="io.convergencia.camel.dbmapper.DBMapperRollbackProcessor"></bean>
+	<bean id="version" class="io.convergencia.tentacle.engine.processors.VersionMapProcessor"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <dataFormats>

@@ -40,7 +40,21 @@
         </dataFormats>
 
         <route>
-            <from uri="dbmapper:selectCupom?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=100&amp;consumer.onConsume=consumePdv&amp;parameters=flagConsolid=0" />
+            <from uri="dbmapper:selectCupom?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=5000&amp;consumer.onConsume=consumePdv&amp;parameters=flagConsolid=0" />
+			<marshal ref="json" />
+			<to uri="log:br.com.itec.selectCupom_0?level=INFO"/>
+			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
+            <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=fiscal-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.fiscal.{{ipdv.queueName}}" />
+			<onException>
+				<exception>java.lang.Exception</exception>
+				<process ref="rollback"/>
+				<unmarshal ref="json" />
+				<to uri="dbmapper:consumePdvReprocessar?dataSource=dataSourcePdv&amp;statementType=Update" />
+			</onException>            
+        </route>	
+		
+        <route>
+            <from uri="dbmapper:selectCupom?dataSource=dataSourcePdv&amp;statementType=SelectList&amp;delay=300000&amp;consumer.onConsume=consumePdv&amp;parameters=flagConsolid=2" />
 			<marshal ref="json" />
 			<to uri="log:br.com.itec.selectCupom_0?level=INFO"/>
 			<setHeader headerName="rabbitmq.DELIVERY_MODE"><constant>2</constant></setHeader>
@@ -163,5 +177,22 @@
          <to uri="log:CARGA?level=INFO"/>
          <to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;queue=sync-ret.consolid.pdv.fiscal.{{ipdv.queueName}}"/> 
        </route> 
+
+	   <!-- ROTAS DE MONITORAMENTO -->
+       <route>
+       	<from uri="quartz://tentacle/status?cron=0+*+*+*+*+?"/>
+		<setBody>
+		    <javaScript>
+		       var map = new java.util.HashMap();
+		       map.put("queue", "{{ipdv.queueName}}");
+		       map;
+		    </javaScript>
+		</setBody>
+		<process ref="version"/>
+		<marshal ref="json"/>
+		<to uri="log:br.com.itec?level=INFO"/>  
+		<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=itec.monitor.tentacle-engine&amp;queue=itec.monitor.tentacle-engine" />     	
+       </route> 
+	   
     </camelContext>
 </beans>

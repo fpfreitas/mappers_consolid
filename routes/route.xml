@@ -184,6 +184,7 @@
 		<setBody>
 		    <javaScript>
 		       var map = new java.util.HashMap();
+		       map.put("type", "version");
 		       map.put("queue", "{{ipdv.queueName}}");
 		       map;
 		    </javaScript>

@@ -660,6 +660,12 @@
 	<update id="consumePdvReprocessar" parameterType="Map">
     	update pdv_vd set flag_consolidado = 0 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and CD_VD = #{cdVd}
 	</update>
+	<update id="consumePdvReprocessarTodos" parameterType="Map">
+    	update pdv_vd set flag_consolidado = 0 where flag_consolidado = 2 and  (now() - interval '15 minutes' ) <= case flag_nfce
+									when 1 then hr_vd
+									else dt_cad
+								end 
+	</update>
 	<select id="selectMapaResumo" resultMap="selectMapaResumo">
 		<![CDATA[
 			SELECT 'mapaResumo' as "tipoRegistro",

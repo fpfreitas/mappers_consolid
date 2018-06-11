@@ -166,6 +166,12 @@
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route> 
 
+		
+        <routes>                                
+            <from uri="quartz://tentacle/status?cron=0+0/20+*+*+?"/>
+            <to uri="dbmapper:consumePdvReprocessarTodos?statementType=Update"/>
+        </route>
+
 		<!-- ROTAS DE CARGA -->
 	    <route>
          <from uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=sync.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;queue=sync.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;concurrentConsumers=4"/>

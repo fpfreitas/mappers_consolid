@@ -76,7 +76,8 @@
                     COALESCE(VD.QTDE_PONTOS_FIDEL_EXTERNO, 0::NUMERIC)             AS QTDE_PONTOS_FIDEL_EXTERNO,
                     COALESCE(VD.NR_TEL_CUPOM, ''::CHARACTER VARYING)               AS NR_TEL_CUPOM,
 					COALESCE(VD.CHV_NFCE ,''::CHARACTER VARYING)                   AS CHV_NFCE	,
-					VD.CD_NF_SERIE					   
+					VD.CD_NF_SERIE,
+				        VD.TP_EMIS
             FROM      
 				PDV_VD VD 
             LEFT JOIN 
@@ -847,6 +848,7 @@
 		<result property="nrTelCupom" column="NR_TEL_CUPOM"/>
 		<result property="chvNfce"	column="CHV_NFCE"/>	
 		<result property="cdNfSerie"	column="CD_NF_SERIE"/>	
+		<result property="tpEmis"	column="TP_EMIS" />
 		<result property="vlrTickets" column="VLR_TICKETS"/>
 		<association property="nfce" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdNf=NR_ECF,cdNfSerie=CD_NF_SERIE}" javaType="Map" select="selectCupomNfce"/>
 		<association property="nfceCancel" column="{cdEmp=CD_EMP,cdFilial=CD_FILIAL,cdVd=CD_VD}" javaType="Map" select="selectCupomNfceCancel"/>

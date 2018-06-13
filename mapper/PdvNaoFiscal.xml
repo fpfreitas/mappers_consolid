@@ -13,7 +13,7 @@
                            cupom.cd_cx                                                       ,
                            cupom.dt_cupom                                                    ,
                            cupom.dt_cad                                                      ,
-                           cupom.hr_cupom                                                    ,
+                           CAST(dt_cupom AS DATE) + pg_catalog.time(hr_cupom) as hr_cupom    ,
                            cupom.tp_cupom_nao_fiscal                                         ,
                            cupom.cd_mov                                                      ,
                            cupom.cd_ctr                                                      ,
@@ -78,9 +78,9 @@
                  left join glb_usu operador 
                  ON        cupom.cd_usu = operador.cd_usu 
                  WHERE     cupom.st_cupom >= 0::NUMERIC 
-				 and 		cupom. vlr_to_cupom > 0
+				 and cupom. vlr_to_cupom > 0
                  AND       cupom.flag_consolidado = #{flagConsolid}::numeric
-                 AND        cupom.hr_cupom < (now() - interval '5 minutes')  limit 1
+                 AND        CAST(dt_cupom AS DATE) + pg_catalog.time(hr_cupom) < (now() - interval '5 minutes')  limit 1
 				 
 ]]>
 	</select>
@@ -409,7 +409,7 @@
 		where 
 			cd_emp = 1 
 			and cd_filial in ( (select cd_filial from prc_filial) ) 
-			and hr_cupom  >= (now() - interval '6 hours' ) 
+			and CAST(dt_cupom AS DATE) + pg_catalog.time(hr_cupom) >= (now() - interval '6 hours' ) 
 			and st_cupom = 0 
 			and vlr_to_cupom > 0 ]]>
 	</select>

@@ -170,9 +170,14 @@
         <route>                                
             <from uri="quartz://tentacle/status?cron=0+0/20+*+*+*+?"/>
             <to uri="dbmapper:consumePdvReprocessarTodos?dataSource=dataSourcePdv&amp;statementType=Update"/>
-			<to uri="log:UPDATE_REPROCESSAR_TODOS?level=INFO"/> 
+			<to uri="log:UPDATE_REPROCESSAR_TODOS_ISCAL?level=INFO"/> 
         </route>
 
+		<route>                                
+            <from uri="quartz://tentacle/status?cron=0+0/20+*+*+*+?"/>
+            <to uri="dbmapper:consumePdvReprocessarTodos?dataSource=dataSourcePdv&amp;statementType=Update"/>
+			<to uri="log:UPDATE_REPROCESSAR_TODOS_NAO_FISCAL?level=INFO"/> 
+        </route>
 
 		<!-- ROTAS DE CARGA -->
 	    <route>

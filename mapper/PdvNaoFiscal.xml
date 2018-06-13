@@ -86,55 +86,59 @@
 	</select>
 	<select id="selectCupomNaoFiscalBaixa" resultMap="selectCupomNaoFiscalBaixa">
 		<if test="isFatura == 1">
-		SELECT 
-
-							cupom.cd_emp				,
-							cupom.cd_filial             ,
-							cupom.cd_cx,
-							cupom.cd_ctr,
-						   cupom.hash_protocolo         			
-						   from pdv_cupom_nao_fiscal cupom
-						   where cupom.cd_emp = #{cdEmp}
-						   AND   cupom.cd_filial = #{cdFilial}
-						   AND   cupom.cd_cx = #{cdCx}
-						   AND   cupom.cd_ctr = #{cdCtr} 
+		    SELECT 
+			    cupom.cd_emp			,
+			    cupom.cd_filial         ,
+			    cupom.cd_cx             ,
+			    cupom.cd_ctr            ,
+			    cupom.hash_protocolo         			
+			from
+                pdv_cupom_nao_fiscal cupom
+			where 
+                cupom.cd_emp            = #{cdEmp}
+			    AND   cupom.cd_filial   = #{cdFilial}
+			    AND   cupom.cd_cx       = #{cdCx}
+			    AND   cupom.cd_ctr      = #{cdCtr} 
 		</if>
 	</select>
 	<select id="selectCupomNaoFiscalBaixaFatura" resultMap="selectCupomNaoFiscalBaixaFatura">
-
-                           SELECT 
-						   fatura.cd_ctr_pgto                        ,
-                           fatura.cd_rc_deb                                 ,
-						   fatura.dt_vencto				    				,
-                           fatura.vlr_sld_dp                                ,
-                           fatura.vlr_sld_dp                                ,
-                           fatura.vlr_min_pgto                              ,
-                           fatura.vlr_pago                                  ,                         
-                           1 as st_paga                                   ,
-                           fatura.tp_pgto_offline                           ,
-                           fatura.vlrjuros                                  ,
-                           fatura.vlrdesconto                               ,
-                           fatura.nrfatura                                                                         						   
-						   FROM pdv_cupom_nao_fiscal_rec_fatura fatura 
-						   WHERE        #{cdEmp} = fatura.cd_emp 
-						   AND       	#{cdFilial} = fatura.cd_filial 
-						   AND       	#{cdCx} = fatura.cd_cx 
-						   AND       	#{cdCtr} = fatura.cd_ctr 
+        SELECT 
+		    fatura.cd_ctr_pgto                        ,
+            fatura.cd_rc_deb                          ,
+		    fatura.dt_vencto				    	  ,
+            fatura.vlr_sld_dp                         ,
+            fatura.vlr_sld_dp                         ,
+            fatura.vlr_min_pgto                       ,
+            fatura.vlr_pago                           ,                         
+            1 as st_paga                              ,
+            fatura.tp_pgto_offline                    ,
+            fatura.vlrjuros                           ,
+            fatura.vlrdesconto                        ,
+            fatura.nrfatura                                                                         						   
+		FROM 
+            pdv_cupom_nao_fiscal_rec_fatura fatura 
+		WHERE   
+            #{cdEmp}        = fatura.cd_emp 
+		    AND #{cdFilial} = fatura.cd_filial 
+		    AND #{cdCx}     = fatura.cd_cx 
+		    AND #{cdCtr}    = fatura.cd_ctr 
 
 	</select>
 	<select id="selectCupomNaoFiscalBaixaParcela" resultMap="selectCupomNaoFiscalBaixaParcela">
 			SELECT 
-			parcela.cd_ctr_pgto						        ,
-            parcela.cd_ctr_parc                             ,
-            parcela.vlr_parc                                ,
-            parcela.vlr_pago                                ,
-			1 as st_paga                                 ,
-            parcela.tp_pgto_offline                         
-			FROM pdv_cupom_nao_fiscal_rec_parc_cred parcela 
-			WHERE     #{cdEmp} = parcela.cd_emp 
-			AND       #{cdFilial} = parcela.cd_filial 
-			AND       #{cdCx} = parcela.cd_cx 
-			AND       #{cdCtr} = parcela.cd_ctr 
+                parcela.cd_ctr_pgto						        ,
+                parcela.cd_ctr_parc                             ,
+                parcela.vlr_parc                                ,
+                parcela.vlr_pago                                ,
+                1 as st_paga                                    ,
+                parcela.tp_pgto_offline                         
+			FROM
+                pdv_cupom_nao_fiscal_rec_parc_cred parcela 
+			WHERE
+                #{cdEmp}        = parcela.cd_emp 
+                AND #{cdFilial} = parcela.cd_filial 
+                AND #{cdCx}     = parcela.cd_cx 
+                AND #{cdCtr}    = parcela.cd_ctr 
 	</select>
 	<select id="selectCupomNaoFiscalCheque" resultMap="selectCupomNaoFiscalCheque">
 		SELECT chq.cd_bc_chq       ,
@@ -156,11 +160,13 @@
 			   chq.sr_chq          ,
 			   chq.cmc7_chq        ,
 			   chq.mes_ano_cnt_chq 
-		FROM   pdv_cupom_nao_fiscal_chqs chq                                                                                
-		WHERE  #{cdEmp} = chq.cd_emp
-		AND    #{cdFilial} = chq.cd_filial
-		AND    #{cdCtr} = chq.cd_ctr
-		AND    #{cdCx} = chq.cd_cx
+		FROM   
+            pdv_cupom_nao_fiscal_chqs chq                                                                                
+		WHERE
+            #{cdEmp}            = chq.cd_emp
+		    AND    #{cdFilial}  = chq.cd_filial
+		    AND    #{cdCtr}     = chq.cd_ctr
+		    AND    #{cdCx}      = chq.cd_cx
 	</select>
 	<select id="selectCupomNaoFiscalCartao" resultMap="selectCupomNaoFiscalCartao">	
 		<![CDATA[ SELECT     cupomtef.cd_trn_tef AS "cdRectoTef",
@@ -389,29 +395,34 @@
                                                                                AND       #{cdCtr} = cupomtef.cd_ctr]]>
 	</select>
 	<update id="consumePdvNaoFiscal" parameterType="Map">
-    update pdv_cupom_nao_fiscal set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
+        update pdv_cupom_nao_fiscal set flag_consolidado = 2 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_cx = #{cdCx} and cd_ctr = #{cdCtr}
 	</update>
 	<update id="consumePdvNaoFiscalReprocessar" parameterType="Map">
-    update pdv_cupom_nao_fiscal set flag_consolidado = 0 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_ctr = #{cdCtr}
+        update pdv_cupom_nao_fiscal set flag_consolidado = 0 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_cx = #{cdCx} and cd_ctr = #{cdCtr}
+	</update>
+    <update id="consumePdvNaoFiscalReprocessarTodos" parameterType="Map">
+        <![CDATA[  update pdv_cupom_nao_fiscal set flag_consolidado = 0 where flag_consolidado = 2 and  st_cupom = 0  AND CAST(dt_cupom AS DATE) + pg_catalog.time(hr_cupom) < (now() - interval '25 minutes') ]]>
 	</update>
 	<select id="selectConciliacaoPdvCupomNaoFiscal" resultMap="selectConciliacaoPdvCupomNaoFiscal">
 		select 'pdvCupomNaoFiscalConciliacao' as "tipoRegistro"
 	</select>
 	<select id="selectConciliacaoPdvCupomNaoFiscalCupons" resultMap="selectConciliacaoPdvCupomNaoFiscalCupons">
-	<![CDATA[	select  cd_emp 	,
-		  cd_filial 	,
-		  cd_cx 		,
-		  nr_coo 		,
-		  dt_cupom 		,
-		  st_cupom 		,
-          cd_ctr
-		from pdv_cupom_nao_fiscal 
-		where 
-			cd_emp = 1 
-			and cd_filial in ( (select cd_filial from prc_filial) ) 
-			and CAST(dt_cupom AS DATE) + pg_catalog.time(hr_cupom) >= (now() - interval '6 hours' ) 
-			and st_cupom = 0 
-			and vlr_to_cupom > 0 ]]>
+        <![CDATA[	select  cd_emp 	,
+                            cd_filial 	,
+                            cd_cx 		,
+                            nr_coo 		,
+                            dt_cupom 		,
+                            st_cupom 		,
+                            cd_ctr
+                        from 
+                            pdv_cupom_nao_fiscal 
+                        where 
+                            cd_emp = 1 
+                            and cd_filial in ( (select cd_filial from prc_filial) ) 
+                            and CAST(dt_cupom AS DATE) + pg_catalog.time(hr_cupom) >= (now() - interval '6 hours' ) 
+                            and st_cupom = 0 
+                            and vlr_to_cupom > 0 
+                ]]>
 	</select>
 	<resultMap id="cupomNaoFiscal" type="Map"> 	
 		<result property="cnpjFilial" column="CNPJ_FILIAL"/>

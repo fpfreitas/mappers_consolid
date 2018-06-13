@@ -110,7 +110,7 @@
                            fatura.vlr_sld_dp                                ,
                            fatura.vlr_min_pgto                              ,
                            fatura.vlr_pago                                  ,                         
-                           fatura.st_paga                                   ,
+                           1 as st_paga                                   ,
                            fatura.tp_pgto_offline                           ,
                            fatura.vlrjuros                                  ,
                            fatura.vlrdesconto                               ,
@@ -128,7 +128,7 @@
             parcela.cd_ctr_parc                             ,
             parcela.vlr_parc                                ,
             parcela.vlr_pago                                ,
-			parcela.st_paga                                 ,
+			1 as st_paga                                 ,
             parcela.tp_pgto_offline                         
 			FROM pdv_cupom_nao_fiscal_rec_parc_cred parcela 
 			WHERE     #{cdEmp} = parcela.cd_emp 

@@ -166,16 +166,14 @@
 			<to uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=outrosProcedimentos-{{ipdv.queueName}}&amp;queue=integra.consolid.pdv.outrosProcedimentos.{{ipdv.queueName}}" />
         </route> 
 
-<<<<<<< Updated upstream
-=======
-		
+
         <route>                                
             <from uri="quartz://tentacle/status?cron=0+0/20+*+*+*+?"/>
             <to uri="dbmapper:consumePdvReprocessarTodos?dataSource=dataSourcePdv&amp;statementType=Update"/>
 			<to uri="log:UPDATE_REPROCESSAR_TODOS?level=INFO"/> 
         </route>
 
->>>>>>> Stashed changes
+
 		<!-- ROTAS DE CARGA -->
 	    <route>
          <from uri="rabbitmq:{{ipdv.queueServer}}/{{ipdv.queueExchange}}?username={{ipdv.queueUsername}}&amp;password={{ipdv.queuePassword}}&amp;autoDelete=false&amp;routingKey=sync.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;queue=sync.consolid.pdv.fiscal.{{ipdv.queueName}}&amp;concurrentConsumers=4"/>

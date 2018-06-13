@@ -174,7 +174,7 @@
         </route>
 
 		<route>                                
-            <from uri="quartz://tentacle/status?cron=0+0/20+*+*+*+?"/>
+            <from uri="quartz://tentacle/status1?cron=0+0/20+*+*+*+?"/>
             <to uri="dbmapper:consumePdvNaoFiscalReprocessarTodos?dataSource=dataSourcePdv&amp;statementType=Update"/>
 			<to uri="log:UPDATE_REPROCESSAR_TODOS_NAO_FISCAL?level=INFO"/> 
         </route>

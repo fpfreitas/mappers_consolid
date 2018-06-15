@@ -662,7 +662,7 @@
 	</update>
 
 	<update id="consumePdvReprocessarTodos" parameterType="Map">
-    <![CDATA[	update pdv_vd set flag_consolidado = 0 where flag_consolidado in (2,3) and  (now() - interval '15 minutes' ) >= case flag_nfce
+    <![CDATA[	update pdv_vd set flag_consolidado = 0 where flag_consolidado in (2,3) and (select count(*) from pdv_Vd where flag_consolidado = 0) < 100  and (now() - interval '15 minutes' ) >= case flag_nfce
 									when 1 then hr_vd
 									else dt_cad
 								end ]]>

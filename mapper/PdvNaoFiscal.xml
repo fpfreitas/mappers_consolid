@@ -401,7 +401,7 @@
         update pdv_cupom_nao_fiscal set flag_consolidado = 0 where CD_EMP = #{cdEmp} and CD_FILIAL = #{cdFilial} and cd_cx = #{cdCx} and cd_ctr = #{cdCtr}
 	</update>
     <update id="consumePdvNaoFiscalReprocessarTodos" parameterType="Map">
-        <![CDATA[  update pdv_cupom_nao_fiscal set flag_consolidado = 0 where flag_consolidado in (2,3) and (select count(*) from pdv_cupom_nao_fiscal where flag_consolidado = 0) < 20  and  st_cupom = 0  AND CAST(dt_cupom AS DATE) + pg_catalog.time(hr_cupom) < (now() - interval '25 minutes') ]]>
+        <![CDATA[  update pdv_cupom_nao_fiscal set flag_consolidado = 0 where flag_consolidado in (2,3) and (select count(*) from pdv_cupom_nao_fiscal where flag_consolidado = 2) < 100  and  st_cupom = 0  AND CAST(dt_cupom AS DATE) + pg_catalog.time(hr_cupom) < (now() - interval '25 minutes') ]]>
 	</update>
 	<select id="selectConciliacaoPdvCupomNaoFiscal" resultMap="selectConciliacaoPdvCupomNaoFiscal">
 		select 'pdvCupomNaoFiscalConciliacao' as "tipoRegistro"
